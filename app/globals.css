@@ -10,6 +10,14 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-header-bg: #d1d5db;
+  /* Light gray for header area */
+  --color-chat-bg: #f3f4f6;
+  /* Chat message background */
+  --color-button-bg: #f9fafb;
+  /* Action button background */
+  --color-accent: #f87171;
+  /* Reddish/Pinkish for send button */
 }
 
 @media (prefers-color-scheme: dark) {
