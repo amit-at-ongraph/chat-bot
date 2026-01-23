@@ -12,15 +12,12 @@ const handler = NextAuth({
     }),
   ],
   session: {
-    strategy: "jwt",
-  },
-  pages: {
-    signIn: "/",
+    strategy: "database",
   },
   callbacks: {
-    async session({ session, token }) {
-      if (session.user && token.sub) {
-        session.user.id = token.sub;
+    async session({ session, user }) {
+      if (session.user) {
+        session.user.id = user.id;
       }
       return session;
     },
