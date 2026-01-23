@@ -69,12 +69,11 @@ export default function Home() {
   });
   const [input, setInput] = useState("");
 
-  function handleSubmit(e: React.FormEvent<HTMLButtonElement>) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    console.log({ input });
     if (input.trim()) {
       sendMessage({ text: input });
-      // setInput("");
+      setInput("");
     }
   }
 
@@ -149,7 +148,10 @@ export default function Home() {
 
       {/* Input Area */}
       <footer className="p-4 bg-white border-t border-zinc-200 sticky bottom-0">
-        <div className="flex gap-3 items-center max-w-xl mx-auto">
+        <form
+          onSubmit={handleSubmit}
+          className="flex gap-3 items-center max-w-xl mx-auto"
+        >
           <div className="relative flex-1">
             <input
               type="text"
@@ -174,12 +176,11 @@ export default function Home() {
           <button
             type="submit"
             disabled={status !== "ready"}
-            onClick={handleSubmit}
             className="w-14 h-14 rounded-full bg-accent flex items-center justify-center shadow-lg hover:bg-accent/50 active:scale-90 transition-all cursor-pointer"
           >
             <Send className="w-7 h-7" />
           </button>
-        </div>
+        </form>
       </footer>
 
       {errorToast && (
