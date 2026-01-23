@@ -10,14 +10,32 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --color-header-bg: #d1d5db;
-  /* Light gray for header area */
-  --color-chat-bg: #f3f4f6;
-  /* Chat message background */
-  --color-button-bg: #f9fafb;
-  /* Action button background */
-  --color-accent: #f87171;
-  /* Reddish/Pinkish for send button */
+
+  /* Primary Theme */
+  --color-primary: #22c55e;
+  --color-primary-hover: #16a34a;
+
+  /* Backgrounds */
+  --color-app-bg: #f9fafb;
+  --color-header-bg: #f5f5f5;
+  --color-action-btn-bg: #f9fafb;
+  --color-input-bg: #f9fafb;
+
+  /* Borders */
+  --color-border-light: #f4f4f5; /* zinc-100 */
+  --color-border-base: #e4e4e7;  /* zinc-200 */
+  --color-border-dark: #d4d4d8;  /* zinc-300 */
+
+  /* Text */
+  --color-text-main: #09090b;      /* zinc-950 */
+  --color-text-secondary: #27272a; /* zinc-800 */
+  --color-text-muted: #71717a;     /* zinc-500 */
+  --color-text-subtle: #a1a1aa;    /* zinc-400 */
+
+  /* Semantic */
+  --color-error: #ef4444;    /* red-500 */
+  --color-error-bg: #fef2f2; /* red-50 */
+  --color-error-text: #b91c1c; /* red-700 */
 }
 
 @media (prefers-color-scheme: dark) {

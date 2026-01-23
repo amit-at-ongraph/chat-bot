@@ -23,27 +23,27 @@ export default function Home() {
   const { data: session, status: authStatus } = useSession();
   const actions = [
     {
-      icon: <HomeIcon className="w-5 h-5 text-amber-900" />,
+      icon: <HomeIcon className="h-5 w-5 text-amber-900" />,
       label: "ICE at my door",
     },
     {
-      icon: <BookOpen className="w-5 h-5 text-blue-400" />,
+      icon: <BookOpen className="h-5 w-5 text-blue-400" />,
       label: "ICE at my work",
     },
     {
-      icon: <Scale className="w-5 h-5 text-amber-600" />,
+      icon: <Scale className="h-5 w-5 text-amber-600" />,
       label: "Find legal help",
     },
     {
-      icon: <AlertCircle className="w-5 h-5 text-red-500" />,
+      icon: <AlertCircle className="h-5 w-5 text-red-500" />,
       label: "Friend taken by ICE",
     },
     {
-      icon: <MessageSquare className="w-5 h-5 text-amber-500" />,
+      icon: <MessageSquare className="h-5 w-5 text-amber-500" />,
       label: "Protest prep guide",
     },
     {
-      icon: <FileText className="w-5 h-5 text-red-400" />,
+      icon: <FileText className="h-5 w-5 text-red-400" />,
       label: "About ICE warrants",
     },
   ];
@@ -90,35 +90,37 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-white text-zinc-900 font-sans shadow-xl relative">
+    <div className="bg-app-bg text-text-main relative flex min-h-screen flex-col font-sans shadow-xl">
       {/* Sign In Overlay */}
       {!session && !skippedAuth && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm p-6">
-          <div className="bg-white p-8 rounded-3xl shadow-2xl border border-zinc-100 max-w-sm w-full text-center space-y-6">
-            <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto">
-              <Globe className="w-10 h-10 text-amber-600" />
+        <div className="bg-app-bg/80 absolute inset-0 z-50 flex items-center justify-center p-6 backdrop-blur-sm">
+          <div className="border-border-light bg-app-bg w-full max-w-sm space-y-6 rounded-3xl border p-8 text-center shadow-2xl">
+            <div className="bg-primary/10 mx-auto flex h-20 w-20 items-center justify-center rounded-full">
+              <Globe className="text-primary h-10 w-10" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-zinc-800">Welcome</h2>
-              <p className="text-zinc-500 mt-2">
+              <h2 className="text-text-main text-2xl font-bold">Welcome</h2>
+              <p className="text-text-muted mt-2">
                 Please sign in to access the Immigration Action Guide.
               </p>
             </div>
             <div className="space-y-3">
               <button
+                type="button"
                 onClick={() => signIn("google")}
-                className="w-full bg-zinc-900 text-white py-4 rounded-full font-bold hover:bg-zinc-800 transition-all flex items-center justify-center gap-3 active:scale-95"
+                className="bg-text-main text-app-bg hover:bg-text-secondary flex w-full items-center justify-center gap-3 rounded-full py-4 font-bold transition-all active:scale-95"
               >
                 <img
                   src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
                   alt="Google"
-                  className="w-5 h-5"
+                  className="h-5 w-5"
                 />
                 Sign in with Google
               </button>
               <button
+                type="button"
                 onClick={() => setSkippedAuth(true)}
-                className="w-full bg-zinc-100 text-zinc-600 py-3 rounded-full font-semibold hover:bg-zinc-200 transition-all active:scale-95"
+                className="bg-border-light text-text-secondary hover:bg-border-base w-full rounded-full py-3 font-semibold transition-all active:scale-95"
               >
                 Skip for now
               </button>
@@ -128,21 +130,21 @@ export default function Home() {
       )}
 
       {/* Header */}
-      <header className="flex items-center justify-between px-4 py-3 bg-header-bg border-b border-zinc-300 sticky top-0 z-10">
+      <header className="bg-header-bg border-border-dark sticky top-0 z-10 flex items-center justify-between border-b px-4 py-3">
         <div className="flex items-center gap-3">
-          <Menu className="w-6 h-6 text-zinc-700 cursor-pointer" />
+          <Menu className="text-text-secondary h-6 w-6 cursor-pointer" />
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center border border-zinc-200 shadow-sm overflow-hidden">
+            <div className="border-border-base bg-app-bg flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border shadow-sm">
               <img
                 src={
                   session?.user?.image ||
                   "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
                 }
                 alt="logo"
-                className="w-full h-full object-cover"
+                className="h-full w-full object-cover"
               />
             </div>
-            <h1 className="text-xl font-bold text-zinc-800 tracking-tight">
+            <h1 className="text-text-main text-xl font-bold tracking-tight">
               Immigration Action Guide
             </h1>
           </div>
@@ -151,39 +153,40 @@ export default function Home() {
           {session ? (
             <button
               onClick={() => signOut()}
-              className="text-xs font-bold text-zinc-500 hover:text-red-500 transition-colors"
+              className="text-text-muted hover:text-error text-xs font-bold transition-colors"
             >
               Sign Out
             </button>
           ) : skippedAuth ? (
             <button
+              type="button"
               onClick={() => signIn("google")}
-              className="text-xs font-bold bg-zinc-900 text-white px-3 py-1.5 rounded-full hover:bg-zinc-800 transition-all active:scale-95"
+              className="bg-text-main text-app-bg hover:bg-text-secondary rounded-full px-3 py-1.5 text-xs font-bold transition-all active:scale-95"
             >
               Sign In
             </button>
           ) : null}
-          <Globe className="w-6 h-6 text-zinc-700 cursor-pointer" />
+          <Globe className="text-text-secondary h-6 w-6 cursor-pointer" />
         </div>
       </header>
 
       {/* Chat Area */}
-      <main className="flex-1 overflow-y-auto p-4 space-y-6 bg-white">
-        <div className="max-w-2xl mx-auto">
+      <main className="flex-1 space-y-6 overflow-y-auto bg-white p-4 shadow-inner">
+        <div className="mx-auto max-w-2xl">
           {messages.map((message) => (
             <div key={message.id} className="flex w-full justify-end">
               {/* {message.role === "user" ? "User: " : "AI: "} */}
               {message.parts.map((part, index) =>
                 part.type === "text" ? (
-                  <div key={index} className="flex gap-3 mb-2">
-                    <div className="w-10 h-10 rounded-full bg-zinc-200 flex items-center justify-center shrink-0 border border-zinc-300">
-                      <span className="text-red-500 font-bold text-lg">P</span>
+                  <div key={index} className="mb-2 flex gap-3">
+                    <div className="border-border-dark bg-border-base flex h-10 w-10 shrink-0 items-center justify-center rounded-full border">
+                      <span className="text-primary text-lg font-bold">P</span>
                     </div>
-                    <div className="bg-chat-bg rounded-2xl p-4 max-w-[85%] relative shadow-sm border border-zinc-100">
-                      <p className="text-[17px] leading-relaxed text-zinc-800">
+                    <div className="border-border-light relative max-w-[85%] rounded-2xl border p-4 shadow-sm">
+                      <p className="text-text-secondary text-[17px] leading-relaxed">
                         {part.text}
                       </p>
-                      <span className="text-xs text-zinc-400 mt-2 block">
+                      <span className="text-text-subtle mt-2 block text-xs">
                         18:13
                       </span>
                     </div>
@@ -194,7 +197,7 @@ export default function Home() {
           ))}
 
           {(status === "submitted" || status === "streaming") && (
-            <div className="flex gap-3 mb-2">
+            <div className="mb-2 flex gap-3">
               <TypingIndicator />
             </div>
           )}
@@ -202,16 +205,16 @@ export default function Home() {
       </main>
 
       {/* Action Buttons Area */}
-      <div className="bg-header-bg py-6 px-4">
-        <div className="grid grid-cols-2 gap-3 max-w-md mx-auto">
+      <div className="bg-header-bg px-4 py-6">
+        <div className="mx-auto grid max-w-md grid-cols-2 gap-3">
           {actions.map((action, idx) => (
             <button
               key={idx}
               onClick={() => setInput(action.label)}
-              className="flex items-center gap-3 bg-button-bg px-4 py-3 rounded-full border border-zinc-200 shadow-sm hover:shadow-md hover:bg-white transition-all duration-200 text-left active:scale-[0.98] cursor-pointer"
+              className="bg-action-btn-bg border-border-base hover:bg-app-bg flex cursor-pointer items-center gap-3 rounded-full border px-4 py-3 text-left shadow-sm transition-all duration-200 hover:shadow-md active:scale-[0.98]"
             >
               {action.icon}
-              <span className="text-[15px] font-medium text-zinc-700 whitespace-nowrap overflow-hidden text-ellipsis">
+              <span className="text-text-secondary overflow-hidden text-[15px] font-medium text-ellipsis whitespace-nowrap">
                 {action.label}
               </span>
             </button>
@@ -220,10 +223,10 @@ export default function Home() {
       </div>
 
       {/* Input Area */}
-      <footer className="p-4 bg-white border-t border-zinc-200 sticky bottom-0">
+      <footer className="border-border-base bg-app-bg sticky bottom-0 border-t p-4">
         <form
           onSubmit={handleSubmit}
-          className="flex gap-3 items-center max-w-xl mx-auto"
+          className="mx-auto flex max-w-xl items-center gap-3"
         >
           <div className="relative flex-1">
             <input
@@ -231,16 +234,16 @@ export default function Home() {
               placeholder="Ask a question..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              className="w-full pl-6 pr-4 py-4 rounded-full border border-zinc-300 bg-zinc-50 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all text-lg shadow-inner"
+              className="focus:ring-primary/50 focus:border-primary border-border-base bg-input-bg w-full rounded-full border py-4 pr-4 pl-6 text-lg shadow-inner transition-all focus:ring-2 focus:outline-none"
             />
             {(status === "submitted" || status === "streaming") && (
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center bg-white/80 backdrop-blur-sm px-2 py-1 rounded-full border border-zinc-200 shadow-sm">
+              <div className="border-border-base bg-app-bg/80 absolute top-1/2 right-4 flex -translate-y-1/2 items-center rounded-full border px-2 py-1 shadow-sm backdrop-blur-sm">
                 <button
                   type="button"
                   onClick={() => stop()}
-                  className="flex items-center gap-1.5 text-xs font-bold text-zinc-600 hover:text-accent transition-colors cursor-pointer"
+                  className="hover:text-primary text-text-muted flex cursor-pointer items-center gap-1.5 text-xs font-bold transition-colors"
                 >
-                  <div className="w-2.5 h-2.5 bg-zinc-500 rounded-sm"></div>
+                  <div className="bg-primary/60 h-2.5 w-2.5 rounded-sm"></div>
                   Stop
                 </button>
               </div>
@@ -249,33 +252,33 @@ export default function Home() {
           <button
             type="submit"
             disabled={status !== "ready"}
-            className="w-14 h-14 rounded-full bg-accent flex items-center justify-center shadow-lg hover:bg-accent/50 active:scale-90 transition-all cursor-pointer"
+            className="bg-primary hover:bg-primary-hover flex h-14 w-14 cursor-pointer items-center justify-center rounded-full shadow-lg transition-all active:scale-90"
           >
-            <Send className="w-7 h-7" />
+            <Send className="text-app-bg h-7 w-7" />
           </button>
         </form>
       </footer>
 
       {errorToast && (
-        <div className="fixed top-4 right-4 z-50 bg-red-50 border max-w-md border-red-200 text-red-700 px-4 py-3 rounded-lg shadow-lg flex items-center gap-3">
-          <AlertCircle className="w-5 h-5" />
-          <span className="text-sm flex-1">{errorToast}</span>
+        <div className="border-error/20 bg-error-bg text-error-text fixed top-4 right-4 z-50 flex max-w-md items-center gap-3 rounded-lg border px-4 py-3 shadow-lg">
+          <AlertCircle className="h-5 w-5" />
+          <span className="flex-1 text-sm">{errorToast}</span>
           <div className="flex items-center gap-3">
             <button
               onClick={() => {
                 setErrorToast(null);
                 reload();
               }}
-              className="text-xs font-semibold underline hover:text-red-800 transition-colors cursor-pointer"
+              className="hover:text-error cursor-pointer text-xs font-semibold underline transition-colors"
             >
               Retry
             </button>
             <button
               onClick={() => setErrorToast(null)}
-              className="p-1 hover:bg-red-100 rounded-full transition-colors cursor-pointer absolute right-2 top-2"
+              className="hover:bg-error/10 absolute top-2 right-2 cursor-pointer rounded-full p-1 transition-colors"
               aria-label="Close alert"
             >
-              <X className="w-4 h-4" />
+              <X className="h-4 w-4" />
             </button>
           </div>
         </div>
