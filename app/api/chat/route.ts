@@ -1,20 +1,37 @@
-import { streamText } from 'ai';
-import { chatModel } from '@/lib/ai';
+import { convertToModelMessages, streamText, UIMessage } from "ai";
+import { chatModel } from "@/lib/ai";
 
-export const runtime = 'edge';
+// Allow streaming responses up to 30 seconds
+export const maxDuration = 30;
 
-export async function POST(req: Request): Promise<Response> {
-  const { messages }: { messages: Array<{ role: 'user' | 'assistant'; content: string }> } =
-    await req.json();
+export async function POST(req: Request) {
+  const { messages }: { messages: UIMessage[] } = await req.json();
 
-  const result = await streamText({
+  const result = streamText({
     model: chatModel,
-    // messages,
-    prompt: messages[0].content,
-    system: 'You are a helpful AI chatbot.',
+    system: "You are a helpful assistant.",
+    messages: await convertToModelMessages(messages),
   });
 
-  console.log(result)
+  return result.toUIMessageStreamResponse({
+    onError: (error: any) => {
+      if (error?.error?.message) {
+        return error.error.message;
+      }
 
-  return result.toTextStreamResponse();
+      if (error == null) {
+        return "unknown error";
+      }
+
+      if (typeof error === "string") {
+        return error;
+      }
+
+      if (error instanceof Error) {
+        return error.message;
+      }
+
+      return JSON.stringify(error);
+    },
+  });
 }
