@@ -16,6 +16,7 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useState } from "react";
 import Spinner from "./components/Spinner";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 function TypingIndicator() {
   return (
@@ -28,6 +29,7 @@ function TypingIndicator() {
 }
 
 export default function Home() {
+  const { data: session, status: authStatus } = useSession();
   const actions = [
     {
       icon: <HomeIcon className="w-5 h-5 text-amber-900" />,
@@ -87,10 +89,44 @@ export default function Home() {
     }
   }
 
-  console.log({ status });
+  if (authStatus === "loading") {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-white">
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col min-h-screen bg-white text-zinc-900 font-sans shadow-xl">
+    <div className="flex flex-col min-h-screen bg-white text-zinc-900 font-sans shadow-xl relative">
+      {/* Sign In Overlay */}
+      {!session && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm p-6">
+          <div className="bg-white p-8 rounded-3xl shadow-2xl border border-zinc-100 max-w-sm w-full text-center space-y-6">
+            <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto">
+              <Globe className="w-10 h-10 text-amber-600" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-zinc-800">Welcome</h2>
+              <p className="text-zinc-500 mt-2">
+                Please sign in to access the Immigration Action Guide.
+              </p>
+            </div>
+            <button
+              onClick={() => signIn("google")}
+              className="w-full bg-zinc-900 text-white py-4 rounded-full font-bold hover:bg-zinc-800 transition-all flex items-center justify-center gap-3 active:scale-95"
+            >
+              <img
+                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                alt="Google"
+                className="w-5 h-5"
+              />
+              Sign in with Google
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <header className="flex items-center justify-between px-4 py-3 bg-header-bg border-b border-zinc-300 sticky top-0 z-10">
         <div className="flex items-center gap-3">
@@ -98,7 +134,10 @@ export default function Home() {
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center border border-zinc-200 shadow-sm overflow-hidden">
               <img
-                src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
+                src={
+                  session?.user?.image ||
+                  "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
+                }
                 alt="logo"
                 className="w-full h-full object-cover"
               />
@@ -108,7 +147,17 @@ export default function Home() {
             </h1>
           </div>
         </div>
-        <Globe className="w-6 h-6 text-zinc-700 cursor-pointer" />
+        <div className="flex items-center gap-3">
+          {session && (
+            <button
+              onClick={() => signOut()}
+              className="text-xs font-bold text-zinc-500 hover:text-red-500 transition-colors"
+            >
+              Sign Out
+            </button>
+          )}
+          <Globe className="w-6 h-6 text-zinc-700 cursor-pointer" />
+        </div>
       </header>
 
       {/* Chat Area */}
