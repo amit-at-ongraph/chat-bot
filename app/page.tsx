@@ -57,6 +57,7 @@ export default function Home() {
     },
   ];
   const [errorToast, setErrorToast] = useState<string | null>(null);
+  const [skippedAuth, setSkippedAuth] = useState(false);
 
   const {
     messages,
@@ -100,7 +101,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-white text-zinc-900 font-sans shadow-xl relative">
       {/* Sign In Overlay */}
-      {!session && (
+      {!session && !skippedAuth && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm p-6">
           <div className="bg-white p-8 rounded-3xl shadow-2xl border border-zinc-100 max-w-sm w-full text-center space-y-6">
             <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto">
@@ -112,17 +113,25 @@ export default function Home() {
                 Please sign in to access the Immigration Action Guide.
               </p>
             </div>
-            <button
-              onClick={() => signIn("google")}
-              className="w-full bg-zinc-900 text-white py-4 rounded-full font-bold hover:bg-zinc-800 transition-all flex items-center justify-center gap-3 active:scale-95"
-            >
-              <img
-                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-                alt="Google"
-                className="w-5 h-5"
-              />
-              Sign in with Google
-            </button>
+            <div className="space-y-3">
+              <button
+                onClick={() => signIn("google")}
+                className="w-full bg-zinc-900 text-white py-4 rounded-full font-bold hover:bg-zinc-800 transition-all flex items-center justify-center gap-3 active:scale-95"
+              >
+                <img
+                  src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                  alt="Google"
+                  className="w-5 h-5"
+                />
+                Sign in with Google
+              </button>
+              <button
+                onClick={() => setSkippedAuth(true)}
+                className="w-full bg-zinc-100 text-zinc-600 py-3 rounded-full font-semibold hover:bg-zinc-200 transition-all active:scale-95"
+              >
+                Skip for now
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -148,14 +157,21 @@ export default function Home() {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          {session && (
+          {session ? (
             <button
               onClick={() => signOut()}
               className="text-xs font-bold text-zinc-500 hover:text-red-500 transition-colors"
             >
               Sign Out
             </button>
-          )}
+          ) : skippedAuth ? (
+            <button
+              onClick={() => signIn("google")}
+              className="text-xs font-bold bg-zinc-900 text-white px-3 py-1.5 rounded-full hover:bg-zinc-800 transition-all active:scale-95"
+            >
+              Sign In
+            </button>
+          ) : null}
           <Globe className="w-6 h-6 text-zinc-700 cursor-pointer" />
         </div>
       </header>
