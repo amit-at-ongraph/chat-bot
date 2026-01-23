@@ -17,6 +17,16 @@ import { DefaultChatTransport } from "ai";
 import { useState } from "react";
 import Spinner from "./components/Spinner";
 
+function TypingIndicator() {
+  return (
+    <div className="flex gap-1 items-center px-4 py-3 bg-chat-bg rounded-2xl w-fit shadow-sm border border-zinc-100">
+      <div className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+      <div className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+      <div className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce"></div>
+    </div>
+  );
+}
+
 export default function Home() {
   const actions = [
     {
@@ -126,6 +136,12 @@ export default function Home() {
               )}
             </div>
           ))}
+
+          {(status === "submitted" || status === "streaming") && (
+            <div className="flex gap-3 mb-2">
+              <TypingIndicator />
+            </div>
+          )}
         </div>
       </main>
 
@@ -135,7 +151,8 @@ export default function Home() {
           {actions.map((action, idx) => (
             <button
               key={idx}
-              className="flex items-center gap-3 bg-button-bg px-4 py-3 rounded-full border border-zinc-200 shadow-sm hover:shadow-md hover:bg-white transition-all duration-200 text-left active:scale-[0.98]"
+              onClick={() => setInput(action.label)}
+              className="flex items-center gap-3 bg-button-bg px-4 py-3 rounded-full border border-zinc-200 shadow-sm hover:shadow-md hover:bg-white transition-all duration-200 text-left active:scale-[0.98] cursor-pointer"
             >
               {action.icon}
               <span className="text-[15px] font-medium text-zinc-700 whitespace-nowrap overflow-hidden text-ellipsis">
@@ -161,13 +178,13 @@ export default function Home() {
               className="w-full pl-6 pr-4 py-4 rounded-full border border-zinc-300 bg-zinc-50 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all text-lg shadow-inner"
             />
             {(status === "submitted" || status === "streaming") && (
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 bg-white/80 backdrop-blur-sm px-2 py-1 rounded-full">
-                {status === "submitted" && <Spinner />}
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center bg-white/80 backdrop-blur-sm px-2 py-1 rounded-full border border-zinc-200 shadow-sm">
                 <button
                   type="button"
                   onClick={() => stop()}
-                  className="text-xs font-semibold text-zinc-500 hover:text-accent transition-colors cursor-pointer"
+                  className="flex items-center gap-1.5 text-xs font-bold text-zinc-600 hover:text-accent transition-colors cursor-pointer"
                 >
+                  <div className="w-2.5 h-2.5 bg-zinc-500 rounded-sm"></div>
                   Stop
                 </button>
               </div>
