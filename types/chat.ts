@@ -1,21 +1,28 @@
+import { UIMessage } from "ai";
+
+export type ExtendedUIMessage = UIMessage & {
+  createdAt?: Date | string;
+};
+
+export type MessagePart = UIMessage["parts"][number];
+
 export interface ChatAction {
   label: string;
   color: string;
   icon: React.ComponentType<{ className?: string }>;
 }
 
-export interface AppConfig {
-  name: string;
-  description: string;
-}
-
-export interface MessagePart {
-  type: string;
-  text?: string;
-}
-
-export interface CustomMessage {
+export interface DBChat {
   id: string;
+  userId: string | null;
+  title: string | null;
+  createdAt: Date;
+}
+
+export interface DBMessage {
+  id: string;
+  chatId: string;
   role: string;
-  parts?: MessagePart[];
+  content: string;
+  createdAt: Date;
 }

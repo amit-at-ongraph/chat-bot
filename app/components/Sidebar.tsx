@@ -1,14 +1,26 @@
 "use client";
 
 import { APP_CONFIG } from "@/lib/constants";
-import { History, MessageSquare, Plus, Settings, X } from "lucide-react";
+import { DBChat } from "@/types/chat";
+import { MessageSquare, Plus, Settings, X } from "lucide-react";
 
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
+  chats: DBChat[];
+  currentChatId: string | null;
+  onSelectChat: (id: string) => void;
+  onNewChat: () => void;
 }
 
-export default function Sidebar({ isOpen, onClose }: SidebarProps) {
+export default function Sidebar({
+  isOpen,
+  onClose,
+  chats,
+  currentChatId,
+  onSelectChat,
+  onNewChat,
+}: SidebarProps) {
   return (
     <>
       {/* Mobile Overlay */}
@@ -28,7 +40,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="flex h-full w-72 flex-col overflow-hidden">
           {/* Sidebar Header - Aligned with main Header */}
           <div className="border-border-base flex h-[65px] items-center justify-between border-b px-6 py-3">
-            <h2 className="text-text-main font-bold">Menu</h2>
+            <h2 className="text-text-main font-semibold">Menu</h2>
             <button onClick={onClose} className="text-text-muted hover:text-text-main lg:hidden">
               <X className="h-6 w-6" />
             </button>
@@ -36,7 +48,15 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
           {/* New Chat Button */}
           <div className="p-4">
-            <button className="border-border-base bg-app-bg text-text-main hover:bg-border-light flex w-full items-center justify-center gap-2 rounded-full border py-3 font-normal shadow-sm transition-all active:scale-95">
+            <button
+              onClick={() => {
+                onNewChat();
+                if (window.innerWidth < 1024) {
+                  onClose();
+                }
+              }}
+              className="border-border-base bg-app-bg text-text-main hover:bg-border-light flex w-full items-center justify-center gap-2 rounded-full border py-3 font-normal shadow-sm transition-all hover:cursor-pointer active:scale-95"
+            >
               <Plus className="h-5 w-5" />
               New Conversation
             </button>
@@ -44,8 +64,27 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
           {/* Navigation Items */}
           <nav className="flex-1 space-y-1 overflow-y-auto px-3">
-            <SidebarItem icon={MessageSquare} label="Recent Chats" active />
-            <SidebarItem icon={History} label="History" />
+            <div className="text-text-muted px-3 py-2 text-xs font-semibold tracking-wider uppercase">
+              Recent Chats
+            </div>
+            {chats.map((chat) => (
+              <SidebarItem
+                key={chat.id}
+                icon={MessageSquare}
+                label={chat.title || "Untitled Chat"}
+                active={currentChatId === chat.id}
+                onClick={() => {
+                  onSelectChat(chat.id);
+                  if (window.innerWidth < 1024) {
+                    onClose();
+                  }
+                }}
+              />
+            ))}
+            {chats.length === 0 && (
+              <div className="text-text-muted px-3 py-4 text-sm italic">No recent chats</div>
+            )}
+            <div className="border-border-base my-2 border-t" />
             <SidebarItem icon={Settings} label="Settings" />
           </nav>
 
@@ -63,14 +102,17 @@ function SidebarItem({
   icon: Icon,
   label,
   active = false,
+  onClick,
 }: {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
   active?: boolean;
+  onClick?: () => void;
 }) {
   return (
     <button
-      className={`hover:bg-border-light flex w-full items-center gap-3 rounded-xl px-3 py-3 text-[15px] font-medium transition-colors ${
+      onClick={onClick}
+      className={`hover:bg-border-base flex w-full items-center gap-3 rounded-xl px-3 py-2 text-[15px] font-medium transition-colors hover:cursor-pointer ${
         active ? "bg-border-light text-primary" : "text-text-secondary"
       }`}
     >

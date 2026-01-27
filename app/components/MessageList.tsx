@@ -1,10 +1,11 @@
 "use client";
 
-import { CustomMessage, MessagePart } from "@/types/chat";
+import { ExtendedUIMessage, MessagePart } from "@/types/chat";
+import React from "react";
 import TypingIndicator from "./TypingIndicator";
 
 interface MessageListProps {
-  messages: CustomMessage[];
+  messages: ExtendedUIMessage[];
   status: string;
 }
 
@@ -13,25 +14,37 @@ export default function MessageList({ messages, status }: MessageListProps) {
     <main className="flex-1 space-y-6 overflow-y-auto bg-white p-4 shadow-inner">
       <div className="mx-auto max-w-2xl">
         {messages.map((message) => (
-          <div key={message.id} className="flex w-full justify-end">
-            {message.parts?.map((part: MessagePart, index: number) =>
-              part.type === "text" ? (
-                <div key={index} className="mb-2 flex gap-3">
-                  <div className="border-border-dark bg-border-base flex h-10 w-10 shrink-0 items-center justify-center rounded-full border">
-                    <span className="text-primary text-lg font-bold">P</span>
-                  </div>
-                  <div className="border-border-light relative max-w-[85%] rounded-2xl border p-4 shadow-sm">
-                    <p className="text-text-secondary text-[17px] leading-relaxed">{part.text}</p>
-                    <span className="text-text-subtle mt-2 block text-xs">
-                      {new Date().toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </span>
-                  </div>
+          <div
+            key={message.id}
+            className={`flex w-full ${message.role === "user" ? "justify-end" : "justify-start"}`}
+          >
+            <div
+              className={`mb-4 flex max-w-[85%] gap-3 ${message.role === "user" ? "flex-row-reverse" : "flex-row"}`}
+            >
+              {/* Avatar - Only for User */}
+              {message.role === "user" && (
+                <div className="border-border-dark bg-border-base flex h-10 w-10 shrink-0 items-center justify-center rounded-full border">
+                  <span className="text-primary text-lg font-bold">P</span>
                 </div>
-              ) : null,
-            )}
+              )}
+
+              {/* Message Content */}
+              <div className="border-border-light relative rounded-2xl border p-4 shadow-sm">
+                {message.parts?.map((part: MessagePart, index: number) =>
+                  part.type === "text" ? (
+                    <React.Fragment key={index}>
+                      <p className="text-text-secondary text-[17px] leading-relaxed">{part.text}</p>
+                    </React.Fragment>
+                  ) : null,
+                )}
+                <span className="text-text-subtle mt-2 block text-xs">
+                  {new Date(message.createdAt || new Date()).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
+              </div>
+            </div>
           </div>
         ))}
 

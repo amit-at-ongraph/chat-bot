@@ -9,8 +9,8 @@
     "lint": "eslint",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format": "eslint --fix . && prettier --write .",
+    "format:check": "eslint . && prettier --check ."
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.14",

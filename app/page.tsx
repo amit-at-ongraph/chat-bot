@@ -1,13 +1,14 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ChatFooter from "./components/ChatFooter";
 import ErrorToast from "./components/ErrorToast";
 import Header from "./components/Header";
 import MessageList from "./components/MessageList";
 import Welcome from "./components/Welcome";
 
+import { DBChat } from "@/types/chat";
 import Sidebar from "./components/Sidebar";
 import { useChatLogic } from "./hooks/useChatLogic";
 import Loading from "./loading";
@@ -16,12 +17,7 @@ export default function Home() {
   const { data: session, status: authStatus } = useSession();
   const [skippedAuth, setSkippedAuth] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  useEffect(() => {
-    if (window.innerWidth >= 1024) {
-      setIsSidebarOpen(true);
-    }
-  }, []);
+  const [userChats, setUserChats] = useState<DBChat[]>([]);
 
   const {
     messages,
@@ -30,10 +26,39 @@ export default function Home() {
     input,
     setInput,
     errorToast,
+    chatId,
     handleSubmit,
     handleRetry,
     handleClearError,
+    loadChat,
+    startNewChat,
   } = useChatLogic();
+
+  const fetchChats = useCallback(async () => {
+    if (session?.user?.id) {
+      try {
+        const res = await fetch("/api/chats");
+        if (res.ok) {
+          const data = await res.json();
+          setUserChats(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch chats:", error);
+      }
+    }
+  }, [session]);
+
+  useEffect(() => {
+    if (window.innerWidth >= 1024) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsSidebarOpen(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchChats();
+  }, [fetchChats, chatId]);
 
   if (authStatus === "loading") {
     return <Loading />;
@@ -42,7 +67,14 @@ export default function Home() {
   return (
     <div className="bg-app-bg text-text-main relative flex min-h-screen font-sans shadow-xl">
       {/* Sidebar */}
-      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      <Sidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        chats={userChats}
+        currentChatId={chatId}
+        onSelectChat={loadChat}
+        onNewChat={startNewChat}
+      />
 
       <div
         className={`flex flex-1 flex-col transition-all duration-300 ${
