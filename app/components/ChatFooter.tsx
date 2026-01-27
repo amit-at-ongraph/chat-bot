@@ -14,6 +14,8 @@ interface ChatFooterProps {
   hasMessages: boolean;
 }
 
+const MAX_HEIGHT = 160; // px (≈ 6–7 lines)
+
 export default function ChatFooter({
   input,
   setInput,
@@ -22,6 +24,33 @@ export default function ChatFooter({
   stop,
   hasMessages,
 }: ChatFooterProps) {
+  const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+
+  React.useEffect(() => {
+    if (!input && textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.overflowY = "hidden";
+    }
+  }, [input]);
+
+  const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInput(e.target.value);
+
+    const el = textareaRef.current;
+    if (!el) return;
+
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, MAX_HEIGHT)}px`;
+    el.style.overflowY = el.scrollHeight > MAX_HEIGHT ? "auto" : "hidden";
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e as unknown as React.FormEvent);
+    }
+  };
+
   return (
     <>
       {/* Action Buttons Area - Only show when no messages */}
@@ -48,15 +77,18 @@ export default function ChatFooter({
       <footer className="border-border-base bg-app-bg sticky bottom-0 border-t p-4">
         <form onSubmit={handleSubmit} className="mx-auto flex max-w-xl items-center gap-3">
           <div className="relative flex-1">
-            <input
-              type="text"
+            <textarea
+              ref={textareaRef}
               placeholder="Ask a question..."
+              rows={1}
               value={input}
-              onChange={(e) => setInput(e.target.value)}
-              className="focus:ring-primary/50 focus:border-primary border-border-base bg-input-bg w-full rounded-full border py-4 pr-4 pl-6 text-lg shadow-inner transition-all focus:ring-2 focus:outline-none"
+              onChange={handleInput}
+              onKeyDown={handleKeyDown}
+              className="no-scrollbar focus:ring-primary/50 focus:border-primary border-border-base bg-input-bg w-full resize-none rounded-2xl border py-3 pr-4 pl-6 text-lg shadow-inner transition-all focus:ring-2 focus:outline-none"
             />
+
             {(status === "submitted" || status === "streaming") && (
-              <div className="border-border-base bg-app-bg/80 absolute top-1/2 right-4 flex -translate-y-1/2 items-center rounded-full border px-2 py-1 shadow-sm backdrop-blur-sm">
+              <div className="border-border-base bg-app-bg/80 absolute top-1/2 right-4 flex -translate-y-4 items-center rounded-full border px-2 py-1 shadow-sm backdrop-blur-sm">
                 <button
                   type="button"
                   onClick={stop}
