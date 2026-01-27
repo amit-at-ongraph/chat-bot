@@ -2,6 +2,7 @@
 
 import { Globe } from "lucide-react";
 import { signIn } from "next-auth/react";
+import Image from "next/image";
 
 interface WelcomeProps {
   onSkip: () => void;
@@ -26,10 +27,12 @@ export default function Welcome({ onSkip }: WelcomeProps) {
             onClick={() => signIn("google")}
             className="bg-text-main text-app-bg hover:bg-text-secondary flex w-full items-center justify-center gap-3 rounded-full py-4 font-bold transition-all active:scale-95"
           >
-            <img
+            <Image
               src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
               alt="Google"
               className="h-5 w-5"
+              width={24}
+              height={24}
             />
             Sign in with Google
           </button>

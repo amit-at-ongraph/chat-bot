@@ -25,7 +25,6 @@ export function useChatLogic() {
           headers.set("x-chat-id", chatIdRef.current);
         }
         const response = await fetch(url, { ...init, headers });
-        console.log({ response });
         const id = response.headers.get("x-chat-id");
         if (id) {
           setChatId(id);

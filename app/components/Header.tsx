@@ -1,9 +1,10 @@
 "use client";
 
-import { Globe, Menu, Moon, Sun } from "lucide-react";
+import { Globe, Menu, Moon, Sun, User } from "lucide-react";
 import { Session } from "next-auth";
 import { signIn, signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
+import Image from "next/image";
 
 interface HeaderProps {
   session: Session | null;
@@ -26,11 +27,17 @@ export default function Header({ session, skippedAuth, onToggleSidebar }: Header
         </button>
         <div className="flex items-center gap-2">
           <div className="border-border-base bg-app-bg flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border shadow-sm">
-            <img
-              src={session?.user?.image || "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"}
-              alt="logo"
-              className="h-full w-full object-cover"
-            />
+            {session?.user?.image ? (
+              <Image
+                src={session.user.image}
+                alt="logo"
+                className="h-full w-full object-cover"
+                width={24}
+                height={24}
+              />
+            ) : (
+              <User className="text-text-main h-5 w-5" />
+            )}
           </div>
           <h1 className="text-text-main text-xl font-bold tracking-tight">
             Immigration Action Guide
