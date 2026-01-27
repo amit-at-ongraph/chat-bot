@@ -93,7 +93,7 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-app-bg text-text-main relative flex min-h-screen font-sans shadow-xl">
+    <div className="bg-app-bg text-text-main relative flex min-h-screen overflow-x-hidden font-sans shadow-xl">
       {/* Sidebar */}
       <Sidebar
         isOpen={isSidebarOpen}
@@ -107,7 +107,7 @@ export default function Home() {
       />
 
       <div
-        className={`flex flex-1 flex-col transition-all duration-300 ${
+        className={`flex h-screen flex-1 flex-col transition-all duration-300 ${
           isSidebarOpen ? "lg:pl-72" : "lg:pl-0"
         }`}
       >
@@ -131,6 +131,7 @@ export default function Home() {
           handleSubmit={handleSubmit}
           status={status}
           stop={stop}
+          hasMessages={messages.length > 0}
         />
 
         {errorToast && (

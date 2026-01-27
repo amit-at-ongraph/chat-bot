@@ -39,7 +39,7 @@ export default function Header({ session, skippedAuth, onToggleSidebar }: Header
               <User className="text-text-main h-5 w-5" />
             )}
           </div>
-          <h1 className="text-text-main text-xl font-bold tracking-tight">
+          <h1 className="text-text-main hidden text-xl font-bold tracking-tight sm:block sm:truncate md:max-w-md">
             Immigration Action Guide
           </h1>
         </div>
@@ -68,7 +68,7 @@ export default function Header({ session, skippedAuth, onToggleSidebar }: Header
             Sign In
           </button>
         ) : null}
-        <Globe className="text-text-secondary h-6 w-6 cursor-pointer" />
+        <Globe className="text-text-secondary hidden h-6 w-6 cursor-pointer sm:block" />
       </div>
     </header>
   );

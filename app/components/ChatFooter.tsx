@@ -11,6 +11,7 @@ interface ChatFooterProps {
   handleSubmit: (e: React.FormEvent) => void;
   status: string;
   stop: () => void;
+  hasMessages: boolean;
 }
 
 export default function ChatFooter({
@@ -19,26 +20,29 @@ export default function ChatFooter({
   handleSubmit,
   status,
   stop,
+  hasMessages,
 }: ChatFooterProps) {
   return (
     <>
-      {/* Action Buttons Area */}
-      <div className="bg-header-bg px-4 py-6">
-        <div className="mx-auto grid max-w-md grid-cols-2 gap-3">
-          {CHAT_ACTIONS.map((action: ChatAction, idx: number) => (
-            <button
-              key={idx}
-              onClick={() => setInput(action.label)}
-              className="bg-action-btn-bg border-border-base hover:bg-app-bg flex cursor-pointer items-center gap-3 rounded-full border px-4 py-3 text-left shadow-sm transition-all duration-200 hover:shadow-md active:scale-[0.98]"
-            >
-              <action.icon className={`h-5 w-5 ${action.color}`} />
-              <span className="text-text-secondary overflow-hidden text-[15px] font-medium text-ellipsis whitespace-nowrap">
-                {action.label}
-              </span>
-            </button>
-          ))}
+      {/* Action Buttons Area - Only show when no messages */}
+      {!hasMessages && (
+        <div className="bg-header-bg px-4 py-6">
+          <div className="mx-auto grid max-w-md grid-cols-1 gap-3 sm:grid-cols-2">
+            {CHAT_ACTIONS.map((action: ChatAction, idx: number) => (
+              <button
+                key={idx}
+                onClick={() => setInput(action.label)}
+                className="bg-action-btn-bg border-border-base hover:bg-app-bg flex cursor-pointer items-center gap-3 rounded-full border px-4 py-3 text-left shadow-sm transition-all duration-200 hover:shadow-md active:scale-[0.98]"
+              >
+                <action.icon className={`h-5 w-5 ${action.color}`} />
+                <span className="text-text-secondary overflow-hidden text-[15px] font-medium text-ellipsis whitespace-nowrap">
+                  {action.label}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Input Area */}
       <footer className="border-border-base bg-app-bg sticky bottom-0 border-t p-4">
