@@ -1,5 +1,10 @@
 import { UIMessage } from "ai";
 
+export type AppConfig = {
+  name: string;
+  description: string;
+};
+
 export type ExtendedUIMessage = UIMessage & {
   createdAt?: Date | string;
 };
