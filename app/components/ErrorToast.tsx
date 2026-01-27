@@ -10,20 +10,20 @@ interface ErrorToastProps {
 
 export default function ErrorToast({ error, onRetry, onClear }: ErrorToastProps) {
   return (
-    <div className="border-error/20 bg-error-bg text-error-text fixed top-4 right-4 z-50 flex max-w-md items-center gap-3 rounded-lg border px-4 py-3 shadow-lg">
+    <div className="fixed top-4 right-4 z-50 flex max-w-md items-center gap-3 rounded-lg border border-red-500/20 bg-red-800 p-2 text-red-100 shadow-lg">
       <AlertCircle className="h-5 w-5" />
       <span className="flex-1 text-sm">{error}</span>
 
       <div className="flex items-center gap-3">
         <button
           onClick={onRetry}
-          className="hover:text-error cursor-pointer text-xs font-semibold underline transition-colors"
+          className="cursor-pointer text-xs font-semibold underline transition-colors hover:text-red-200"
         >
           Retry
         </button>
         <button
           onClick={onClear}
-          className="hover:bg-error/10 absolute top-2 right-2 cursor-pointer rounded-full p-1 transition-colors"
+          className="absolute top-2 right-2 cursor-pointer rounded-full p-1 transition-colors hover:bg-red-900/30"
           aria-label="Close alert"
         >
           <X className="h-4 w-4" />
