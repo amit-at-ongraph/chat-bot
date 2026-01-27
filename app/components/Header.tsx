@@ -7,13 +7,20 @@ import { signIn, signOut } from "next-auth/react";
 interface HeaderProps {
   session: Session | null;
   skippedAuth: boolean;
+  onToggleSidebar: () => void;
 }
 
-export default function Header({ session, skippedAuth }: HeaderProps) {
+export default function Header({ session, skippedAuth, onToggleSidebar }: HeaderProps) {
   return (
     <header className="bg-header-bg border-border-dark sticky top-0 z-10 flex items-center justify-between border-b px-4 py-3">
       <div className="flex items-center gap-3">
-        <Menu className="text-text-secondary h-6 w-6 cursor-pointer" />
+        <button
+          onClick={onToggleSidebar}
+          className="text-text-secondary hover:bg-border-base active:bg-border-dark flex h-10 w-10 items-center justify-center rounded-full transition-all hover:cursor-pointer"
+          aria-label="Toggle sidebar"
+        >
+          <Menu className="h-6 w-6" />
+        </button>
         <div className="flex items-center gap-2">
           <div className="border-border-base bg-app-bg flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border shadow-sm">
             <img
