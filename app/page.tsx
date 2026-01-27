@@ -64,6 +64,34 @@ export default function Home() {
     return <Loading />;
   }
 
+  const handleDeleteChat = async (id: string) => {
+    try {
+      const res = await fetch(`/api/chats/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        if (chatId === id) {
+          startNewChat();
+        }
+        await fetchChats();
+      }
+    } catch (error) {
+      console.error("Failed to delete chat:", error);
+    }
+  };
+
+  const handleRenameChat = async (id: string, newTitle: string) => {
+    try {
+      const res = await fetch(`/api/chats/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ title: newTitle }),
+      });
+      if (res.ok) {
+        await fetchChats();
+      }
+    } catch (error) {
+      console.error("Failed to rename chat:", error);
+    }
+  };
+
   return (
     <div className="bg-app-bg text-text-main relative flex min-h-screen font-sans shadow-xl">
       {/* Sidebar */}
@@ -74,6 +102,8 @@ export default function Home() {
         currentChatId={chatId}
         onSelectChat={loadChat}
         onNewChat={startNewChat}
+        onDeleteChat={handleDeleteChat}
+        onRenameChat={handleRenameChat}
       />
 
       <div

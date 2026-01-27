@@ -45,3 +45,11 @@ export async function getUserChats(userId: string): Promise<DBChat[]> {
     .where(eq(chats.userId, userId))
     .orderBy(desc(chats.createdAt));
 }
+
+export async function deleteChat(chatId: string) {
+  return await db.delete(chats).where(eq(chats.id, chatId));
+}
+
+export async function renameChat(chatId: string, title: string) {
+  return await db.update(chats).set({ title }).where(eq(chats.id, chatId)).returning();
+}
