@@ -1,0 +1,51 @@
+"use client";
+
+import { Globe, Menu } from "lucide-react";
+import { Session } from "next-auth";
+import { signIn, signOut } from "next-auth/react";
+
+interface HeaderProps {
+  session: Session | null;
+  skippedAuth: boolean;
+}
+
+export default function Header({ session, skippedAuth }: HeaderProps) {
+  return (
+    <header className="bg-header-bg border-border-dark sticky top-0 z-10 flex items-center justify-between border-b px-4 py-3">
+      <div className="flex items-center gap-3">
+        <Menu className="text-text-secondary h-6 w-6 cursor-pointer" />
+        <div className="flex items-center gap-2">
+          <div className="border-border-base bg-app-bg flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border shadow-sm">
+            <img
+              src={session?.user?.image || "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"}
+              alt="logo"
+              className="h-full w-full object-cover"
+            />
+          </div>
+          <h1 className="text-text-main text-xl font-bold tracking-tight">
+            Immigration Action Guide
+          </h1>
+        </div>
+      </div>
+      <div className="flex items-center gap-3">
+        {session ? (
+          <button
+            onClick={() => signOut({ redirect: true })}
+            className="text-text-muted hover:text-error text-xs font-bold transition-colors"
+          >
+            Sign Out
+          </button>
+        ) : skippedAuth ? (
+          <button
+            type="button"
+            onClick={() => signIn("google")}
+            className="bg-text-main text-app-bg hover:bg-text-secondary rounded-full px-3 py-1.5 text-xs font-bold transition-all active:scale-95"
+          >
+            Sign In
+          </button>
+        ) : null}
+        <Globe className="text-text-secondary h-6 w-6 cursor-pointer" />
+      </div>
+    </header>
+  );
+}
