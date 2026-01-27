@@ -1,52 +1,59 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
+@theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
 
-  /* Primary Theme */
-  --color-primary: #22c55e;
-  --color-primary-hover: #16a34a;
-
-  /* Backgrounds */
-  --color-app-bg: #f9fafb;
-  --color-header-bg: #f5f5f5;
-  --color-action-btn-bg: #f9fafb;
-  --color-input-bg: #f9fafb;
-
-  /* Borders */
-  --color-border-light: #f4f4f5; /* zinc-100 */
-  --color-border-base: #e4e4e7; /* zinc-200 */
-  --color-border-dark: #d4d4d8; /* zinc-300 */
-
-  /* Text */
-  --color-text-main: #09090b; /* zinc-950 */
-  --color-text-secondary: #27272a; /* zinc-800 */
-  --color-text-muted: #71717a; /* zinc-500 */
-  --color-text-subtle: #a1a1aa; /* zinc-400 */
-
-  /* Semantic */
-  --color-error: #ef4444; /* red-500 */
-  --color-error-bg: #fef2f2; /* red-50 */
-  --color-error-text: #b91c1c; /* red-700 */
+  /* Legacy mapppings for existing components */
+  --color-app-bg: var(--background);
+  --color-header-bg: var(--muted);
+  --color-action-btn-bg: var(--background);
+  --color-input-bg: var(--input);
+  --color-border-light: var(--border);
+  --color-border-base: var(--border);
+  --color-border-dark: var(--border);
+  --color-text-main: var(--foreground);
+  --color-text-secondary: var(--foreground);
+  --color-text-muted: var(--muted-foreground);
+  --color-text-subtle: var(--muted-foreground);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --background: hsl(0 0% 100%);
+  --foreground: hsl(240 10% 3.9%);
+
+  --primary: hsl(221.2 83.2% 53.3%);
+  --primary-foreground: hsl(210 40% 98%);
+
+  --muted: hsl(240 4.8% 95.9%);
+  --muted-foreground: hsl(240 3.8% 46.1%);
+
+  --border: hsl(240 5.9% 90%);
+  --input: hsl(0 0% 100%);
+}
+
+.dark {
+  --background: hsl(240 10% 3.9%);
+  --foreground: hsl(0 0% 98%);
+
+  --primary: hsl(217.2 91.2% 59.8%);
+  --primary-foreground: hsl(222.2 47.4% 11.2%);
+
+  --muted: hsl(240 3.7% 15.9%);
+  --muted-foreground: hsl(240 5% 64.9%);
+
+  --border: hsl(240 3.7% 15.9%);
+  --input: hsl(240 3.7% 15.9%);
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground;
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }

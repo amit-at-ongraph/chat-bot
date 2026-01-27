@@ -221,7 +221,7 @@ function SidebarItem({
                     e.stopPropagation();
                     item.action();
                   }}
-                  className={`flex w-full items-center gap-2 px-3 py-2 text-xs transition-colors hover:bg-gray-100 ${
+                  className={`hover:bg-border-base flex w-full items-center gap-2 px-3 py-2 text-xs transition-colors ${
                     item.danger ? "text-red-500" : "text-text-main"
                   }`}
                 >

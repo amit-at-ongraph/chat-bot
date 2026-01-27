@@ -1,8 +1,9 @@
 "use client";
 
-import { Globe, Menu } from "lucide-react";
+import { Globe, Menu, Moon, Sun } from "lucide-react";
 import { Session } from "next-auth";
 import { signIn, signOut } from "next-auth/react";
+import { useTheme } from "next-themes";
 
 interface HeaderProps {
   session: Session | null;
@@ -11,6 +12,8 @@ interface HeaderProps {
 }
 
 export default function Header({ session, skippedAuth, onToggleSidebar }: HeaderProps) {
+  const { theme, setTheme } = useTheme();
+
   return (
     <header className="bg-header-bg border-border-dark sticky top-0 z-10 flex items-center justify-between border-b px-4 py-3">
       <div className="flex items-center gap-3">
@@ -35,6 +38,13 @@ export default function Header({ session, skippedAuth, onToggleSidebar }: Header
         </div>
       </div>
       <div className="flex items-center gap-3">
+        <button
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          className="text-text-secondary hover:bg-border-base flex h-9 w-9 items-center justify-center rounded-full transition-all"
+        >
+          <Sun className="absolute h-5 w-5 scale-100 transition-transform dark:scale-0" />
+          <Moon className="absolute h-5 w-5 scale-0 transition-transform dark:scale-100" />
+        </button>
         {session ? (
           <button
             onClick={() => signOut({ redirect: true })}

@@ -11,7 +11,7 @@ interface MessageListProps {
 
 export default function MessageList({ messages, status }: MessageListProps) {
   return (
-    <main className="flex-1 space-y-6 overflow-y-auto bg-white p-4 shadow-inner">
+    <main className="bg-app-bg flex-1 space-y-6 overflow-y-auto p-4 shadow-inner">
       <div className="mx-auto max-w-2xl">
         {messages.map((message) => (
           <div
