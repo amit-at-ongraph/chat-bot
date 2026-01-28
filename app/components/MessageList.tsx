@@ -21,7 +21,7 @@ export default function MessageList({ messages, status }: MessageListProps) {
 
   return (
     <main className="bg-app-bg flex-1 space-y-6 overflow-y-auto p-4 shadow-inner">
-      <div className="mx-auto max-w-2xl">
+      <div className="mx-auto max-w-3xl">
         {messages.map((message, index) => (
           <div
             key={message.id}
