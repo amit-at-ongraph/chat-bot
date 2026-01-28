@@ -27,10 +27,12 @@ export default function ChatFooter({
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
 
   React.useEffect(() => {
-    if (!input && textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.overflowY = "hidden";
-    }
+    const el = textareaRef.current;
+    if (!el) return;
+
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, MAX_HEIGHT)}px`;
+    el.style.overflowY = el.scrollHeight > MAX_HEIGHT ? "auto" : "hidden";
   }, [input]);
 
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -60,7 +62,7 @@ export default function ChatFooter({
             {CHAT_ACTIONS.map((action: ChatAction, idx: number) => (
               <button
                 key={idx}
-                onClick={() => setInput(action.label)}
+                onClick={() => setInput(action.prompt)}
                 className="bg-action-btn-bg border-border-base hover:bg-app-bg flex cursor-pointer items-center gap-3 rounded-full border px-4 py-3 text-left shadow-sm transition-all duration-200 hover:shadow-md active:scale-[0.98]"
               >
                 <action.icon className={`h-5 w-5 ${action.color}`} />

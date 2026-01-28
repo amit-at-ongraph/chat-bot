@@ -15,6 +15,7 @@ export interface ChatAction {
   label: string;
   color: string;
   icon: React.ComponentType<{ className?: string }>;
+  prompt: string;
 }
 
 export interface DBChat {
