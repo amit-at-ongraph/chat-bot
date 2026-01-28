@@ -12,14 +12,14 @@ interface MessageListProps {
 export default function MessageList({ messages, status }: MessageListProps) {
   return (
     <main className="bg-app-bg flex-1 space-y-6 overflow-y-auto p-4 shadow-inner">
-      <div className="mx-auto max-w-2xl">
+      <div className="mx-auto max-w-3xl">
         {messages.map((message) => (
           <div
             key={message.id}
             className={`flex w-full ${message.role === "user" ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`mb-4 flex max-w-[85%] gap-3 ${message.role === "user" ? "flex-row-reverse" : "flex-row"}`}
+              className={`mb-4 flex gap-3 flex-row ${message.role === "user" ? "max-w-[80%]" : ""}`}
             >
               {/* Avatar - Only for User */}
               {message.role === "user" && (
@@ -29,11 +29,11 @@ export default function MessageList({ messages, status }: MessageListProps) {
               )}
 
               {/* Message Content */}
-              <div className="border-border-light relative rounded-2xl border p-4 shadow-sm">
+              <div className="border-border-light relative rounded-2xl border p-4 shadow-xs">
                 {message.parts?.map((part: MessagePart, index: number) =>
                   part.type === "text" ? (
                     <React.Fragment key={index}>
-                      <p className="text-text-secondary text-[17px] leading-relaxed">{part.text}</p>
+                      <p className="text-text-secondary text-[17px] leading-relaxed whitespace-pre-wrap">{part.text}</p>
                     </React.Fragment>
                   ) : null,
                 )}
