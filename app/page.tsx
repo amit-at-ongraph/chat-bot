@@ -32,6 +32,9 @@ export default function Home() {
     handleClearError,
     loadChat,
     startNewChat,
+    loadMore,
+    hasMore,
+    isLoadingMore,
   } = useChatLogic();
 
   const fetchChats = useCallback(async () => {
@@ -122,7 +125,14 @@ export default function Home() {
         />
 
         {/* Chat Area */}
-        <MessageList messages={messages} status={status} />
+        <MessageList
+          messages={messages}
+          status={status}
+          loadMore={loadMore}
+          hasMore={hasMore}
+          isLoadingMore={isLoadingMore}
+          chatId={chatId}
+        />
 
         {/* Footer Area */}
         <ChatFooter

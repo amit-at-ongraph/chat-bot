@@ -9,6 +9,9 @@ export function useChatLogic() {
   const [errorToast, setErrorToast] = useState<string | null>(null);
   const [input, setInput] = useState("");
   const [chatId, setChatId] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState(false);
+  const [cursor, setCursor] = useState<string | null>(null);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const chatIdRef = useRef<string | null>(null);
 
   // Keep ref in sync with state
@@ -48,11 +51,12 @@ export function useChatLogic() {
     setChatId(id);
     chatIdRef.current = id;
     try {
-      const res = await fetch(`/api/chats/${id}/messages`);
+      const res = await fetch(`/api/chats/${id}/messages?limit=20`);
       if (!res.ok) throw new Error("Failed to load chat history");
-      const data: DBMessage[] = await res.json();
+      const { data, nextCursor }: { data: DBMessage[]; nextCursor: string | null } =
+        await res.json();
       setMessages(
-        data.map(
+        data.reverse().map(
           (m): ExtendedUIMessage => ({
             id: m.id,
             role: m.role as "user" | "assistant",
@@ -61,6 +65,13 @@ export function useChatLogic() {
           }),
         ),
       );
+      if (data.length === 20) {
+        setCursor(nextCursor);
+        setHasMore(true);
+      } else {
+        setHasMore(false);
+        setCursor(null);
+      }
     } catch (error) {
       if (error instanceof Error) {
         setErrorToast(error.message);
@@ -70,10 +81,46 @@ export function useChatLogic() {
     }
   };
 
+  const loadMore = async () => {
+    if (!hasMore || !cursor || !chatId || isLoadingMore) return;
+    setIsLoadingMore(true);
+    try {
+      const res = await fetch(`/api/chats/${chatId}/messages?cursor=${cursor}&limit=20`);
+      if (!res.ok) throw new Error("Failed to load more messages");
+      const { data, nextCursor }: { data: DBMessage[]; nextCursor: string | null } =
+        await res.json();
+      setMessages((prev) => [
+        ...data.reverse().map(
+          (m) =>
+            ({
+              id: m.id,
+              role: m.role as "user" | "assistant",
+              parts: [{ type: "text", text: m.content }],
+              createdAt: new Date(m.createdAt),
+            }) as ExtendedUIMessage,
+        ),
+        ...prev,
+      ]);
+      if (data.length === 20) {
+        setCursor(nextCursor);
+      } else {
+        setHasMore(false);
+        setCursor(null);
+      }
+    } catch (error) {
+      console.error("Failed to load more messages:", error);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  };
+
   const startNewChat = () => {
     setChatId(null);
     chatIdRef.current = null;
     setMessages([]);
+    setHasMore(false);
+    setCursor(null);
+    setIsLoadingMore(false);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -109,5 +156,8 @@ export function useChatLogic() {
     handleClearError,
     loadChat,
     startNewChat,
+    loadMore,
+    hasMore,
+    isLoadingMore,
   };
 }

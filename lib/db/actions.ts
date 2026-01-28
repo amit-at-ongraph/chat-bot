@@ -1,5 +1,5 @@
 import { DBChat, DBMessage } from "@/types/chat";
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq, lt, or } from "drizzle-orm";
 import { db } from "./index";
 import { chats, messages } from "./schema";
 
@@ -30,12 +30,32 @@ export async function saveMessage(
   return newMessage;
 }
 
-export async function getChatMessages(chatId: string): Promise<DBMessage[]> {
+export async function getChatMessages(
+  chatId: string,
+  date: Date,
+  cursorId: string,
+  limit = 20,
+): Promise<DBMessage[]> {
+  let whereCondition;
+
+  if (cursorId) {
+    whereCondition = and(
+      eq(messages.chatId, chatId),
+      or(
+        lt(messages.createdAt, date),
+        and(eq(messages.createdAt, date), lt(messages.id, cursorId)),
+      ),
+    );
+  } else {
+    whereCondition = eq(messages.chatId, chatId);
+  }
+
   return await db
     .select()
     .from(messages)
-    .where(eq(messages.chatId, chatId))
-    .orderBy(messages.createdAt);
+    .where(whereCondition)
+    .orderBy(desc(messages.createdAt), desc(messages.id))
+    .limit(limit);
 }
 
 export async function getUserChats(userId: string): Promise<DBChat[]> {

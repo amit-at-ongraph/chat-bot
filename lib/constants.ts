@@ -18,7 +18,8 @@ export const CHAT_ACTIONS: ChatAction[] = [
     label: "ICE at my door",
     color: "text-amber-900",
     icon: HomeIcon,
-    prompt: "ICE is at my door. What steps should I take? What must I do and what shouldn't I do before opening the door?",
+    prompt:
+      "ICE is at my door. What steps should I take? What must I do and what shouldn't I do before opening the door?",
   },
   {
     label: "ICE at my work",
@@ -30,24 +31,28 @@ export const CHAT_ACTIONS: ChatAction[] = [
     label: "Find legal help",
     color: "text-amber-600",
     icon: Scale,
-    prompt: "I need to find legal help for immigration issues. Can you connect me with trusted lawyers and support groups, including free and low-cost options?",
+    prompt:
+      "I need to find legal help for immigration issues. Can you connect me with trusted lawyers and support groups, including free and low-cost options?",
   },
   {
     label: "Friend taken by ICE",
     color: "text-red-500",
     icon: AlertCircle,
-    prompt: "A friend has been taken by ICE. What should I do? How can I find them, support them, and act quickly?",
+    prompt:
+      "A friend has been taken by ICE. What should I do? How can I find them, support them, and act quickly?",
   },
   {
     label: "Protest prep guide",
     color: "text-amber-500",
     icon: MessageSquare,
-    prompt: "I'm planning to attend a protest. What are my rights? Any tips to stay safe, prepared, and legally protected?",
+    prompt:
+      "I'm planning to attend a protest. What are my rights? Any tips to stay safe, prepared, and legally protected?",
   },
   {
     label: "About ICE warrants",
     color: "text-red-400",
     icon: FileText,
-    prompt: "Explain the difference between ICE warrants and judicial warrants. When can ICE legally enter or detain someone?",
+    prompt:
+      "Explain the difference between ICE warrants and judicial warrants. When can ICE legally enter or detain someone?",
   },
 ];

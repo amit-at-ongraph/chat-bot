@@ -67,3 +67,18 @@
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+/* globals.css */
+.markdown-container {
+  /* Helps the browser prepare for changing content */
+  contain: layout style;
+  /* Prevents layout shifts */
+  overflow-anchor: none;
+}
+
+/* Ensure the typing indicator doesn't push text up and down */
+.typing-indicator-container {
+  height: 24px;
+  display: flex;
+  align-items: center;
+}
