@@ -5,7 +5,7 @@ export default defineConfig({
   out: "./lib/db/migrations",
   dialect: "postgresql",
   dbCredentials: {
-    url: "postgresql://postgres:m11vzDqLhBX4QeEm@db.nydoiezsepvcautphznl.supabase.co:5432/postgres",
+    url: "postgresql://postgres.nydoiezsepvcautphznl:m11vzDqLhBX4QeEm@aws-1-ap-south-1.pooler.supabase.com:6543/postgres",
   },
   // This prevents Drizzle from trying to 'read' Supabase system schemas
   schemaFilter: ["public"],
