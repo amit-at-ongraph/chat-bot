@@ -2,7 +2,7 @@
 
 import { CHAT_ACTIONS } from "@/lib/constants";
 import { ChatAction } from "@/types/chat";
-import { Send } from "lucide-react";
+import { ArrowUp, SquareIcon } from "lucide-react";
 import React from "react";
 
 interface ChatFooterProps {
@@ -26,24 +26,26 @@ export default function ChatFooter({
 }: ChatFooterProps) {
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
 
-  React.useEffect(() => {
+  const [isMultiline, setIsMultiline] = React.useState(false);
+
+  const updateHeight = React.useCallback(() => {
     const el = textareaRef.current;
     if (!el) return;
 
     el.style.height = "auto";
-    el.style.height = `${Math.min(el.scrollHeight, MAX_HEIGHT)}px`;
-    el.style.overflowY = el.scrollHeight > MAX_HEIGHT ? "auto" : "hidden";
-  }, [input]);
+    const scrollHeight = el.scrollHeight;
+    el.style.height = `${Math.min(scrollHeight, MAX_HEIGHT)}px`;
+    el.style.overflowY = scrollHeight > MAX_HEIGHT ? "auto" : "hidden";
+    setIsMultiline(scrollHeight > 60);
+  }, []);
+
+  React.useEffect(() => {
+    updateHeight();
+  }, [input, updateHeight]);
 
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
-
-    const el = textareaRef.current;
-    if (!el) return;
-
-    el.style.height = "auto";
-    el.style.height = `${Math.min(el.scrollHeight, MAX_HEIGHT)}px`;
-    el.style.overflowY = el.scrollHeight > MAX_HEIGHT ? "auto" : "hidden";
+    updateHeight();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -58,6 +60,8 @@ export default function ChatFooter({
       }
     }
   };
+
+  const isStreaming = status === "submitted" || status === "streaming";
 
   return (
     <>
@@ -85,17 +89,35 @@ export default function ChatFooter({
       <footer className="border-border-base bg-app-bg sticky bottom-0 border-t p-4">
         <form onSubmit={handleSubmit} className="mx-auto flex max-w-xl items-center gap-3">
           <div className="relative flex-1">
-            <textarea
-              ref={textareaRef}
-              placeholder="Ask a question..."
-              rows={1}
-              value={input}
-              onChange={handleInput}
-              onKeyDown={handleKeyDown}
-              className="no-scrollbar focus:ring-primary/50 focus:border-primary border-border-base bg-input-bg w-full resize-none rounded-2xl border py-3 pr-4 pl-6 text-lg shadow-inner transition-all focus:ring-2 focus:outline-none"
-            />
+            <div
+              className={`border-border-base bg-input-bg shadow-outline relative border ${
+                isMultiline ? "rounded-[28px]" : "rounded-[32px]"
+              }`}
+            >
+              <textarea
+                ref={textareaRef}
+                placeholder="Ask a question..."
+                rows={1}
+                value={input}
+                onChange={handleInput}
+                onKeyDown={handleKeyDown}
+                className={`no-scrollbar w-full resize-none border border-transparent py-3 pr-14 pl-6 text-[16px] transition-all duration-300 focus:outline-none`}
+              />
 
-            {(status === "submitted" || status === "streaming") && (
+              <button
+                type={isStreaming ? "button" : "submit"}
+                className="bg-primary hover:bg-primary-hover absolute right-3 bottom-0 flex h-10 w-10 -translate-y-2 cursor-pointer items-center justify-center rounded-full shadow-lg transition-all active:scale-90"
+                onClick={isStreaming ? stop : undefined}
+              >
+                {isStreaming ? (
+                  <SquareIcon fill="white" className="text-app-bg h-4 w-4" />
+                ) : (
+                  <ArrowUp className="text-app-bg h-5 w-5" />
+                )}
+              </button>
+            </div>
+
+            {/* {(status === "submitted" || status === "streaming") && (
               <div className="border-border-base bg-app-bg/80 absolute top-1/2 right-4 flex -translate-y-4 items-center rounded-full border px-2 py-1 shadow-sm backdrop-blur-sm">
                 <button
                   type="button"
@@ -106,15 +128,8 @@ export default function ChatFooter({
                   Stop
                 </button>
               </div>
-            )}
+            )} */}
           </div>
-          <button
-            type="submit"
-            disabled={status !== "ready"}
-            className="bg-primary hover:bg-primary-hover flex h-14 w-14 cursor-pointer items-center justify-center rounded-full shadow-lg transition-all active:scale-90"
-          >
-            <Send className="text-app-bg h-7 w-7" />
-          </button>
         </form>
       </footer>
     </>

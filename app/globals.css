@@ -15,13 +15,14 @@
   --color-header-bg: var(--muted);
   --color-action-btn-bg: var(--background);
   --color-input-bg: var(--input);
-  --color-border-light: var(--border);
+  --color-border-light: var(--border-light);
   --color-border-base: var(--border);
   --color-border-dark: var(--border);
   --color-text-main: var(--foreground);
   --color-text-secondary: var(--foreground);
   --color-text-muted: var(--muted-foreground);
   --color-text-subtle: var(--muted-foreground);
+
 }
 
 :root {
@@ -35,6 +36,10 @@
   --muted-foreground: hsl(240 3.8% 46.1%);
 
   --border: hsl(240 5.9% 90%);
+  --border-light: rgba(233, 233, 233, 0.5);
+
+  --corner-radius: 18px;
+
   --input: hsl(0 0% 100%);
 }
 

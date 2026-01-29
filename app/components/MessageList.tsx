@@ -94,20 +94,15 @@ export default function MessageList({
               <div
                 className={`mb-4 flex flex-row gap-3 ${message.role === "user" ? "max-w-[80%]" : ""}`}
               >
-                {/* Avatar - Only for User */}
-                {message.role === "user" && (
-                  <div className="border-border-dark bg-border-base flex h-10 w-10 shrink-0 items-center justify-center rounded-full border">
-                    <span className="text-primary text-lg font-bold">P</span>
-                  </div>
-                )}
-
                 {/* Message Content */}
-                <div className="border-border-light relative rounded-2xl border p-4 shadow-xs">
+                <div
+                  className={`${message.role === "user" ? "border-border-light bg-border-light mb-4 rounded-[18px] border p-3 shadow-xs" : ""} relative`}
+                >
                   {message.parts?.map((part: MessagePart, index: number) =>
                     part.type === "text" ? (
                       <div
                         key={index}
-                        className="text-text-secondary prose prose-slate max-w-none text-[17px] leading-relaxed"
+                        className="text-text-secondary prose prose-slate max-w-none text-[16px] leading-relaxed"
                       >
                         <MemoizedMarkdown
                           text={part.text}
@@ -132,12 +127,14 @@ export default function MessageList({
                       <Copy className="h-4 w-4" />
                     </button>
                   )}
-                  <span className="text-text-subtle mt-2 block text-xs">
-                    {new Date(message.createdAt || new Date()).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
+                  {message.role === "assistant" && (
+                    <span className="text-text-subtle mt-2 block text-xs">
+                      {new Date(message.createdAt || new Date()).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>

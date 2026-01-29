@@ -58,7 +58,7 @@ export default function Sidebar({
           >
             <div className="flex h-full w-72 flex-col overflow-hidden">
           {/* Sidebar Header - Aligned with main Header */}
-            <div className="border-border-base flex h-[65px] items-center justify-between border-b px-6 py-3">
+            <div className="border-border-base flex h-16.25 items-center justify-between border-b px-6 py-3">
               <h2 className="text-text-main font-bold">Menu</h2>
               <div className="flex items-center gap-3">
                 {isLoadingChats && (
