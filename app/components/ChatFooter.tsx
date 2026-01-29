@@ -50,6 +50,12 @@ export default function ChatFooter({
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit(e as unknown as React.FormEvent);
+      // ask the message list to scroll to bottom so user's input remains visible
+      try {
+        window.dispatchEvent(new CustomEvent("chat-scroll-to-bottom"));
+      } catch {
+        // ignore for non-browser environments
+      }
     }
   };
 

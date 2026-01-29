@@ -12,6 +12,7 @@ export function useChatLogic() {
   const [hasMore, setHasMore] = useState(false);
   const [cursor, setCursor] = useState<string | null>(null);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [isLoadingMessages, setIsLoadingMessages] = useState(false);
   const chatIdRef = useRef<string | null>(null);
 
   // Keep ref in sync with state
@@ -44,12 +45,17 @@ export function useChatLogic() {
     },
     onFinish: () => {
       clearError();
+      // Dispatch event to signal a new conversation was created and submitted
+      if (chatIdRef.current) {
+        window.dispatchEvent(new Event("new-chat-created"));
+      }
     },
   });
 
   const loadChat = async (id: string) => {
     setChatId(id);
     chatIdRef.current = id;
+    setIsLoadingMessages(true);
     try {
       const res = await fetch(`/api/chats/${id}/messages?limit=20`);
       if (!res.ok) throw new Error("Failed to load chat history");
@@ -79,6 +85,7 @@ export function useChatLogic() {
         setErrorToast(String(error));
       }
     }
+      setIsLoadingMessages(false);
   };
 
   const loadMore = async () => {
@@ -121,6 +128,9 @@ export function useChatLogic() {
     setHasMore(false);
     setCursor(null);
     setIsLoadingMore(false);
+    setIsLoadingMessages(false);
+    // Dispatch event to signal a new chat has been created
+    window.dispatchEvent(new Event("new-chat-created"));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -159,5 +169,6 @@ export function useChatLogic() {
     loadMore,
     hasMore,
     isLoadingMore,
+    isLoadingMessages,
   };
 }

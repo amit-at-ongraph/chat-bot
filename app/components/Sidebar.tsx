@@ -4,6 +4,7 @@ import { APP_CONFIG } from "@/lib/constants";
 import { DBChat } from "@/types/chat";
 import { Edit2, MessageSquare, MoreVertical, Plus, Settings, Trash2, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -14,6 +15,8 @@ interface SidebarProps {
   onNewChat: () => void;
   onDeleteChat: (id: string) => void;
   onRenameChat: (id: string, newTitle: string) => void;
+  isLoadingChats?: boolean;
+  selectedChatLoading?: boolean;
 }
 
 export default function Sidebar({
@@ -25,31 +28,49 @@ export default function Sidebar({
   onNewChat,
   onDeleteChat,
   onRenameChat,
+  isLoadingChats,
+  selectedChatLoading,
 }: SidebarProps) {
   return (
     <>
       {/* Mobile Overlay */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm lg:hidden"
-          onClick={onClose}
-        />
-      )}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm lg:hidden"
+            onClick={onClose}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Sidebar */}
-      <aside
-        className={`bg-header-bg border-border-dark fixed top-0 bottom-0 left-0 z-50 w-72 transform border-r transition-all duration-300 ease-in-out ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <div className="flex h-full w-72 flex-col overflow-hidden">
+      <AnimatePresence>
+        {isOpen && (
+          <motion.aside
+            initial={{ x: -320 }}
+            animate={{ x: 0 }}
+            exit={{ x: -320 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className={`bg-header-bg border-border-dark fixed top-0 bottom-0 left-0 z-50 w-72 transform border-r`}
+          >
+            <div className="flex h-full w-72 flex-col overflow-hidden">
           {/* Sidebar Header - Aligned with main Header */}
-          <div className="border-border-base flex h-[65px] items-center justify-between border-b px-6 py-3">
-            <h2 className="text-text-main font-bold">Menu</h2>
-            <button onClick={onClose} className="text-text-muted hover:text-text-main lg:hidden">
-              <X className="h-6 w-6" />
-            </button>
-          </div>
+            <div className="border-border-base flex h-[65px] items-center justify-between border-b px-6 py-3">
+              <h2 className="text-text-main font-bold">Menu</h2>
+              <div className="flex items-center gap-3">
+                {isLoadingChats && (
+                  <div className="inline-flex items-center justify-center">
+                    <div className="border-primary inline-block h-4 w-4 animate-spin rounded-full border-b-2" />
+                  </div>
+                )}
+                <button onClick={onClose} className="text-text-muted hover:text-text-main lg:hidden">
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+            </div>
 
           {/* New Chat Button */}
           <div className="p-4">
@@ -78,6 +99,7 @@ export default function Sidebar({
                 icon={MessageSquare}
                 label={chat.title || "Untitled Chat"}
                 active={currentChatId === chat.id}
+                loading={selectedChatLoading && currentChatId === chat.id}
                 onClick={() => {
                   onSelectChat(chat.id);
                   if (window.innerWidth < 1024) {
@@ -99,8 +121,10 @@ export default function Sidebar({
           <div className="border-border-base flex h-[95px] items-center border-t px-6">
             <p className="text-text-muted text-xs">© 2026 {APP_CONFIG.name}</p>
           </div>
-        </div>
-      </aside>
+          </div>
+          </motion.aside>
+        )}
+      </AnimatePresence>
     </>
   );
 }
@@ -109,6 +133,7 @@ function SidebarItem({
   icon: Icon,
   label,
   active = false,
+  loading = false,
   onClick,
   onRename,
   onDelete,
@@ -116,6 +141,7 @@ function SidebarItem({
   icon: React.ComponentType<{ className?: string }>;
   label: string;
   active?: boolean;
+  loading?: boolean;
   onClick?: () => void;
   onRename?: (newTitle: string) => void;
   onDelete?: () => void;
@@ -198,6 +224,11 @@ function SidebarItem({
       >
         <Icon className="h-5 w-5 shrink-0" />
         <span className="truncate">{label}</span>
+        {loading && (
+          <span className="ml-2 inline-flex items-center">
+            <div className="border-primary inline-block h-3 w-3 animate-spin rounded-full border-b-2" />
+          </span>
+        )}
       </button>
 
       {onRename && onDelete && (

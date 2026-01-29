@@ -46,6 +46,15 @@ export default function MessageList({
     }
   }, [messages, isLoadingMore, status]);
 
+  // listen for scroll-to-bottom events dispatched from ChatFooter (when user types)
+  React.useEffect(() => {
+    const handler = () => {
+      mainRef.current?.scrollTo({ top: mainRef.current.scrollHeight, behavior: "smooth" });
+    };
+    window.addEventListener("chat-scroll-to-bottom", handler as EventListener);
+    return () => window.removeEventListener("chat-scroll-to-bottom", handler as EventListener);
+  }, []);
+
   React.useEffect(() => {
     initialScrollDone.current = false;
   }, [chatId]);

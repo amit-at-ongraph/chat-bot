@@ -18,6 +18,7 @@ export default function Home() {
   const [skippedAuth, setSkippedAuth] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [userChats, setUserChats] = useState<DBChat[]>([]);
+  const [userChatsLoading, setUserChatsLoading] = useState(false);
 
   const {
     messages,
@@ -35,11 +36,13 @@ export default function Home() {
     loadMore,
     hasMore,
     isLoadingMore,
+    isLoadingMessages,
   } = useChatLogic();
 
   const fetchChats = useCallback(async () => {
     if (session?.user?.id) {
       try {
+        setUserChatsLoading(true);
         const res = await fetch("/api/chats");
         if (res.ok) {
           const data = await res.json();
@@ -47,21 +50,30 @@ export default function Home() {
         }
       } catch (error) {
         console.error("Failed to fetch chats:", error);
+      } finally {
+        setUserChatsLoading(false);
       }
     }
   }, [session]);
 
   useEffect(() => {
     if (window.innerWidth >= 1024) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsSidebarOpen(true);
     }
   }, []);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchChats();
-  }, [fetchChats, chatId]);
+  }, [fetchChats]);
+
+  // Listen for new chat creation event to refetch the chat list
+  useEffect(() => {
+    const handleNewChat = async () => {
+      await fetchChats();
+    };
+    window.addEventListener("new-chat-created", handleNewChat);
+    return () => window.removeEventListener("new-chat-created", handleNewChat);
+  }, [fetchChats]);
 
   if (authStatus === "loading") {
     return <Loading />;
@@ -74,7 +86,7 @@ export default function Home() {
         if (chatId === id) {
           startNewChat();
         }
-        await fetchChats();
+        setUserChats((prev) => prev.filter((chat) => chat.id !== id));
       }
     } catch (error) {
       console.error("Failed to delete chat:", error);
@@ -88,7 +100,9 @@ export default function Home() {
         body: JSON.stringify({ title: newTitle }),
       });
       if (res.ok) {
-        await fetchChats();
+        setUserChats((prev) =>
+          prev.map((chat) => (chat.id === id ? { ...chat, title: newTitle } : chat))
+        );
       }
     } catch (error) {
       console.error("Failed to rename chat:", error);
@@ -103,6 +117,8 @@ export default function Home() {
         onClose={() => setIsSidebarOpen(false)}
         chats={userChats}
         currentChatId={chatId}
+        isLoadingChats={userChatsLoading}
+        selectedChatLoading={isLoadingMessages}
         onSelectChat={loadChat}
         onNewChat={startNewChat}
         onDeleteChat={handleDeleteChat}
