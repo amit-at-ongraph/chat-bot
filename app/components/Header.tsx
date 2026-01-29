@@ -15,7 +15,7 @@ export default function Header({ session, skippedAuth, onToggleSidebar }: Header
   const { theme, setTheme } = useTheme();
 
   return (
-    <header className="bg-header-bg border-border-dark sticky top-0 z-10 flex items-center justify-between border-b px-4 py-3">
+    <header className="sticky top-0 z-10 flex items-center justify-between bg-transparent px-4 py-3">
       <div className="flex items-center gap-3">
         <button
           onClick={onToggleSidebar}

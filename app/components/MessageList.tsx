@@ -71,7 +71,7 @@ export default function MessageList({
     <main
       ref={mainRef}
       style={{ overflowAnchor: "auto" }} // Helps keep scroll position stable during history loads
-      className="bg-app-bg flex-1 space-y-6 overflow-y-auto p-4 shadow-inner"
+      className="bg-app-bg flex-1 space-y-6 overflow-y-auto p-4"
       onScroll={handleScroll}
     >
       <div className="mx-auto max-w-3xl">
@@ -114,6 +114,15 @@ export default function MessageList({
                   )}
 
                   {message.role === "assistant" && (
+                    <span className="text-text-subtle mt-2 block text-xs">
+                      {new Date(message.createdAt || new Date()).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  )}
+
+                  {message.role === "assistant" && (
                     <button
                       onClick={() => {
                         const text =
@@ -121,19 +130,11 @@ export default function MessageList({
                           "";
                         navigator.clipboard.writeText(text);
                       }}
-                      className="text-text-muted hover:text-text-secondary absolute top-2 right-2 transition-colors"
+                      className="text-text-muted hover:text-text-secondary mt-3 transition-colors hover:cursor-pointer"
                       title="Copy response"
                     >
                       <Copy className="h-4 w-4" />
                     </button>
-                  )}
-                  {message.role === "assistant" && (
-                    <span className="text-text-subtle mt-2 block text-xs">
-                      {new Date(message.createdAt || new Date()).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </span>
                   )}
                 </div>
               </div>
@@ -148,7 +149,7 @@ export default function MessageList({
         )}
 
         {/* Transparent area to adjust height of last chat to top */}
-        <div className="h-[40vh]"></div>
+        {/* <div className="h-[40vh]"></div> */}
       </div>
     </main>
   );

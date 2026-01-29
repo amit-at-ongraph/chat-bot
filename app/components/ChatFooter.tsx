@@ -90,7 +90,7 @@ export default function ChatFooter({
         <form onSubmit={handleSubmit} className="mx-auto flex max-w-xl items-center gap-3">
           <div className="relative flex-1">
             <div
-              className={`border-border-base bg-input-bg shadow-outline relative border ${
+              className={`border-muted bg-prompt-input shadow-outline relative border ${
                 isMultiline ? "rounded-[28px]" : "rounded-[32px]"
               }`}
             >

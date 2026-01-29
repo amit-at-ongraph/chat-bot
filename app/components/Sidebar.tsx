@@ -161,12 +161,12 @@ export default function Sidebar({
                   />
                 ))}
                 {chats.length === 0 && !effectivelyCollapsed && (
-                  <div className="text-text-muted py-4 text-sm italic">No recent chats</div>
+                  <div className="text-text-muted px-4 py-4 text-sm italic">No recent chats</div>
                 )}
               </nav>
 
               {/* Sidebar Footer */}
-              <div className="border-border-base relative flex h-[60px] items-center justify-start border-t px-4">
+              <div className="border-border-base relative flex h-[60px] items-center justify-start border-t px-2">
                 <AnimatePresence>
                   {isUserMenuOpen && session && (
                     <motion.div
@@ -174,12 +174,12 @@ export default function Sidebar({
                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      className={`border-border-base absolute bottom-full z-50 mb-1 w-60 overflow-hidden rounded-2xl border bg-white p-2 text-[14px] shadow-lg ${
+                      className={`border-border-base bg-app-bg absolute bottom-full z-50 mb-1 w-60 overflow-hidden rounded-2xl border p-1 text-[14px] shadow-lg ${
                         effectivelyCollapsed ? "left-1/2 -translate-x-1/2" : "left-4"
                       }`}
                     >
                       <button
-                        className="text-text-main hover:bg-border-light flex w-full cursor-pointer items-center gap-3 rounded-xl px-2 py-2.5 font-medium transition-colors"
+                        className="text-text-main hover:bg-border-light flex w-full cursor-pointer items-center gap-3 rounded-xl px-2 py-2 font-medium transition-colors"
                         onClick={() => {
                           setIsUserMenuOpen(false);
                         }}
@@ -192,7 +192,7 @@ export default function Sidebar({
                 </AnimatePresence>
 
                 <div
-                  className="hover:bg-border-light flex w-full cursor-pointer items-center gap-4 rounded-xl py-2 transition-colors"
+                  className="hover:bg-border-light flex w-full cursor-pointer items-center gap-4 rounded-xl px-2 py-2 transition-colors"
                   onClick={() => session && setIsUserMenuOpen(!isUserMenuOpen)}
                 >
                   <div className="border-border-base bg-app-bg flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border shadow-sm">
@@ -316,7 +316,7 @@ function SidebarItem({
         onClick={onClick}
         title={isCollapsed ? label : ""}
         className={`hover:bg-border-base flex w-full items-center gap-3 truncate rounded-xl py-2 pr-7 pl-2 font-medium transition-colors hover:cursor-pointer ${
-          active ? "bg-border-light text-primary" : "text-text-secondary"
+          active ? "bg-selected text-primary" : "text-text-secondary"
         }`}
       >
         {/* <Icon className="h-5 w-5 shrink-0" /> */}
@@ -329,7 +329,7 @@ function SidebarItem({
       </button>
 
       {onRename && onDelete && !isCollapsed && (
-        <div className="absolute right-1" ref={menuRef}>
+        <div className="absolute right-3" ref={menuRef}>
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -337,7 +337,7 @@ function SidebarItem({
             }}
             className="text-text-muted hover:text-text-main cursor-pointer p-1 opacity-0 transition-opacity group-hover:opacity-100"
           >
-            <MoreVertical className="h-5 w-5" />
+            <MoreVertical className="h-4 w-4" />
           </button>
 
           {showMenu && (

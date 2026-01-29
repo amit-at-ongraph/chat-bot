@@ -9,6 +9,7 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
+  --color-prompt-input: var(--prompt-input);
 
   /* Legacy mapppings for existing components */
   --color-app-bg: var(--background);
@@ -23,6 +24,7 @@
   --color-text-muted: var(--muted-foreground);
   --color-text-subtle: var(--muted-foreground);
 
+  --color-selected: var(--selected);
 }
 
 :root {
@@ -41,22 +43,28 @@
   --corner-radius: 18px;
 
   --input: hsl(0 0% 100%);
+
+  --prompt-input: white;
+  --selected: rgba(233, 233, 233, 0.7);
 }
 
 .dark {
-  --background: hsl(240 10% 3.9%);
+  --background: rgb(33,33,33);
   --foreground: hsl(0 0% 98%);
 
   --primary: hsl(217.2 91.2% 59.8%);
   --primary-foreground: hsl(222.2 47.4% 11.2%);
 
-  --muted: hsl(240 3.7% 15.9%);
+  --muted: rgb(24,24,24);
   --muted-foreground: hsl(240 5% 64.9%);
 
   --border: hsl(240 3.7% 15.9%);
   --input: hsl(240 3.7% 15.9%);
 
   --border-light: rgba(50, 50, 50, 0.85);
+  --prompt-input: var(--border-light);
+
+  --selected: #ffffff0d;
 }
 
 @layer base {
