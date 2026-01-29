@@ -1,10 +1,9 @@
 "use client";
 
-import { Globe, Menu, Moon, Sun, User } from "lucide-react";
+import { Globe, Menu, Moon, Sun } from "lucide-react";
 import { Session } from "next-auth";
 import { signIn, signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
-import Image from "next/image";
 
 interface HeaderProps {
   session: Session | null;
@@ -26,7 +25,7 @@ export default function Header({ session, skippedAuth, onToggleSidebar }: Header
           <Menu className="h-6 w-6" />
         </button>
         <div className="flex items-center gap-2">
-          <div className="border-border-base bg-app-bg flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border shadow-sm">
+          {/* <div className="border-border-base bg-app-bg flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border shadow-sm">
             {session?.user?.image ? (
               <Image
                 src={session.user.image}
@@ -38,7 +37,7 @@ export default function Header({ session, skippedAuth, onToggleSidebar }: Header
             ) : (
               <User className="text-text-main h-5 w-5" />
             )}
-          </div>
+          </div> */}
           <h1 className="text-text-main hidden text-xl font-bold tracking-tight sm:block sm:truncate md:max-w-md">
             Immigration Action Guide
           </h1>

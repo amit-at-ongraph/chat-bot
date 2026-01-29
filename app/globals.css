@@ -55,6 +55,8 @@
 
   --border: hsl(240 3.7% 15.9%);
   --input: hsl(240 3.7% 15.9%);
+
+  --border-light: rgba(50, 50, 50, 0.85);
 }
 
 @layer base {

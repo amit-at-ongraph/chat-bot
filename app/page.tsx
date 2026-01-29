@@ -101,7 +101,7 @@ export default function Home() {
       });
       if (res.ok) {
         setUserChats((prev) =>
-          prev.map((chat) => (chat.id === id ? { ...chat, title: newTitle } : chat))
+          prev.map((chat) => (chat.id === id ? { ...chat, title: newTitle } : chat)),
         );
       }
     } catch (error) {
@@ -123,6 +123,7 @@ export default function Home() {
         onNewChat={startNewChat}
         onDeleteChat={handleDeleteChat}
         onRenameChat={handleRenameChat}
+        session={session}
       />
 
       <div
