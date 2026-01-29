@@ -3,6 +3,7 @@
 import { CHAT_ACTIONS } from "@/lib/constants";
 import { ChatAction } from "@/types/chat";
 import { ArrowUp, SquareIcon } from "lucide-react";
+import { useTheme } from "next-themes";
 import React from "react";
 
 interface ChatFooterProps {
@@ -24,6 +25,8 @@ export default function ChatFooter({
   stop,
   hasMessages,
 }: ChatFooterProps) {
+  const { theme, setTheme } = useTheme();
+
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
 
   const [isMultiline, setIsMultiline] = React.useState(false);
@@ -110,7 +113,10 @@ export default function ChatFooter({
                 onClick={isStreaming ? stop : undefined}
               >
                 {isStreaming ? (
-                  <SquareIcon fill="white" className="text-app-bg h-4 w-4" />
+                  <SquareIcon
+                    fill={theme === "dark" ? "rgb(24,24,24)" : "white"}
+                    className="text-app-bg h-4 w-4"
+                  />
                 ) : (
                   <ArrowUp className="text-app-bg h-5 w-5" />
                 )}
