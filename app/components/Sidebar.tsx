@@ -2,13 +2,25 @@
 
 import { DBChat } from "@/types/chat";
 import { AnimatePresence, motion } from "framer-motion";
-import { Edit, Edit2, MessageSquare, MoreVertical, Settings, Trash2, User, X } from "lucide-react";
+import {
+  Edit,
+  Edit2,
+  Menu,
+  MessageSquare,
+  MoreVertical,
+  Settings,
+  Trash2,
+  User,
+  X,
+} from "lucide-react";
 import { Session } from "next-auth";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 interface SidebarProps {
   isOpen: boolean;
+  isCollapsed: boolean;
+  onToggleCollapse: () => void;
   onClose: () => void;
   chats: DBChat[];
   currentChatId: string | null;
@@ -23,6 +35,8 @@ interface SidebarProps {
 
 export default function Sidebar({
   isOpen,
+  isCollapsed,
+  onToggleCollapse,
   onClose,
   chats,
   currentChatId,
@@ -36,6 +50,16 @@ export default function Sidebar({
 }: SidebarProps) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const checkDesktop = () => setIsDesktop(window.innerWidth >= 1024);
+    checkDesktop();
+    window.addEventListener("resize", checkDesktop);
+    return () => window.removeEventListener("resize", checkDesktop);
+  }, []);
+
+  const effectivelyCollapsed = isCollapsed && isDesktop;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -67,32 +91,35 @@ export default function Sidebar({
         {isOpen && (
           <motion.aside
             initial={{ x: -320 }}
-            animate={{ x: 0 }}
+            animate={{ x: 0, width: effectivelyCollapsed ? 64 : 288 }}
             exit={{ x: -320 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className={`bg-header-bg border-border-dark fixed top-0 bottom-0 left-0 z-50 w-72 transform border-r`}
+            className="bg-header-bg border-border-dark fixed top-0 bottom-0 left-0 z-50 transform border-r"
           >
-            <div className="flex h-full w-72 flex-col overflow-hidden">
-              {/* Sidebar Header - Aligned with main Header */}
-              <div className="border-border-base flex h-16.25 items-center justify-between border-b px-6 py-3">
-                <h2 className="text-text-main font-bold">Menu</h2>
-                <div className="flex items-center gap-3">
-                  {isLoadingChats && (
-                    <div className="inline-flex items-center justify-center">
-                      <div className="border-primary inline-block h-4 w-4 animate-spin rounded-full border-b-2" />
-                    </div>
-                  )}
+            <div className="flex h-full w-full flex-col overflow-hidden">
+              {/* Sidebar Header */}
+              <div className="flex h-16.25 items-center justify-start gap-4 px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={onToggleCollapse}
+                    className="text-text-muted hover:text-text-main hidden shrink-0 cursor-pointer lg:block"
+                  >
+                    <Menu className="h-6 w-6" />
+                  </button>
                   <button
                     onClick={onClose}
-                    className="text-text-muted hover:text-text-main lg:hidden"
+                    className="text-text-muted hover:text-text-main shrink-0 lg:hidden"
                   >
                     <X className="h-6 w-6" />
                   </button>
                 </div>
+                {!effectivelyCollapsed && (
+                  <h2 className="text-text-main truncate font-bold">Menu</h2>
+                )}
               </div>
 
               {/* New Chat Button */}
-              <div className="p-4">
+              <div className="flex justify-start p-4 px-4">
                 <button
                   onClick={() => {
                     onNewChat();
@@ -100,16 +127,21 @@ export default function Sidebar({
                       onClose();
                     }
                   }}
-                  className="flex cursor-pointer items-center gap-2 text-[14px]"
+                  className="flex w-full cursor-pointer items-center gap-3 text-[14px]"
+                  title={effectivelyCollapsed ? "New Conversation" : ""}
                 >
-                  <Edit className="h-4 w-4" />
-                  New Conversation
+                  <Edit className="h-5 w-5 shrink-0" />
+                  {!effectivelyCollapsed && (
+                    <span className="whitespace-nowrap">New Conversation</span>
+                  )}
                 </button>
               </div>
 
               {/* Navigation Items */}
-              <nav className="flex-1 space-y-1 overflow-y-auto px-3">
-                <div className="text-text-muted px-3 py-2 text-[14px]">Recent Chats</div>
+              <nav className="flex-1 space-y-1 overflow-y-auto">
+                {!effectivelyCollapsed && (
+                  <div className="text-text-muted px-4 py-2 text-[14px]">Recent Chats</div>
+                )}
                 {chats.map((chat) => (
                   <SidebarItem
                     key={chat.id}
@@ -117,6 +149,7 @@ export default function Sidebar({
                     label={chat.title || "Untitled Chat"}
                     active={currentChatId === chat.id}
                     loading={selectedChatLoading && currentChatId === chat.id}
+                    isCollapsed={effectivelyCollapsed}
                     onClick={() => {
                       onSelectChat(chat.id);
                       if (window.innerWidth < 1024) {
@@ -127,15 +160,13 @@ export default function Sidebar({
                     onDelete={() => onDeleteChat(chat.id)}
                   />
                 ))}
-                {chats.length === 0 && (
-                  <div className="text-text-muted px-3 py-4 text-sm italic">No recent chats</div>
+                {chats.length === 0 && !effectivelyCollapsed && (
+                  <div className="text-text-muted py-4 text-sm italic">No recent chats</div>
                 )}
-                {/* <div className="border-border-base my-2 border-t" /> */}
-                {/* <SidebarItem icon={Settings} label="Settings" /> */}
               </nav>
 
               {/* Sidebar Footer */}
-              <div className="border-border-base relative flex h-[60px] items-center justify-start border-t px-6">
+              <div className="border-border-base relative flex h-[60px] items-center justify-start border-t px-4">
                 <AnimatePresence>
                   {isUserMenuOpen && session && (
                     <motion.div
@@ -143,12 +174,13 @@ export default function Sidebar({
                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      className="border-border-base absolute bottom-full left-6 z-50 mb-1 w-60 overflow-hidden rounded-2xl border bg-white p-2 text-[14px]"
+                      className={`border-border-base absolute bottom-full z-50 mb-1 w-60 overflow-hidden rounded-2xl border bg-white p-2 text-[14px] shadow-lg ${
+                        effectivelyCollapsed ? "left-1/2 -translate-x-1/2" : "left-4"
+                      }`}
                     >
                       <button
-                        className="text-text-main hover:bg-border-light flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 font-medium transition-colors"
+                        className="text-text-main hover:bg-border-light flex w-full cursor-pointer items-center gap-3 rounded-xl px-2 py-2.5 font-medium transition-colors"
                         onClick={() => {
-                          // Settings action
                           setIsUserMenuOpen(false);
                         }}
                       >
@@ -160,10 +192,10 @@ export default function Sidebar({
                 </AnimatePresence>
 
                 <div
-                  className="hover:bg-border-light flex w-full cursor-pointer items-center gap-2 rounded-xl p-2 transition-colors"
+                  className="hover:bg-border-light flex w-full cursor-pointer items-center gap-4 rounded-xl py-2 transition-colors"
                   onClick={() => session && setIsUserMenuOpen(!isUserMenuOpen)}
                 >
-                  <div className="border-border-base bg-app-bg flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border shadow-sm">
+                  <div className="border-border-base bg-app-bg flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border shadow-sm">
                     {session?.user?.image ? (
                       <Image
                         src={session.user.image}
@@ -176,9 +208,11 @@ export default function Sidebar({
                       <User className="text-text-main h-5 w-5" />
                     )}
                   </div>
-                  <div className="text-text-main text-[14px]">
-                    {session?.user?.name || "Guest User"}
-                  </div>
+                  {!effectivelyCollapsed && (
+                    <div className="text-text-main max-w-[150px] truncate text-[14px]">
+                      {session?.user?.name || "Guest User"}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -194,6 +228,7 @@ function SidebarItem({
   label,
   active = false,
   loading = false,
+  isCollapsed = false,
   onClick,
   onRename,
   onDelete,
@@ -202,6 +237,7 @@ function SidebarItem({
   label: string;
   active?: boolean;
   loading?: boolean;
+  isCollapsed?: boolean;
   onClick?: () => void;
   onRename?: (newTitle: string) => void;
   onDelete?: () => void;
@@ -275,23 +311,24 @@ function SidebarItem({
   }
 
   return (
-    <div className="group relative flex items-center text-[14px]">
+    <div className="group relative flex items-center justify-start px-2 text-[14px]">
       <button
         onClick={onClick}
-        className={`hover:bg-border-base flex w-full items-center gap-3 truncate rounded-xl px-3 py-2 pr-8 font-medium transition-colors hover:cursor-pointer ${
+        title={isCollapsed ? label : ""}
+        className={`hover:bg-border-base flex w-full items-center gap-3 truncate rounded-xl py-2 pr-7 pl-2 font-medium transition-colors hover:cursor-pointer ${
           active ? "bg-border-light text-primary" : "text-text-secondary"
         }`}
       >
-        <Icon className="h-5 w-5 shrink-0" />
-        <span className="truncate">{label}</span>
-        {loading && (
+        {/* <Icon className="h-5 w-5 shrink-0" /> */}
+        {!isCollapsed && <span className="truncate">{label}</span>}
+        {loading && !isCollapsed && (
           <span className="ml-2 inline-flex items-center">
             <div className="border-primary inline-block h-3 w-3 animate-spin rounded-full border-b-2" />
           </span>
         )}
       </button>
 
-      {onRename && onDelete && (
+      {onRename && onDelete && !isCollapsed && (
         <div className="absolute right-1" ref={menuRef}>
           <button
             onClick={(e) => {

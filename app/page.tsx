@@ -17,6 +17,7 @@ export default function Home() {
   const { data: session, status: authStatus } = useSession();
   const [skippedAuth, setSkippedAuth] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [userChats, setUserChats] = useState<DBChat[]>([]);
   const [userChatsLoading, setUserChatsLoading] = useState(false);
 
@@ -114,6 +115,8 @@ export default function Home() {
       {/* Sidebar */}
       <Sidebar
         isOpen={isSidebarOpen}
+        isCollapsed={isCollapsed}
+        onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
         onClose={() => setIsSidebarOpen(false)}
         chats={userChats}
         currentChatId={chatId}
@@ -128,7 +131,7 @@ export default function Home() {
 
       <div
         className={`flex h-screen flex-1 flex-col transition-all duration-300 ${
-          isSidebarOpen ? "lg:pl-72" : "lg:pl-0"
+          isSidebarOpen ? (isCollapsed ? "lg:pl-16" : "lg:pl-72") : "lg:pl-0"
         }`}
       >
         {/* Sign In Overlay */}

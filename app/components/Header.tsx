@@ -1,6 +1,6 @@
 "use client";
 
-import { Globe, Menu, Moon, Sun } from "lucide-react";
+import { Menu, Moon, Sun } from "lucide-react";
 import { Session } from "next-auth";
 import { signIn, signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
@@ -19,7 +19,7 @@ export default function Header({ session, skippedAuth, onToggleSidebar }: Header
       <div className="flex items-center gap-3">
         <button
           onClick={onToggleSidebar}
-          className="text-text-secondary hover:bg-border-base active:bg-border-dark flex h-10 w-10 items-center justify-center rounded-full transition-all hover:cursor-pointer"
+          className="text-text-secondary hover:bg-border-base active:bg-border-dark flex h-10 w-10 items-center justify-center rounded-full transition-all hover:cursor-pointer lg:hidden"
           aria-label="Toggle sidebar"
         >
           <Menu className="h-6 w-6" />
@@ -67,7 +67,7 @@ export default function Header({ session, skippedAuth, onToggleSidebar }: Header
             Sign In
           </button>
         ) : null}
-        <Globe className="text-text-secondary hidden h-6 w-6 cursor-pointer sm:block" />
+        {/* <Globe className="text-text-secondary hidden h-6 w-6 cursor-pointer sm:block" /> */}
       </div>
     </header>
   );
