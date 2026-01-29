@@ -70,7 +70,7 @@ export default function ChatFooter({
     <>
       {/* Action Buttons Area - Only show when no messages */}
       {!hasMessages && (
-        <div className="bg-header-bg px-4 py-6">
+        <div className="bg-selected px-4 py-6">
           <div className="mx-auto grid max-w-xl grid-cols-1 gap-3 sm:grid-cols-3">
             {CHAT_ACTIONS.map((action: ChatAction, idx: number) => (
               <button
