@@ -142,24 +142,25 @@ export default function Sidebar({
                 {!effectivelyCollapsed && (
                   <div className="text-text-muted px-4 py-2 text-[14px]">Recent Chats</div>
                 )}
-                {chats.map((chat) => (
-                  <SidebarItem
-                    key={chat.id}
-                    icon={MessageSquare}
-                    label={chat.title || "Untitled Chat"}
-                    active={currentChatId === chat.id}
-                    loading={selectedChatLoading && currentChatId === chat.id}
-                    isCollapsed={effectivelyCollapsed}
-                    onClick={() => {
-                      onSelectChat(chat.id);
-                      if (window.innerWidth < 1024) {
-                        onClose();
-                      }
-                    }}
-                    onRename={(newTitle) => onRenameChat(chat.id, newTitle)}
-                    onDelete={() => onDeleteChat(chat.id)}
-                  />
-                ))}
+                {!isCollapsed &&
+                  chats.map((chat) => (
+                    <SidebarItem
+                      key={chat.id}
+                      icon={MessageSquare}
+                      label={chat.title || "Untitled Chat"}
+                      active={currentChatId === chat.id}
+                      loading={selectedChatLoading && currentChatId === chat.id}
+                      isCollapsed={effectivelyCollapsed}
+                      onClick={() => {
+                        onSelectChat(chat.id);
+                        if (window.innerWidth < 1024) {
+                          onClose();
+                        }
+                      }}
+                      onRename={(newTitle) => onRenameChat(chat.id, newTitle)}
+                      onDelete={() => onDeleteChat(chat.id)}
+                    />
+                  ))}
                 {chats.length === 0 && !effectivelyCollapsed && (
                   <div className="text-text-muted px-4 py-4 text-sm italic">No recent chats</div>
                 )}
@@ -174,7 +175,7 @@ export default function Sidebar({
                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      className={`border-border-base bg-app-bg absolute bottom-full z-50 mb-1 w-60 overflow-hidden rounded-2xl border p-1 text-[14px] shadow-lg ${
+                      className={`border-border-base bg-app-bg absolute bottom-full z-50 mb-1 w-[90%] overflow-hidden rounded-2xl border p-1 text-[14px] shadow-lg ${
                         effectivelyCollapsed ? "left-1/2 -translate-x-1/2" : "left-4"
                       }`}
                     >
