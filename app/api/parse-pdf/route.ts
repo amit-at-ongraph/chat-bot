@@ -55,6 +55,7 @@ export async function POST(req: Request) {
       // We explicitly stop the library from looking for external scripts
       stopAtErrors: true,
       ownerDocument: globalThis.document, // helps it realize there is no document
+      verbosity: 0, // Suppresses console noise on Vercel
     });
 
     const pdf = await loadingTask.promise;
