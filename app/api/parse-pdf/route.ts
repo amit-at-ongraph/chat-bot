@@ -1,34 +1,4 @@
 import { NextResponse } from "next/server";
-// 1. IMMEDIATE POLYFILL
-// We use a self-executing check to ensure these exist before pdfjs loads
-(function polyfill() {
-  if (typeof globalThis.DOMMatrix === "undefined") {
-    (globalThis as any).DOMMatrix = class DOMMatrix {
-      constructor() {
-        return { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 };
-      }
-    };
-  }
-  if (typeof globalThis.ImageData === "undefined") {
-    (globalThis as any).ImageData = class ImageData {
-      constructor() {
-        return { data: new Uint8ClampedArray() };
-      }
-    };
-  }
-})();
-// 1. Use the legacy build to avoid DOMMatrix/Canvas errors
-import * as pdfjs from "pdfjs-dist/legacy/build/pdf.mjs";
-
-// 2. EXPLICITLY import the worker to ensure it gets bundled
-// @ts-ignore - this is often needed for the .mjs extension in TS
-import * as pdfjsWorker from "pdfjs-dist/legacy/build/pdf.worker.mjs";
-
-// 3. Manually assign the worker
-// This tells PDF.js "don't look for a file, use this module I already loaded"
-if (!pdfjs.GlobalWorkerOptions.workerSrc) {
-  pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
-}
 
 export const runtime = "nodejs";
 
@@ -45,25 +15,32 @@ export async function POST(req: Request) {
     }
     // END OF BASIC AUTH CHECK
 
-    const formData = await req.formData();
-    const file = formData.get("file") as File | null;
-
-    if (!file) {
-      return NextResponse.json({ error: "No file provided" }, { status: 400 });
+    // 1. Define the polyfill IMMEDIATELY before doing anything else
+    if (typeof globalThis.DOMMatrix === "undefined") {
+      (globalThis as any).DOMMatrix = class DOMMatrix {
+        constructor() {
+          return { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 };
+        }
+      };
     }
 
-    const arrayBuffer = await file.arrayBuffer();
-    const uint8Array = new Uint8Array(arrayBuffer);
+    // 2. DYNAMICALLY import the library to ensure it sees the polyfill
+    const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
+    const pdfjsWorker = await import("pdfjs-dist/legacy/build/pdf.worker.mjs");
 
+    // Set the worker correctly
+    // (pdfjs as any).GlobalWorkerOptions.workerSrc = pdfjsWorker;
+
+    // 3. Process your PDF
+    const formData = await req.formData();
+    const file = formData.get("file") as File | null;
+    if (!file) return NextResponse.json({ error: "No file" }, { status: 400 });
+
+    const arrayBuffer = await file.arrayBuffer();
     const loadingTask = pdfjs.getDocument({
-      data: uint8Array,
+      data: new Uint8Array(arrayBuffer),
       disableFontFace: true,
       useSystemFonts: true,
-      standardFontDataUrl: undefined,
-      // We explicitly stop the library from looking for external scripts
-      stopAtErrors: true,
-      ownerDocument: globalThis.document, // helps it realize there is no document
-      verbosity: 0, // Suppresses console noise on Vercel
     });
 
     const pdf = await loadingTask.promise;
