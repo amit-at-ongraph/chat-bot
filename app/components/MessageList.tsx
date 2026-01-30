@@ -96,7 +96,7 @@ export default function MessageList({
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const target = e.currentTarget;
-    if (target.scrollTop < 450 && hasMore && !isLoadingMore) {
+    if (target.scrollTop < 800 && hasMore && !isLoadingMore) {
       loadMore();
     }
   };
@@ -124,7 +124,7 @@ export default function MessageList({
 
           return (
             <div
-              key={message.id}
+              key={message.id + message.createdAt}
               ref={isLast ? lastMessageRef : null}
               data-role={message.role}
               className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}
