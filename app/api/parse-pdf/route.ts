@@ -3,6 +3,16 @@ import { NextResponse } from "next/server";
 // 1. Use the legacy build to avoid DOMMatrix/Canvas errors
 import * as pdfjs from "pdfjs-dist/legacy/build/pdf.mjs";
 
+// 2. EXPLICITLY import the worker to ensure it gets bundled
+// @ts-ignore - this is often needed for the .mjs extension in TS
+import * as pdfjsWorker from "pdfjs-dist/legacy/build/pdf.worker.mjs";
+
+// 3. Manually assign the worker
+// This tells PDF.js "don't look for a file, use this module I already loaded"
+if (!pdfjs.GlobalWorkerOptions.workerSrc) {
+  pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+}
+
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
