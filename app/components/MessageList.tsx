@@ -1,7 +1,7 @@
 "use client";
 
 import { ExtendedUIMessage, MessagePart } from "@/types/chat";
-import { Copy } from "lucide-react";
+import { Check, Copy } from "lucide-react";
 import React from "react";
 import MemoizedMarkdown from "./Markdown";
 import TypingIndicator from "./TypingIndicator";
@@ -101,6 +101,8 @@ export default function MessageList({
     }
   };
 
+  const [copiedId, setCopiedId] = React.useState<string | null>(null);
+
   return (
     <main
       ref={mainRef}
@@ -159,11 +161,17 @@ export default function MessageList({
                             message.parts?.map((p) => (p.type === "text" ? p.text : "")).join("") ||
                             "";
                           navigator.clipboard.writeText(text);
+                          setCopiedId(message.id);
+                          setTimeout(() => setCopiedId(null), 3000);
                         }}
                         className="text-text-muted hover:text-text-secondary transition-colors hover:cursor-pointer"
                         title="Copy response"
                       >
-                        <Copy className="h-4 w-4" />
+                        {copiedId === message.id ? (
+                          <Check className="h-4 w-4" />
+                        ) : (
+                          <Copy className="h-4 w-4" />
+                        )}
                       </button>
                     </div>
                   )}
