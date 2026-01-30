@@ -319,7 +319,7 @@ function SidebarItem({
       <button
         onClick={onClick}
         title={isCollapsed ? label : ""}
-        className={`group-hover:bg-border-base flex w-full items-center gap-3 truncate rounded-full py-2 pr-7 pl-2 font-medium transition-colors hover:cursor-pointer ${
+        className={`group-hover:bg-border-base flex w-full items-center gap-3 truncate rounded-[10px] py-2 pr-7 pl-2 font-medium transition-colors hover:cursor-pointer ${
           active ? "bg-selected text-primary" : "text-text-secondary"
         }`}
       >
@@ -357,7 +357,7 @@ function SidebarItem({
                     e.stopPropagation();
                     item.action();
                   }}
-                  className={`hover:bg-border-base flex w-full items-center gap-2 px-3 py-2 text-xs transition-colors ${
+                  className={`hover:bg-border-base flex w-full items-center gap-2 rounded-2xl px-3 py-2 text-xs transition-colors ${
                     item.danger ? "text-red-500" : "text-text-main"
                   }`}
                 >
