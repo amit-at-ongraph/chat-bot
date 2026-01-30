@@ -16,6 +16,8 @@ import {
 import { Session } from "next-auth";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { Button } from "./ui/Button";
+import { Input } from "./ui/Input";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -100,18 +102,17 @@ export default function Sidebar({
               {/* Sidebar Header */}
               <div className="flex h-16.25 items-center justify-start gap-4 px-4 py-3">
                 <div className="flex items-center gap-2">
-                  <button
+                  <Button
+                    variant="none"
+                    size="none"
                     onClick={onToggleCollapse}
-                    className="text-text-muted hover:text-text-main hidden shrink-0 cursor-pointer lg:block"
+                    className="text-text-muted hidden shrink-0 cursor-pointer max-lg:hidden lg:block"
                   >
                     <Menu className="h-6 w-6" />
-                  </button>
-                  <button
-                    onClick={onClose}
-                    className="text-text-muted hover:text-text-main shrink-0 lg:hidden"
-                  >
+                  </Button>
+                  <Button variant="ghost" size="icon" onClick={onClose} className="lg:hidden">
                     <X className="h-6 w-6" />
-                  </button>
+                  </Button>
                 </div>
                 {!effectivelyCollapsed && (
                   <h2 className="text-text-main truncate font-bold">Menu</h2>
@@ -120,21 +121,23 @@ export default function Sidebar({
 
               {/* New Chat Button */}
               <div className="flex justify-start p-4 px-4">
-                <button
+                <Button
+                  variant="none"
+                  size="none"
                   onClick={() => {
                     onNewChat();
                     if (window.innerWidth < 1024) {
                       onClose();
                     }
                   }}
-                  className="flex w-full cursor-pointer items-center gap-3 text-[14px]"
+                  className="w-full gap-3 text-[14px]"
                   title={effectivelyCollapsed ? "New Conversation" : ""}
                 >
                   <Edit className="h-5 w-5 shrink-0" />
                   {!effectivelyCollapsed && (
                     <span className="whitespace-nowrap">New Conversation</span>
                   )}
-                </button>
+                </Button>
               </div>
 
               {/* Navigation Items */}
@@ -179,15 +182,16 @@ export default function Sidebar({
                         effectivelyCollapsed ? "left-1/2 -translate-x-1/2" : "left-4"
                       }`}
                     >
-                      <button
-                        className="text-text-main hover:bg-border-light flex w-full cursor-pointer items-center gap-3 rounded-xl px-2 py-2 font-medium transition-colors"
+                      <Button
+                        variant="ghost"
+                        className="text-text-main hover:bg-border-light w-full justify-start gap-3 rounded-xl px-2 py-2 font-medium"
                         onClick={() => {
                           setIsUserMenuOpen(false);
                         }}
                       >
                         <Settings className="h-5 w-5" />
                         Settings
-                      </button>
+                      </Button>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -299,13 +303,12 @@ function SidebarItem({
   if (isRenaming) {
     return (
       <form onSubmit={handleRenameSubmit} className="px-2 py-1">
-        <input
+        <Input
           ref={inputRef}
           type="text"
           value={editValue}
           onChange={(e) => setEditValue(e.target.value)}
           onBlur={handleRenameSubmit}
-          className="border-primary bg-app-bg w-full rounded-md border px-2 py-1 text-sm outline-none"
         />
       </form>
     );
@@ -316,7 +319,7 @@ function SidebarItem({
       <button
         onClick={onClick}
         title={isCollapsed ? label : ""}
-        className={`hover:bg-border-base flex w-full items-center gap-3 truncate rounded-xl py-2 pr-7 pl-2 font-medium transition-colors hover:cursor-pointer ${
+        className={`group-hover:bg-border-base flex w-full items-center gap-3 truncate rounded-xl py-2 pr-7 pl-2 font-medium transition-colors hover:cursor-pointer ${
           active ? "bg-selected text-primary" : "text-text-secondary"
         }`}
       >
@@ -331,21 +334,25 @@ function SidebarItem({
 
       {onRename && onDelete && !isCollapsed && (
         <div className="absolute right-3" ref={menuRef}>
-          <button
+          <Button
+            variant="none"
+            size="none"
             onClick={(e) => {
               e.stopPropagation();
               setShowMenu(!showMenu);
             }}
-            className="text-text-muted hover:text-text-main cursor-pointer p-1 opacity-0 transition-opacity group-hover:opacity-100"
+            className="text-text-muted hover:text-text-main p-1 opacity-0 transition-opacity group-hover:opacity-100"
           >
             <MoreVertical className="h-4 w-4" />
-          </button>
+          </Button>
 
           {showMenu && (
             <div className="bg-app-bg border-border-light absolute top-full right-0 z-50 mt-1 w-32 overflow-hidden rounded-lg border shadow-lg ring-1 ring-black/5">
               {menuItems.map((item) => (
-                <button
+                <Button
                   key={item.label}
+                  variant="none"
+                  size="none"
                   onClick={(e) => {
                     e.stopPropagation();
                     item.action();
@@ -356,7 +363,7 @@ function SidebarItem({
                 >
                   <item.icon className="h-3 w-3" />
                   {item.label}
-                </button>
+                </Button>
               ))}
             </div>
           )}

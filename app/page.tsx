@@ -142,6 +142,7 @@ export default function Home() {
           session={session}
           skippedAuth={skippedAuth}
           onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
+          isSidebarOpen={isSidebarOpen}
         />
 
         {/* Chat Area */}

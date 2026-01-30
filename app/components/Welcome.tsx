@@ -3,6 +3,7 @@
 import { Globe } from "lucide-react";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
+import { Button } from "./ui/Button";
 
 interface WelcomeProps {
   onSkip: () => void;
@@ -22,10 +23,9 @@ export default function Welcome({ onSkip }: WelcomeProps) {
           </p>
         </div>
         <div className="space-y-3">
-          <button
-            type="button"
+          <Button
             onClick={() => signIn("google")}
-            className="bg-text-main text-app-bg hover:bg-text-secondary flex w-full items-center justify-center gap-3 rounded-full py-4 font-bold transition-all active:scale-95"
+            className="flex w-full items-center justify-center gap-3 py-4 font-bold"
           >
             <Image
               src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
@@ -35,14 +35,14 @@ export default function Welcome({ onSkip }: WelcomeProps) {
               height={24}
             />
             Sign in with Google
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="ghost"
             onClick={onSkip}
-            className="bg-border-light text-text-secondary hover:bg-border-base w-full rounded-full py-3 font-semibold transition-all active:scale-95"
+            className="bg-border-light text-text-secondary hover:bg-border-base w-full py-3 font-semibold"
           >
             Skip for now
-          </button>
+          </Button>
         </div>
       </div>
     </div>
