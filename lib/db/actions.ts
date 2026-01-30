@@ -1,7 +1,9 @@
 import { DBChat, DBMessage } from "@/types/chat";
-import { and, desc, eq, lt, or } from "drizzle-orm";
+import { embed } from "ai";
+import { and, desc, eq, lt, or, sql } from "drizzle-orm";
+import { embeddingModel } from "../ai";
 import { db } from "./index";
-import { chats, messages } from "./schema";
+import { chats, documents, messages } from "./schema";
 
 export async function createChat(userId: string, title?: string): Promise<DBChat> {
   const [newChat] = await db
@@ -72,4 +74,34 @@ export async function deleteChat(chatId: string) {
 
 export async function renameChat(chatId: string, title: string) {
   return await db.update(chats).set({ title }).where(eq(chats.id, chatId)).returning();
+}
+
+export async function findRelevantContent(userQuery: string) {
+  if (!userQuery) return "";
+
+  // 1. Generate embedding for the user's question
+  const { embedding } = await embed({
+    model: embeddingModel,
+    value: userQuery,
+  });
+
+  console.log(embedding);
+
+  // 2. Query Supabase for the most relevant chunks
+  // We use the cosine distance operator <=>
+  // 1 - distance = similarity
+  // const similarity = sql<number>`1 - (${documents.embedding} <=> ${JSON.stringify(embedding)})`;
+
+  const relevantChunks = await db
+    .select({
+      content: documents.content,
+      distance: sql<number>`
+      ${documents.embedding} <=> ${JSON.stringify(embedding)}
+    `,
+    })
+    .from(documents)
+    .orderBy((t) => t.distance) // ASC = most similar first
+    .limit(4);
+
+  return relevantChunks.map((chunk) => chunk.content).join("\n\n");
 }

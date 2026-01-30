@@ -1,6 +1,6 @@
 import { chatModel } from "@/lib/ai";
 import { authOptions } from "@/lib/auth";
-import { createChat, saveMessage } from "@/lib/db/actions";
+import { createChat, findRelevantContent, saveMessage } from "@/lib/db/actions";
 import { convertToModelMessages, streamText, UIMessage } from "ai";
 import { getServerSession } from "next-auth";
 
@@ -14,33 +14,32 @@ export async function POST(req: Request) {
 
   let chatId = headerChatId || body.chatId;
 
+  // Extract the text content from the last user message
+  const lastUserMessage = messages[messages.length - 1];
+  const userQuery =
+    lastUserMessage.parts
+      ?.filter((p) => p.type === "text")
+      .map((p) => (p.type === "text" ? p.text : ""))
+      .join("") || "";
+
+  const context = await findRelevantContent(userQuery);
+
   if (session?.user?.id) {
-    // If no chatId provided, create a new chat record
     if (!chatId) {
-      const firstMessageContent =
-        messages[0].parts
-          ?.filter((p) => p.type === "text")
-          .map((p) => (p.type === "text" ? p.text : ""))
-          .join("") || "New Conversation";
-      const chat = await createChat(session.user.id, firstMessageContent.slice(0, 50));
+      const chat = await createChat(session.user.id, userQuery.slice(0, 50));
       chatId = chat.id;
     }
 
-    // Save the user's latest message
-    const lastMessage = messages[messages.length - 1];
-    if (lastMessage.role === "user") {
-      const content =
-        lastMessage.parts
-          ?.filter((p) => p.type === "text")
-          .map((p) => (p.type === "text" ? p.text : ""))
-          .join("") || "";
-      await saveMessage(chatId, lastMessage.role, content);
+    if (lastUserMessage.role === "user") {
+      await saveMessage(chatId, lastUserMessage.role, userQuery);
     }
   }
-
   const result = streamText({
     model: chatModel,
-    system: "You are a helpful assistant.",
+    system: `You are a helpful assistant. Use the following pieces of retrieved context to answer the user's question. If you don't know the answer based on the context, say so.
+    
+    Context:
+    ${context}`,
     messages: await convertToModelMessages(messages),
     onFinish: async ({ text }) => {
       if (session?.user?.id && chatId) {

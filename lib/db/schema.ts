@@ -1,4 +1,4 @@
-import { integer, pgTable, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { integer, pgTable, primaryKey, text, timestamp, uuid, vector } from "drizzle-orm/pg-core";
 import { AdapterAccount } from "next-auth/adapters";
 
 export const users = pgTable("user", {
@@ -63,4 +63,17 @@ export const messages = pgTable("message", {
   role: text("role").notNull(), // 'user' | 'assistant'
   content: text("content").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const embeddings = pgTable("embeddings", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  content: text("content").notNull(), // The original text
+  embedding: vector("embedding", { dimensions: 1536 }).notNull(), // The vector
+});
+
+export const documents = pgTable("documents", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  filePath: text("file_path").notNull(),
+  content: text("content").notNull(),
+  embedding: vector("embedding", { dimensions: 1536 }),
 });

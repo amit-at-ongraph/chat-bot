@@ -1,0 +1,33 @@
+Supabase + Drizzle Embeddings Test Document
+
+This is a sample text file created to test an automated ingestion pipeline
+that uploads files to Supabase Storage and generates vector embeddings
+using OpenAI.
+
+The pipeline works as follows:
+1. A file is uploaded to Supabase Storage.
+2. A database trigger fires when the upload completes.
+3. A Supabase Edge Function is invoked automatically.
+4. The function extracts text from the uploaded file.
+5. The text is split into smaller chunks.
+6. Each chunk is converted into a vector embedding.
+7. The embeddings are stored in PostgreSQL using pgvector.
+
+This system supports semantic search, retrieval augmented generation (RAG),
+and intelligent document querying.
+
+Key technologies involved:
+- Supabase Storage for file uploads
+- Supabase Edge Functions running on Deno
+- PostgreSQL with pgvector extension
+- Drizzle ORM for type-safe database access
+- OpenAI embedding models via AI SDK
+
+Use cases for this pipeline include:
+- Knowledge base indexing
+- Chatbots with document awareness
+- Semantic search across uploaded files
+- Automated document processing workflows
+
+If this text appears in the database with an associated embedding,
+the ingestion pipeline is working correctly.
