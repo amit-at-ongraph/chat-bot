@@ -46,7 +46,13 @@ export default function ChatFooter({
 
       {/* Input Area */}
       <footer className="border-border-base bg-app-bg sticky bottom-0 p-4">
-        <form onSubmit={handleSubmit} className="mx-auto flex max-w-xl items-center gap-3">
+        <form
+          onSubmit={(e) => {
+            handleSubmit(e);
+            window.dispatchEvent(new CustomEvent("chat-submitted"));
+          }}
+          className="mx-auto flex max-w-xl items-center gap-3"
+        >
           <div className="relative flex-1">
             <PromptInput
               value={input}

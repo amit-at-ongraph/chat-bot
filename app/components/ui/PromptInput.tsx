@@ -48,6 +48,7 @@ export const PromptInput = ({
       onSubmit(e as unknown as React.FormEvent);
       try {
         window.dispatchEvent(new CustomEvent("chat-scroll-to-bottom"));
+        window.dispatchEvent(new CustomEvent("chat-submitted"));
       } catch {
         // ignore
       }

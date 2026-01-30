@@ -25,44 +25,78 @@ export default function MessageList({
 }: MessageListProps) {
   const lastMessageRef = React.useRef<HTMLDivElement>(null);
   const mainRef = React.useRef<HTMLElement>(null);
-  // 1. Track if the initial scroll has happened
   const initialScrollDone = React.useRef(false);
+  const [hasSubmitted, setHasSubmitted] = React.useState(false);
 
+  const isStreaming = status === "submitted" || status === "streaming";
+
+  // Auto-scroll logic
   React.useEffect(() => {
     if (messages.length === 0) return;
 
-    const lastMessage = messages[messages.length - 1];
+    const container = mainRef.current;
+    if (!container) return;
 
-    // Scroll if:
-    // A) First time loading
-    // B) The last message was sent by the user (immediate feedback)
-    // C) The assistant is currently typing/streaming
-    if (!initialScrollDone.current || (lastMessage.role === "user" && status === "streaming")) {
-      mainRef.current?.scrollTo({ top: mainRef.current.scrollHeight, behavior: "instant" });
-
+    // We use a small timeout to ensure the DOM has updated with the new message/spacer
+    const timer = setTimeout(() => {
       if (!initialScrollDone.current) {
+        // Initial load: scroll to bottom instantly
+        container.scrollTo({ top: container.scrollHeight, behavior: "instant" });
         initialScrollDone.current = true;
+        return;
       }
-    }
-  }, [messages, isLoadingMore, status]);
 
-  // listen for scroll-to-bottom events dispatched from ChatFooter (when user types)
+      // Find the last user message
+      const messageElements = container.querySelectorAll('[data-role="user"]');
+      const lastUserElement = messageElements[messageElements.length - 1] as HTMLElement;
+
+      if (lastUserElement) {
+        // Calculate the target top position
+        const targetTop = lastUserElement.offsetTop - 16;
+
+        if (isStreaming) {
+          // During streaming, keep it at top, but skip smooth if we are already close to prevent "bouncy" effect
+          const threshold = 500;
+          const behavior =
+            Math.abs(container.scrollTop - targetTop) < threshold ? "instant" : "smooth";
+          container.scrollTo({ top: targetTop, behavior });
+        } else if (messages[messages.length - 1]?.role === "user") {
+          // When user just submitted, scroll smoothly to their message at the top
+          container.scrollTo({ top: targetTop, behavior: "smooth" });
+        }
+      }
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [messages.length, isStreaming]);
+
+  // Listen for scroll-to-bottom events
   React.useEffect(() => {
-    const handler = () => {
+    const scrollHandler = () => {
       mainRef.current?.scrollTo({ top: mainRef.current.scrollHeight, behavior: "smooth" });
     };
-    window.addEventListener("chat-scroll-to-bottom", handler as EventListener);
-    return () => window.removeEventListener("chat-scroll-to-bottom", handler as EventListener);
+
+    const submitHandler = () => {
+      setHasSubmitted(true);
+    };
+
+    window.addEventListener("chat-scroll-to-bottom", scrollHandler as EventListener);
+    window.addEventListener("chat-submitted", submitHandler as EventListener);
+
+    return () => {
+      window.removeEventListener("chat-scroll-to-bottom", scrollHandler as EventListener);
+      window.removeEventListener("chat-submitted", submitHandler as EventListener);
+    };
   }, []);
 
   React.useEffect(() => {
     initialScrollDone.current = false;
+    setHasSubmitted(false);
   }, [chatId]);
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const target = e.currentTarget;
-
-    if (target.scrollTop < 300 && hasMore && !isLoadingMore) {
+    if (target.scrollTop < 450 && hasMore && !isLoadingMore) {
       loadMore();
     }
   };
@@ -70,7 +104,7 @@ export default function MessageList({
   return (
     <main
       ref={mainRef}
-      style={{ overflowAnchor: "auto" }} // Helps keep scroll position stable during history loads
+      style={{ overflowAnchor: "auto" }}
       className="bg-app-bg flex-1 space-y-6 overflow-y-auto p-4"
       onScroll={handleScroll}
     >
@@ -81,60 +115,57 @@ export default function MessageList({
             <p className="text-text-secondary mt-2">Loading more messages...</p>
           </div>
         )}
+
         {messages.map((message, index) => {
-          // const isLastMessage = index === messages.length - 1;
-          // const isAssistantStreaming = message.role === "assistant" && status === "streaming";
+          const isLast = index === messages.length - 1;
+          const isUser = message.role === "user";
 
           return (
             <div
               key={message.id}
-              ref={index === messages.length - 1 ? lastMessageRef : null}
-              className={`flex w-full ${message.role === "user" ? "justify-end" : "justify-start"}`}
+              ref={isLast ? lastMessageRef : null}
+              data-role={message.role}
+              className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}
             >
-              <div
-                className={`mb-4 flex flex-row gap-3 ${message.role === "user" ? "max-w-[80%]" : ""}`}
-              >
-                {/* Message Content */}
+              <div className={`mb-4 flex flex-col gap-3 ${isUser ? "max-w-[80%]" : "w-full"}`}>
                 <div
-                  className={`${message.role === "user" ? "border-border-light bg-border-light mb-4 rounded-[18px] border p-3 shadow-xs" : ""} relative`}
+                  className={`${isUser ? "border-border-light bg-border-light rounded-[28px] border px-4 py-3 shadow-sm" : ""} relative`}
                 >
-                  {message.parts?.map((part: MessagePart, index: number) =>
+                  {message.parts?.map((part: MessagePart, pIndex: number) =>
                     part.type === "text" ? (
                       <div
-                        key={index}
+                        key={pIndex}
                         className="text-text-secondary prose prose-slate max-w-none text-[16px] leading-relaxed"
                       >
                         <MemoizedMarkdown
                           text={part.text}
-                          // isStreaming={isLastMessage && isAssistantStreaming}
-                          isStreaming={false}
+                          isStreaming={isLast && message.role === "assistant" && isStreaming}
                         />
                       </div>
                     ) : null,
                   )}
 
-                  {message.role === "assistant" && (
-                    <span className="text-text-subtle mt-2 block text-xs">
-                      {new Date(message.createdAt || new Date()).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </span>
-                  )}
-
-                  {message.role === "assistant" && (
-                    <button
-                      onClick={() => {
-                        const text =
-                          message.parts?.map((p) => (p.type === "text" ? p.text : "")).join("") ||
-                          "";
-                        navigator.clipboard.writeText(text);
-                      }}
-                      className="text-text-muted hover:text-text-secondary mt-3 transition-colors hover:cursor-pointer"
-                      title="Copy response"
-                    >
-                      <Copy className="h-4 w-4" />
-                    </button>
+                  {message.role === "assistant" && !isStreaming && (
+                    <div className="mt-2 flex items-center gap-3">
+                      <span className="text-text-subtle block text-xs">
+                        {new Date(message.createdAt || new Date()).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                      <button
+                        onClick={() => {
+                          const text =
+                            message.parts?.map((p) => (p.type === "text" ? p.text : "")).join("") ||
+                            "";
+                          navigator.clipboard.writeText(text);
+                        }}
+                        className="text-text-muted hover:text-text-secondary transition-colors hover:cursor-pointer"
+                        title="Copy response"
+                      >
+                        <Copy className="h-4 w-4" />
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>
@@ -148,8 +179,8 @@ export default function MessageList({
           </div>
         )}
 
-        {/* Transparent area to adjust height of last chat to top */}
-        {/* <div className="h-[40vh]"></div> */}
+        {/* This spacer provides the necessary room to scroll the latest prompt to the top, only after the first message */}
+        {hasSubmitted && <div className="h-[60vh]" aria-hidden="true" />}
       </div>
     </main>
   );
