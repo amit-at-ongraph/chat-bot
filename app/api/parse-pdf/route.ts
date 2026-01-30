@@ -25,7 +25,9 @@ export async function POST(req: Request) {
     }
 
     // 2. DYNAMICALLY import the library to ensure it sees the polyfill
+    // @ts-ignore
     const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
+    // @ts-ignore
     const pdfjsWorker = await import("pdfjs-dist/legacy/build/pdf.worker.mjs");
 
     // Set the worker correctly
