@@ -65,12 +65,6 @@ export const messages = pgTable("message", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
-export const embeddings = pgTable("embeddings", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  content: text("content").notNull(), // The original text
-  embedding: vector("embedding", { dimensions: 1536 }).notNull(), // The vector
-});
-
 export const documents = pgTable("documents", {
   id: uuid("id").defaultRandom().primaryKey(),
   filePath: text("file_path").notNull(),
