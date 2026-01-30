@@ -53,6 +53,7 @@ export async function POST(req: Request) {
       useSystemFonts: true,
       // We explicitly stop the library from looking for external scripts
       stopAtErrors: true,
+      ownerDocument: globalThis.document, // helps it realize there is no document
     });
 
     const pdf = await loadingTask.promise;
