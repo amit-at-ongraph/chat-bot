@@ -7,6 +7,17 @@ const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SE
 
 export async function POST(req: Request) {
   try {
+    // --- BASIC AUTH CHECK ---
+    const authHeader = req.headers.get("authorization");
+
+    if (!authHeader || !authHeader.startsWith("Basic ")) {
+      return NextResponse.json(
+        { error: "Authentication required" },
+        { status: 401, headers: { "WWW-Authenticate": 'Basic realm="Secure Area"' } },
+      );
+    }
+    // END OF BASIC AUTH CHECK
+
     const formData = await req.formData();
     const files = formData.getAll("files") as File[];
 

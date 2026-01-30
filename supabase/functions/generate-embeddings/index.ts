@@ -57,6 +57,9 @@ async function extractPdfText(blob: Blob, fileName: string): Promise<string> {
   const res = await fetch(Deno.env.get("PDF_PARSER_URL")!, {
     method: "POST",
     body: formData,
+    headers: {
+      Authorization: `Basic ${Deno.env.get("API_BASIC_AUTH_SECRET")}`,
+    },
   });
 
   if (!res.ok) {

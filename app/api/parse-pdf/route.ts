@@ -1,14 +1,22 @@
-import { createRequire } from "module";
 import { NextResponse } from "next/server";
+
+// 1. Use the legacy build to avoid DOMMatrix/Canvas errors
+import * as pdfjs from "pdfjs-dist/legacy/build/pdf.mjs";
 
 export const runtime = "nodejs";
 
-const require = createRequire(import.meta.url);
-
 export async function POST(req: Request) {
   try {
-    // ✅ Node-safe CJS import
-    const pdfParse = require("pdf-parse") as (buffer: Buffer) => Promise<{ text: string }>;
+    // --- BASIC AUTH CHECK ---
+    const authHeader = req.headers.get("authorization");
+
+    if (!authHeader || !authHeader.startsWith("Basic ")) {
+      return NextResponse.json(
+        { error: "Authentication required" },
+        { status: 401, headers: { "WWW-Authenticate": 'Basic realm="Secure Area"' } },
+      );
+    }
+    // END OF BASIC AUTH CHECK
 
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
@@ -17,14 +25,40 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const data = await pdfParse(buffer);
+    const arrayBuffer = await file.arrayBuffer();
+    const uint8Array = new Uint8Array(arrayBuffer);
+
+    const loadingTask = pdfjs.getDocument({
+      data: uint8Array,
+      disableFontFace: true,
+      useSystemFonts: true,
+      // We explicitly stop the library from looking for external scripts
+      stopAtErrors: true,
+    });
+
+    const pdf = await loadingTask.promise;
+    let fullText = "";
+
+    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+      const page = await pdf.getPage(pageNum);
+      const content = await page.getTextContent();
+      const pageText = content.items.map((item: any) => item.str).join(" ");
+
+      if (pageText.trim()) {
+        fullText += `\n\n--- Page ${pageNum} ---\n\n${pageText}`;
+      }
+    }
 
     return NextResponse.json({
-      text: data.text,
+      success: true,
+      pages: pdf.numPages,
+      text: fullText,
     });
-  } catch (err) {
-    console.error("PDF parse error:", err);
-    return NextResponse.json({ error: "Failed to parse PDF" }, { status: 500 });
+  } catch (err: any) {
+    console.error("Final PDF parsing attempt error:", err);
+    return NextResponse.json(
+      { error: "PDF parsing failed", details: err.message },
+      { status: 500 },
+    );
   }
 }
