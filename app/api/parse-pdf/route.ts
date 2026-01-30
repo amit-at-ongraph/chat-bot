@@ -51,6 +51,7 @@ export async function POST(req: Request) {
       data: uint8Array,
       disableFontFace: true,
       useSystemFonts: true,
+      standardFontDataUrl: undefined,
       // We explicitly stop the library from looking for external scripts
       stopAtErrors: true,
       ownerDocument: globalThis.document, // helps it realize there is no document
