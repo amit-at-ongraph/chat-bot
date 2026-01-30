@@ -1,4 +1,13 @@
 import { NextResponse } from "next/server";
+// 1. SILENCE THE ERRORS: Define globals before any imports
+// We use globalThis to ensure it attaches to the environment immediately
+if (typeof (globalThis as any).DOMMatrix === "undefined") {
+  (globalThis as any).DOMMatrix = class DOMMatrix {
+    constructor() {
+      return { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 };
+    }
+  };
+}
 
 // 1. Use the legacy build to avoid DOMMatrix/Canvas errors
 import * as pdfjs from "pdfjs-dist/legacy/build/pdf.mjs";
