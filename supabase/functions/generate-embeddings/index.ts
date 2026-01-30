@@ -1,5 +1,3 @@
-/// <reference lib="deno.ns" />
-
 import { openai } from "@ai-sdk/openai";
 import { embed } from "ai";
 import { serve } from "https://deno.land/std@0.203.0/http/server.ts";
