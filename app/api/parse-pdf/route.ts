@@ -1,14 +1,22 @@
 import { NextResponse } from "next/server";
-// 1. SILENCE THE ERRORS: Define globals before any imports
-// We use globalThis to ensure it attaches to the environment immediately
-if (typeof (globalThis as any).DOMMatrix === "undefined") {
-  (globalThis as any).DOMMatrix = class DOMMatrix {
-    constructor() {
-      return { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 };
-    }
-  };
-}
-
+// 1. IMMEDIATE POLYFILL
+// We use a self-executing check to ensure these exist before pdfjs loads
+(function polyfill() {
+  if (typeof globalThis.DOMMatrix === "undefined") {
+    (globalThis as any).DOMMatrix = class DOMMatrix {
+      constructor() {
+        return { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 };
+      }
+    };
+  }
+  if (typeof globalThis.ImageData === "undefined") {
+    (globalThis as any).ImageData = class ImageData {
+      constructor() {
+        return { data: new Uint8ClampedArray() };
+      }
+    };
+  }
+})();
 // 1. Use the legacy build to avoid DOMMatrix/Canvas errors
 import * as pdfjs from "pdfjs-dist/legacy/build/pdf.mjs";
 

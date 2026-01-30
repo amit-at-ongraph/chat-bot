@@ -14,6 +14,13 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+
+  // In modern Next.js, turbo is a top-level property
+  turbopack: {
+    resolveAlias: {
+      canvas: "./empty-module.js",
+    },
+  },
 };
 
 export default nextConfig;
