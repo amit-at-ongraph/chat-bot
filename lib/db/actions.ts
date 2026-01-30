@@ -85,8 +85,6 @@ export async function findRelevantContent(userQuery: string) {
     value: userQuery,
   });
 
-  console.log(embedding);
-
   // 2. Query Supabase for the most relevant chunks
   // We use the cosine distance operator <=>
   // 1 - distance = similarity
