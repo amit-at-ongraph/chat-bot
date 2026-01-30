@@ -96,7 +96,7 @@ export default function MessageList({
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const target = e.currentTarget;
-    if (target.scrollTop < 800 && hasMore && !isLoadingMore) {
+    if (target.scrollTop < 1200 && hasMore && !isLoadingMore) {
       loadMore();
     }
   };
