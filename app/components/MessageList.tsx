@@ -129,7 +129,7 @@ export default function MessageList({
             >
               <div className={`mb-4 flex flex-col gap-3 ${isUser ? "max-w-[80%]" : "w-full"}`}>
                 <div
-                  className={`${isUser ? "border-border-light bg-border-light rounded-[18px] border px-4 py-3 shadow-sm" : ""} relative`}
+                  className={`${isUser ? "border-border-light bg-border-light rounded-3xl border px-4 py-3 shadow-sm" : ""} relative`}
                 >
                   {message.parts?.map((part: MessagePart, pIndex: number) =>
                     part.type === "text" ? (

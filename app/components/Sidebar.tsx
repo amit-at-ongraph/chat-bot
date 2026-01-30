@@ -184,7 +184,7 @@ export default function Sidebar({
                     >
                       <Button
                         variant="ghost"
-                        className="text-text-main hover:bg-border-light w-full justify-start gap-3 rounded-xl px-2 py-2 font-medium"
+                        className="text-text-main hover:bg-border-light w-full justify-start gap-3 rounded-full px-2 py-2 font-medium"
                         onClick={() => {
                           setIsUserMenuOpen(false);
                         }}
@@ -197,7 +197,7 @@ export default function Sidebar({
                 </AnimatePresence>
 
                 <div
-                  className="hover:bg-border-light flex w-full cursor-pointer items-center gap-4 rounded-xl px-2 py-2 transition-colors"
+                  className="hover:bg-border-light flex w-full cursor-pointer items-center gap-4 rounded-full px-2 py-2 transition-colors"
                   onClick={() => session && setIsUserMenuOpen(!isUserMenuOpen)}
                 >
                   <div className="border-border-base bg-app-bg flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border shadow-sm">
@@ -319,7 +319,7 @@ function SidebarItem({
       <button
         onClick={onClick}
         title={isCollapsed ? label : ""}
-        className={`group-hover:bg-border-base flex w-full items-center gap-3 truncate rounded-xl py-2 pr-7 pl-2 font-medium transition-colors hover:cursor-pointer ${
+        className={`group-hover:bg-border-base flex w-full items-center gap-3 truncate rounded-full py-2 pr-7 pl-2 font-medium transition-colors hover:cursor-pointer ${
           active ? "bg-selected text-primary" : "text-text-secondary"
         }`}
       >
