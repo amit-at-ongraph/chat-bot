@@ -8,6 +8,7 @@ const eslintConfig = defineConfig([
   ...nextTs,
   {
     rules: {
+      "@typescript-eslint/no-explicit-any": "off",
       "padding-line-between-statements": [
         "error",
         { blankLine: "always", prev: "*", next: "export" },
@@ -27,6 +28,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "supabase/functions",
+    "supabase/migrations",
+    "supabase/seed",
   ]),
   prettierConfig,
 ]);

@@ -7,8 +7,6 @@ const MemoizedMarkdown = React.memo(
   ({ text, isStreaming }: { text: string; isStreaming: boolean }) => {
     const animatedText = useTypewriter(text, 5, isStreaming);
 
-    console.log({ animatedText, text: text, isStreaming });
-
     return (
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}

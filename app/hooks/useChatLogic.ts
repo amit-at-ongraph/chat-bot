@@ -85,7 +85,7 @@ export function useChatLogic() {
         setErrorToast(String(error));
       }
     }
-      setIsLoadingMessages(false);
+    setIsLoadingMessages(false);
   };
 
   const loadMore = async () => {

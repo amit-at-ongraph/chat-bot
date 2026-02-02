@@ -1,8 +1,9 @@
 "use client";
 
-import { Globe } from "lucide-react";
+import { Globe, Mail } from "lucide-react";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "./ui/Button";
 
 interface WelcomeProps {
@@ -36,6 +37,37 @@ export default function Welcome({ onSkip }: WelcomeProps) {
             />
             Sign in with Google
           </Button>
+
+          <Link href="/login" className="block">
+            <Button
+              variant="ghost"
+              className="border-border-base text-text-main flex w-full items-center justify-center gap-3 border py-4 font-bold"
+            >
+              <Mail className="h-5 w-5" />
+              Sign in with Email
+            </Button>
+          </Link>
+
+          <div className="relative my-4">
+            <div className="absolute inset-0 flex items-center">
+              <div className="border-border-light w-full border-t"></div>
+            </div>
+            <div className="relative flex justify-center text-xs">
+              <span className="bg-app-bg text-text-muted px-2 tracking-wider uppercase">
+                New here?
+              </span>
+            </div>
+          </div>
+
+          <Link href="/register" className="block">
+            <Button
+              variant="ghost"
+              className="text-primary hover:bg-primary/10 w-full py-3 font-bold"
+            >
+              Create an account
+            </Button>
+          </Link>
+
           <Button
             variant="ghost"
             onClick={onSkip}

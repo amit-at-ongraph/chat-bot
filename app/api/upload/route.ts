@@ -1,9 +1,7 @@
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabase";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs"; // IMPORTANT (pdf, buffers, fs safety)
-
-const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 
 export async function POST(req: Request) {
   try {

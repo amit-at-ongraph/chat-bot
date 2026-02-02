@@ -112,26 +112,27 @@ export default function Home() {
 
   return (
     <div className="bg-app-bg text-text-main relative flex min-h-screen overflow-x-hidden font-sans shadow-xl">
-      {/* Sidebar */}
-      <Sidebar
-        isOpen={isSidebarOpen}
-        isCollapsed={isCollapsed}
-        onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
-        onClose={() => setIsSidebarOpen(false)}
-        chats={userChats}
-        currentChatId={chatId}
-        isLoadingChats={userChatsLoading}
-        selectedChatLoading={isLoadingMessages}
-        onSelectChat={loadChat}
-        onNewChat={startNewChat}
-        onDeleteChat={handleDeleteChat}
-        onRenameChat={handleRenameChat}
-        session={session}
-      />
+      {session && (
+        <Sidebar
+          isOpen={isSidebarOpen}
+          isCollapsed={isCollapsed}
+          onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
+          onClose={() => setIsSidebarOpen(false)}
+          chats={userChats}
+          currentChatId={chatId}
+          isLoadingChats={userChatsLoading}
+          selectedChatLoading={isLoadingMessages}
+          onSelectChat={loadChat}
+          onNewChat={startNewChat}
+          onDeleteChat={handleDeleteChat}
+          onRenameChat={handleRenameChat}
+          session={session}
+        />
+      )}
 
       <div
         className={`flex h-screen flex-1 flex-col transition-all duration-300 ${
-          isSidebarOpen ? (isCollapsed ? "lg:pl-16" : "lg:pl-72") : "lg:pl-0"
+          session && isSidebarOpen ? (isCollapsed ? "lg:pl-16" : "lg:pl-72") : "lg:pl-0"
         }`}
       >
         {/* Sign In Overlay */}
@@ -142,7 +143,7 @@ export default function Home() {
           session={session}
           skippedAuth={skippedAuth}
           onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
-          isSidebarOpen={isSidebarOpen}
+          isSidebarOpen={session ? isSidebarOpen : false}
         />
 
         {/* Chat Area */}
