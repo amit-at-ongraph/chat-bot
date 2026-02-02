@@ -1,6 +1,7 @@
 import { chatModel } from "@/lib/ai";
 import { authOptions } from "@/lib/auth";
 import { createChat, findRelevantContent, saveMessage } from "@/lib/db/actions";
+import { getSystemMessage } from "@/lib/prompts";
 import { convertToModelMessages, streamText, UIMessage } from "ai";
 import { getServerSession } from "next-auth";
 
@@ -34,12 +35,12 @@ export async function POST(req: Request) {
       await saveMessage(chatId, lastUserMessage.role, userQuery);
     }
   }
+
+  const systemPrompt = getSystemMessage(context);
+
   const result = streamText({
     model: chatModel,
-    system: `You are a helpful assistant. Use the following pieces of retrieved context to answer the user's question. If you don't know the answer based on the context, say so.
-    
-    Context:
-    ${context}`,
+    system: systemPrompt,
     messages: await convertToModelMessages(messages),
     onFinish: async ({ text }) => {
       if (session?.user?.id && chatId) {
