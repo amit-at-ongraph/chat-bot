@@ -99,7 +99,7 @@ export async function findRelevantContent(userQuery: string) {
     })
     .from(documents)
     .orderBy((t) => t.distance) // ASC = most similar first
-    .limit(4);
+    .limit(5);
 
   return relevantChunks.map((chunk) => chunk.content).join("\n\n");
 }

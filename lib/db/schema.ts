@@ -68,6 +68,7 @@ export const messages = pgTable("message", {
 export const documents = pgTable("documents", {
   id: uuid("id").defaultRandom().primaryKey(),
   filePath: text("file_path").notNull(),
+  chunkIndex: integer("chunk_index").notNull(),
   content: text("content").notNull(),
   embedding: vector("embedding", { dimensions: 1536 }),
 });

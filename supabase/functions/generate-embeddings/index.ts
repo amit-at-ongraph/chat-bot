@@ -7,12 +7,12 @@ serve(async (req: Request) => {
   try {
     const { bucket, path } = await req.json();
 
-    console.log(Deno.env.get("SUPABASE_URL"));
-    console.log(Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"));
-    console.log("ENV CHECK:", {
-      hasOpenAI: Deno.env.get("OPENAI_API_KEY"),
-      hasPdfUrl: Deno.env.get("PDF_PARSER_URL"),
-    });
+    // console.log(Deno.env.get("SUPABASE_URL"));
+    // console.log(Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"));
+    // console.log("ENV CHECK:", {
+    //   hasOpenAI: Deno.env.get("OPENAI_API_KEY"),
+    //   hasPdfUrl: Deno.env.get("PDF_PARSER_URL"),
+    // });
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -33,19 +33,27 @@ serve(async (req: Request) => {
       text = await data.text();
     }
 
-    const { embedding } = await embed({
-      model: openai.embedding("text-embedding-3-small"),
-      value: text,
-    });
+    const chunks = chunkText(text);
 
-    await supabase.from("documents").insert({
-      file_path: path,
-      content: text,
-      embedding,
-    });
+    for (let i = 0; i < chunks.length; i++) {
+      const chunk = chunks[i];
+
+      const { embedding } = await embed({
+        model: openai.embedding("text-embedding-3-small"),
+        value: chunk,
+      });
+
+      await supabase.from("documents").insert({
+        file_path: path,
+        chunk_index: i,
+        content: chunk,
+        embedding,
+      });
+    }
 
     return new Response(JSON.stringify({ success: true }), { status: 200 });
   } catch (err) {
+    console.log(err);
     return new Response(JSON.stringify({ error: String(err) }), { status: 500 });
   }
 });
@@ -68,4 +76,21 @@ async function extractPdfText(blob: Blob, fileName: string): Promise<string> {
 
   const { text } = await res.json();
   return text;
+}
+
+function chunkText(
+  text: string,
+  chunkSize = 3000, // characters ≈ 800–1000 tokens
+  overlap = 500,
+): string[] {
+  const chunks: string[] = [];
+  let start = 0;
+
+  while (start < text.length) {
+    const end = start + chunkSize;
+    chunks.push(text.slice(start, end));
+    start = end - overlap;
+  }
+
+  return chunks;
 }
