@@ -10,7 +10,7 @@ interface ErrorToastProps {
 
 export default function ErrorToast({ error, onRetry, onClear }: ErrorToastProps) {
   return (
-    <div className="fixed top-4 right-4 z-50 flex max-w-md items-center gap-5 rounded-lg border border-red-500/20 bg-red-700 p-2 text-white shadow-lg">
+    <div className="fixed top-4 right-4 z-50 flex min-h-24 max-w-md items-center gap-5 rounded-lg border border-red-500/20 bg-red-700 p-2 text-white shadow-lg">
       <AlertCircle className="h-5 w-5" />
       <span className="flex-1 text-sm break-all">{error}</span>
 
