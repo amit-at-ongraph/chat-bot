@@ -1,5 +1,4 @@
 import { openai } from "@ai-sdk/openai";
-import { embed } from "ai";
 import { serve } from "https://deno.land/std@0.203.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -33,22 +32,24 @@ serve(async (req: Request) => {
       text = await data.text();
     }
 
-    const chunks = chunkText(text);
+    const BATCH_SIZE = 100;
 
-    for (let i = 0; i < chunks.length; i++) {
-      const chunk = chunks[i];
+    for (let i = 0; i < chunks.length; i += BATCH_SIZE) {
+      const batch = chunks.slice(i, i + BATCH_SIZE);
 
-      const { embedding } = await embed({
+      const { embeddings } = await embedMany({
         model: openai.embedding("text-embedding-3-small"),
-        value: chunk,
+        values: batch,
       });
 
-      await supabase.from("documents").insert({
+      const rows = batch.map((chunk, j) => ({
         file_path: path,
-        chunk_index: i,
+        chunk_index: i + j,
         content: chunk,
-        embedding,
-      });
+        embedding: embeddings[j],
+      }));
+
+      await supabase.from("documents").insert(rows);
     }
 
     return new Response(JSON.stringify({ success: true }), { status: 200 });
