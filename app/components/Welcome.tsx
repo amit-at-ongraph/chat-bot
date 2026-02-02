@@ -1,6 +1,6 @@
 "use client";
 
-import { Globe, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,9 +14,6 @@ export default function Welcome({ onSkip }: WelcomeProps) {
   return (
     <div className="bg-app-bg/80 absolute inset-0 z-50 flex items-center justify-center p-6 backdrop-blur-sm">
       <div className="border-border-light bg-app-bg w-full max-w-sm space-y-6 rounded-3xl border p-8 text-center shadow-2xl">
-        <div className="bg-primary/10 mx-auto flex h-20 w-20 items-center justify-center rounded-full">
-          <Globe className="text-primary h-10 w-10" />
-        </div>
         <div>
           <h2 className="text-text-main text-2xl font-bold">Welcome</h2>
           <p className="text-text-muted mt-2">
