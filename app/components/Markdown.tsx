@@ -5,7 +5,7 @@ import { useTypewriter } from "../hooks/useTypewriter";
 
 const MemoizedMarkdown = React.memo(
   ({ text, isStreaming }: { text: string; isStreaming: boolean }) => {
-    const animatedText = useTypewriter(text, 5, isStreaming);
+    const animatedText = useTypewriter(text, 2, isStreaming);
 
     return (
       <ReactMarkdown

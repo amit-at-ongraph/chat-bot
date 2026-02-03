@@ -4,7 +4,7 @@ export function useTypewriter(text: string, speed = 10, active: boolean) {
   // CRITICAL: Initialize based on the active prop.
   // If active is false (history), isWriting is false, and we show the full text immediately.
   const [isWriting, setIsWriting] = useState(active);
-  const [displayedText, setDisplayedText] = useState(() => (active ? "" : text));
+  const [displayedText, setDisplayedText] = useState(() => (active || isWriting ? "" : text));
 
   const textRef = useRef(text);
   const activeRef = useRef(active);
@@ -13,21 +13,7 @@ export function useTypewriter(text: string, speed = 10, active: boolean) {
   useEffect(() => {
     textRef.current = text;
     activeRef.current = active;
-
-    // If we are NOT in writing mode, we must keep displayedText in sync with text.
-    // This handles history loading and updates after writing is done.
-    if (!isWriting) {
-      setDisplayedText(text);
-    }
   }, [text, isWriting, active]);
-
-  // Handle the transition to active (starting a new stream)
-  useEffect(() => {
-    if (active && !isWriting) {
-      setIsWriting(true);
-      setDisplayedText("");
-    }
-  }, [active, isWriting]);
 
   useEffect(() => {
     if (!isWriting) return;
@@ -39,7 +25,7 @@ export function useTypewriter(text: string, speed = 10, active: boolean) {
 
         if (prev.length < target.length) {
           const diff = target.length - prev.length;
-          const jump = 1;
+          const jump = diff > 80 ? 6 : diff > 40 ? 2 : 1;
           return target.slice(0, prev.length + jump);
         }
 

@@ -10,7 +10,7 @@ function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
-  
+
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -19,7 +19,7 @@ function ResetPasswordForm() {
   const [accessToken, setAccessToken] = useState("");
   const [refreshToken, setRefreshToken] = useState("");
   const [isHashChecked, setIsHashChecked] = useState(false);
-  
+
   // Checking for hash parameters (implicit flow)
   React.useEffect(() => {
     const hash = window.location.hash;
@@ -50,7 +50,7 @@ function ResetPasswordForm() {
       setLoading(false);
       return;
     }
-    
+
     if (!code && !accessToken) {
       setError("Invalid or expired reset link (missing code or token).");
       setLoading(false);
@@ -84,31 +84,31 @@ function ResetPasswordForm() {
 
   if (!code && !accessToken) {
     if (!isHashChecked) {
-        return (
-            <div className="flex min-h-[300px] flex-col items-center justify-center">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-                <p className="text-text-muted mt-4">Verifying link...</p>
-            </div>
-        );
+      return (
+        <div className="flex min-h-[300px] flex-col items-center justify-center">
+          <div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent"></div>
+          <p className="text-text-muted mt-4">Verifying link...</p>
+        </div>
+      );
     }
-    
+
     return (
       <div className="text-center">
         <h2 className="text-text-main mt-6 text-2xl font-bold">Invalid Link</h2>
         <p className="text-text-muted mt-2">The password reset link is invalid or has expired.</p>
         {/** Debug info for user/dev */}
-        <p className="text-xs text-red-400 mt-2">Error: Missing auth code or access token.</p>
+        <p className="mt-2 text-xs text-red-400">Error: Missing auth code or access token.</p>
         <div className="mt-6">
-            <Link href="/forgot-password" className="text-primary font-semibold hover:underline">
-                Request a new link
-            </Link>
+          <Link href="/forgot-password" className="text-primary font-semibold hover:underline">
+            Request a new link
+          </Link>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-md space-y-8 rounded-3xl border border-border-light bg-app-bg p-10 shadow-2xl">
+    <div className="border-border-light bg-app-bg w-full max-w-md space-y-8 rounded-3xl border p-10 shadow-2xl">
       <div className="text-center">
         <h2 className="text-text-main mt-6 text-3xl font-bold">Set New Password</h2>
         <p className="text-text-muted mt-2">Please enter your new password below</p>
@@ -150,7 +150,11 @@ function ResetPasswordForm() {
         </div>
 
         <div>
-          <Button type="submit" disabled={loading || success} className="w-full py-4 text-lg font-bold">
+          <Button
+            type="submit"
+            disabled={loading || success}
+            className="w-full py-4 text-lg font-bold"
+          >
             {loading ? "Updating..." : "Update Password"}
           </Button>
         </div>

@@ -57,7 +57,7 @@ export default function ForgotPasswordPage() {
               Check your email for the reset link!
             </div>
           )}
-          
+
           <div className="space-y-4">
             <Input
               id="email"
@@ -74,9 +74,9 @@ export default function ForgotPasswordPage() {
           </div>
 
           <div>
-            <Button 
-              type="submit" 
-              disabled={loading || success} 
+            <Button
+              type="submit"
+              disabled={loading || success}
               className="w-full py-4 text-lg font-bold"
             >
               {loading ? "Sending Link..." : "Send Reset Link"}
@@ -85,10 +85,7 @@ export default function ForgotPasswordPage() {
         </form>
 
         <div className="flex justify-end">
-          <Link
-            href="/login"
-            className="text-primary text-sm font-medium hover:underline"
-          >
+          <Link href="/login" className="text-primary text-sm font-medium hover:underline">
             Back to Login
           </Link>
         </div>

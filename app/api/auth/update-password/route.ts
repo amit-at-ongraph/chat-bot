@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
@@ -8,15 +8,13 @@ export async function POST(req: Request) {
     if ((!code && !accessToken) || !password) {
       return NextResponse.json(
         { error: "Code (or access token) and password are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (code) {
       // Exchange the code for a session
-      const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(
-        code
-      );
+      const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
 
       if (exchangeError) {
         return NextResponse.json({ error: exchangeError.message }, { status: 400 });
@@ -25,7 +23,7 @@ export async function POST(req: Request) {
       if (!data.user) {
         return NextResponse.json(
           { error: "No user found from the provided code." },
-          { status: 400 }
+          { status: 400 },
         );
       }
     } else if (accessToken) {
@@ -40,14 +38,14 @@ export async function POST(req: Request) {
       if (sessionError) {
         return NextResponse.json({ error: sessionError.message }, { status: 400 });
       }
-      
+
       if (!data.user) {
-         // Fallback verification if setSession didn't return user but didn't error?
-         // Usually it returns user.
-         const { data: userData, error: userError } = await supabase.auth.getUser();
-         if (userError || !userData.user) {
-             return NextResponse.json({ error: "Invalid access token." }, { status: 401 });
-         }
+        // Fallback verification if setSession didn't return user but didn't error?
+        // Usually it returns user.
+        const { data: userData, error: userError } = await supabase.auth.getUser();
+        if (userError || !userData.user) {
+          return NextResponse.json({ error: "Invalid access token." }, { status: 401 });
+        }
       }
     }
 
