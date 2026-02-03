@@ -1,34 +1,58 @@
 import { useEffect, useRef, useState } from "react";
 
 export function useTypewriter(text: string, speed = 10, active: boolean) {
-  const [displayedText, setDisplayedText] = useState("");
-  const textRef = useRef(text);
+  // CRITICAL: Initialize based on the active prop.
+  // If active is false (history), isWriting is false, and we show the full text immediately.
+  const [isWriting, setIsWriting] = useState(active);
+  const [displayedText, setDisplayedText] = useState(() => (active ? "" : text));
 
-  // Sync the latest text from the stream into a ref
+  const textRef = useRef(text);
+  const activeRef = useRef(active);
+
+  // Sync refs and handle static content
   useEffect(() => {
     textRef.current = text;
-  }, [text]);
+    activeRef.current = active;
+
+    // If we are NOT in writing mode, we must keep displayedText in sync with text.
+    // This handles history loading and updates after writing is done.
+    if (!isWriting) {
+      setDisplayedText(text);
+    }
+  }, [text, isWriting, active]);
+
+  // Handle the transition to active (starting a new stream)
+  useEffect(() => {
+    if (active && !isWriting) {
+      setIsWriting(true);
+      setDisplayedText("");
+    }
+  }, [active, isWriting]);
 
   useEffect(() => {
-    if (!active) return;
+    if (!isWriting) return;
 
     const interval = setInterval(() => {
       setDisplayedText((prev) => {
-        // If the displayed text is still shorter than the total received text
-        if (prev.length < textRef.current.length) {
-          // Calculate how many characters to add.
-          // If we are way behind, add 2-3 chars to keep it snappy.
-          const jump = textRef.current.length - prev.length > 50 ? 3 : 1;
-          return textRef.current.slice(0, prev.length + jump);
+        const target = textRef.current;
+        const currentActive = activeRef.current;
+
+        if (prev.length < target.length) {
+          const diff = target.length - prev.length;
+          const jump = 1;
+          return target.slice(0, prev.length + jump);
         }
 
-        // If we've caught up, just stay there
+        // Catch-up finished. We only stop writing mode if the stream is dead.
+        if (!currentActive) {
+          setIsWriting(false);
+        }
         return prev;
       });
     }, speed);
 
     return () => clearInterval(interval);
-  }, [speed, active]); // Only restart if speed changes, NOT when text or active changes
+  }, [isWriting, speed]);
 
   return displayedText;
 }

@@ -59,7 +59,6 @@ export default function MessageList({
           const threshold = 500;
           const behavior =
             Math.abs(container.scrollTop - targetTop) < threshold ? "instant" : "smooth";
-          container.scrollTo({ top: targetTop, behavior });
         } else if (messages[messages.length - 1]?.role === "user") {
           // When user just submitted, scroll smoothly to their message at the top
           container.scrollTo({ top: targetTop, behavior: "smooth" });

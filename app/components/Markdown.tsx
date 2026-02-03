@@ -24,7 +24,7 @@ const MemoizedMarkdown = React.memo(
           ),
         }}
       >
-        {isStreaming ? animatedText : text}
+        {animatedText}
       </ReactMarkdown>
     );
   },
