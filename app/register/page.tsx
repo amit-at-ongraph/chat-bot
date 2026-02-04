@@ -46,7 +46,7 @@ export default function RegisterPage() {
         <div className="border-border-light bg-app-bg w-full max-w-md space-y-8 rounded-3xl border p-10 shadow-2xl">
           <h2 className="text-text-main text-3xl font-bold">Check your email</h2>
           <p className="text-text-muted mt-2">
-            {"We've sent a verification link to"}
+            {"We've sent a verification link to "}
             <span className="text-text-main font-semibold">{email}</span>. Please verify your email
             to finish setting up your account.
           </p>
