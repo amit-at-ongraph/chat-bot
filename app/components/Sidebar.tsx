@@ -355,7 +355,7 @@ function SidebarItem({
                     e.stopPropagation();
                     item.action();
                   }}
-                  className={`hover:bg-border-base flex w-full items-center gap-2 rounded-2xl px-3 py-2 text-xs transition-colors ${
+                  className={`hover:bg-border-base flex w-full items-center gap-2 px-3 py-2 text-xs transition-colors ${
                     item.danger ? "text-red-500" : "text-text-main"
                   }`}
                 >
