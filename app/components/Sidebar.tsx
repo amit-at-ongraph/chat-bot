@@ -18,6 +18,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
+import { UI_CONFIG } from "@/config";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -114,9 +115,6 @@ export default function Sidebar({
                     <X className="h-6 w-6" />
                   </Button>
                 </div>
-                {!effectivelyCollapsed && (
-                  <h2 className="text-text-main truncate font-bold">Menu</h2>
-                )}
               </div>
 
               {/* New Chat Button */}
@@ -131,11 +129,11 @@ export default function Sidebar({
                     }
                   }}
                   className="w-full gap-3 text-[14px]"
-                  title={effectivelyCollapsed ? "New Conversation" : ""}
+                  title={effectivelyCollapsed ? UI_CONFIG.CHAT_BTN_TITLE : ""}
                 >
                   <Edit className="h-5 w-5 shrink-0" />
                   {!effectivelyCollapsed && (
-                    <span className="whitespace-nowrap">New Conversation</span>
+                    <span className="whitespace-nowrap">{UI_CONFIG.CHAT_BTN_TITLE}</span>
                   )}
                 </Button>
               </div>
@@ -324,7 +322,7 @@ function SidebarItem({
         }`}
       >
         {/* <Icon className="h-5 w-5 shrink-0" /> */}
-        {!isCollapsed && <span className="truncate">{label}</span>}
+        {!isCollapsed && <span className="truncate font-normal">{label}</span>}
         {loading && !isCollapsed && (
           <span className="ml-2 inline-flex items-center">
             <div className="border-primary inline-block h-3 w-3 animate-spin rounded-full border-b-2" />
