@@ -112,11 +112,11 @@ Detention cases move fast. Do not wait.
 
 **Free & trusted help**
 
-* Immigration Advocates Network (find free lawyers):  
+* Immigration Advocates Network (find free lawyers): <br />  
   https://www.immigrationadvocates.org
-* National Immigration Legal Services Directory (DOJ list):  
+* National Immigration Legal Services Directory (DOJ list): <br />  
   https://www.justice.gov/eoir/legalrepresentation
-* If detained: **National Immigration Detention Hotline**  
+* If detained: **National Immigration Detention Hotline** <br /> 
   📞 209-757-3733 (accepts collect calls)
 
 Avoid notarios or “immigration consultants.”
