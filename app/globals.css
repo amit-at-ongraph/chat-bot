@@ -104,19 +104,19 @@
   }
 
   h2 {
-    @apply mb-2 text-xl font-semibold leading-tight;
+    @apply mb-2 text-lg font-semibold leading-tight;
   }
 
   h3 {
-    @apply mb-1 text-lg font-semibold leading-snug;
+    @apply mb-1 text-base font-semibold leading-snug;
   }
 
   h4 {
-    @apply mb-1 text-base font-semibold;
+    @apply mb-1 text-sm font-semibold;
   }
 
   h5 {
-    @apply mb-1 text-sm font-semibold uppercase tracking-wide;
+    @apply mb-1 text-xs font-semibold uppercase tracking-wide;
   }
 
   h6 {
