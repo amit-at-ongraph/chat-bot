@@ -1,11 +1,11 @@
 "use client";
 
+import { UI_CONFIG } from "@/config";
 import { Menu, Moon, Sun } from "lucide-react";
 import { Session } from "next-auth";
 import { signIn, signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { Button } from "./ui/Button";
-import { UI_CONFIG } from "@/config";
 
 interface HeaderProps {
   session: Session | null;

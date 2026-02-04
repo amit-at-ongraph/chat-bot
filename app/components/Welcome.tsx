@@ -1,11 +1,11 @@
 "use client";
 
+import { APP_NAME } from "@/config";
 import { Mail } from "lucide-react";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/Button";
-import { APP_NAME } from "@/config";
 
 interface WelcomeProps {
   onSkip: () => void;
@@ -17,9 +17,7 @@ export default function Welcome({ onSkip }: WelcomeProps) {
       <div className="border-border-light bg-app-bg w-full max-w-sm space-y-6 rounded-3xl border p-8 text-center shadow-2xl">
         <div>
           <h2 className="text-text-main text-2xl font-bold">Welcome</h2>
-          <p className="text-text-muted mt-2">
-            Please sign in to access the {APP_NAME}.
-          </p>
+          <p className="text-text-muted mt-2">Please sign in to access the {APP_NAME}.</p>
         </div>
         <div className="space-y-3">
           <Button

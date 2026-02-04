@@ -11,7 +11,7 @@ const MemoizedMarkdown = React.memo(
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
-          p: ({ children }) => <p className="mb-4 last:mb-0">{children}</p>,
+          p: ({ children }) => <p className="mb-4 last:mb-0 whitespace-pre-line">{children}</p>,
           ul: ({ children }) => <ul className="mb-4 ml-4 list-disc">{children}</ul>,
           ol: ({ children }) => <ol className="mb-4 ml-4 list-decimal">{children}</ol>,
           code: ({ children }) => (
@@ -22,6 +22,13 @@ const MemoizedMarkdown = React.memo(
               {children}
             </pre>
           ),
+          blockquote: ({ children }) => (
+            <blockquote className="my-4 border-l-4 border-gray-400 pl-4 italic">
+              {children}
+            </blockquote>
+          ),
+          strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+          em: ({ children }) => <em className="font-medium not-italic">{children}</em>,
         }}
       >
         {animatedText}

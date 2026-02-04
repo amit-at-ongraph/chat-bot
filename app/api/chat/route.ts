@@ -2,8 +2,9 @@ import { chatModel } from "@/lib/ai";
 import { authOptions } from "@/lib/auth";
 import { createChat, findRelevantContent, saveMessage } from "@/lib/db/actions";
 import { getSystemMessage } from "@/lib/prompts";
-import { convertToModelMessages, streamText, UIMessage } from "ai";
+import { convertToModelMessages, streamText, UIMessage, generateText } from "ai";
 import { getServerSession } from "next-auth";
+import { MODE_CLASSIFIER_PROMPT } from "@/config/behaviour";
 
 export const maxDuration = 30;
 
@@ -36,7 +37,9 @@ export async function POST(req: Request) {
     }
   }
 
-  const systemPrompt = getSystemMessage(context);
+  const mode = await detectModeWithLLM(userQuery);
+
+  const systemPrompt = getSystemMessage(context, mode);
 
   const result = streamText({
     model: chatModel,
@@ -65,3 +68,29 @@ export async function POST(req: Request) {
     },
   });
 }
+
+
+export type Mode = "CRISIS" | "OPERATIONS" | "INFORMATION";
+
+async function detectModeWithLLM(userQuery: string): Promise<Mode> {
+  const { text } = await generateText({
+    model: chatModel,
+    system: MODE_CLASSIFIER_PROMPT,
+    prompt: userQuery,
+    temperature: 0,
+  });
+
+  const label = text.trim();
+
+  if (
+    label === "CRISIS" ||
+    label === "OPERATIONS" ||
+    label === "INFORMATION"
+  ) {
+    return label;
+  }
+
+  // Safety fallback
+  return "INFORMATION";
+}
+

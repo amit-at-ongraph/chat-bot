@@ -4,9 +4,6 @@ import path from "path";
 
 const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 
-console.log("URL:", process.env.SUPABASE_URL);
-console.log("KEY:", process.env.SUPABASE_SERVICE_ROLE_KEY?.slice(0, 10));
-
 async function uploadFile(filePath: string) {
   const absolutePath = path.resolve(process.cwd(), filePath);
 

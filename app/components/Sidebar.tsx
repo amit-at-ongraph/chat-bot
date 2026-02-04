@@ -1,5 +1,6 @@
 "use client";
 
+import { UI_CONFIG } from "@/config";
 import { DBChat } from "@/types/chat";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -18,7 +19,6 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
-import { UI_CONFIG } from "@/config";
 
 interface SidebarProps {
   isOpen: boolean;
