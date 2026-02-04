@@ -5,6 +5,7 @@ import { Session } from "next-auth";
 import { signIn, signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { Button } from "./ui/Button";
+import { UI_CONFIG } from "@/config";
 
 interface HeaderProps {
   session: Session | null;
@@ -37,7 +38,7 @@ export default function Header({
         )}
         <div className="flex items-center gap-2">
           <h1 className="text-text-main hidden text-xl font-bold tracking-tight sm:block sm:truncate md:max-w-md">
-            Immigration Action Guide
+            {UI_CONFIG.HEADER_TITLE}
           </h1>
         </div>
       </div>

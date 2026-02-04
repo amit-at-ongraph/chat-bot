@@ -5,6 +5,7 @@ import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/Button";
+import { APP_NAME } from "@/config";
 
 interface WelcomeProps {
   onSkip: () => void;
@@ -17,7 +18,7 @@ export default function Welcome({ onSkip }: WelcomeProps) {
         <div>
           <h2 className="text-text-main text-2xl font-bold">Welcome</h2>
           <p className="text-text-muted mt-2">
-            Please sign in to access the Immigration Action Guide.
+            Please sign in to access the {APP_NAME}.
           </p>
         </div>
         <div className="space-y-3">
