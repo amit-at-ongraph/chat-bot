@@ -9,7 +9,7 @@ export async function signUpAction(formData: {
   origin: string;
 }) {
   try {
-    const { data, error } = await supabase.auth.signUp({
+    const { data: _, error } = await supabase.auth.signUp({
       email: formData.email,
       password: formData.password,
       options: {
@@ -25,7 +25,7 @@ export async function signUpAction(formData: {
     }
 
     return { success: true };
-  } catch (err: any) {
+  } catch (_: any) {
     return { error: "An unexpected error occurred during sign up" };
   }
 }

@@ -18,8 +18,7 @@ export const CHAT_ACTIONS: ChatAction[] = [
     label: "ICE at my door",
     color: "text-amber-900",
     icon: HomeIcon,
-    prompt:
-      "Ice is knocking at my door, what do I do?",
+    prompt: "Ice is knocking at my door, what do I do?",
   },
   {
     label: "ICE at my work",

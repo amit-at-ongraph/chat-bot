@@ -47,7 +47,7 @@ export default function Sidebar({
   onNewChat,
   onDeleteChat,
   onRenameChat,
-  isLoadingChats,
+  isLoadingChats: _,
   selectedChatLoading,
   session,
 }: SidebarProps) {
@@ -168,7 +168,7 @@ export default function Sidebar({
               </nav>
 
               {/* Sidebar Footer */}
-              <div className="border-border-base relative flex h-[60px] items-center justify-start border-t px-2">
+              <div className="border-border-base relative flex h-15 items-center justify-start border-t px-2">
                 <AnimatePresence>
                   {isUserMenuOpen && session && (
                     <motion.div
@@ -195,7 +195,7 @@ export default function Sidebar({
                 </AnimatePresence>
 
                 <div
-                  className="hover:bg-border-light flex w-full cursor-pointer items-center gap-4 rounded-full px-2 py-2 transition-colors"
+                  className="hover:bg-border-light flex w-full cursor-pointer items-center gap-4 rounded-[10px] px-2 py-2 transition-colors"
                   onClick={() => session && setIsUserMenuOpen(!isUserMenuOpen)}
                 >
                   <div className="border-border-base bg-app-bg flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border shadow-sm">
@@ -212,7 +212,7 @@ export default function Sidebar({
                     )}
                   </div>
                   {!effectivelyCollapsed && (
-                    <div className="text-text-main max-w-[150px] truncate text-[14px]">
+                    <div className="text-text-main max-w-37.5 truncate text-[14px]">
                       {session?.user?.name || "Guest User"}
                     </div>
                   )}
@@ -227,7 +227,7 @@ export default function Sidebar({
 }
 
 function SidebarItem({
-  icon: Icon,
+  icon: _Icon,
   label,
   active = false,
   loading = false,

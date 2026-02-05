@@ -1,10 +1,10 @@
+import { MODE_CLASSIFIER_PROMPT } from "@/config/behaviour";
 import { chatModel } from "@/lib/ai";
 import { authOptions } from "@/lib/auth";
 import { createChat, findRelevantContent, saveMessage } from "@/lib/db/actions";
 import { getSystemMessage } from "@/lib/prompts";
-import { convertToModelMessages, streamText, UIMessage, generateText } from "ai";
+import { convertToModelMessages, generateText, streamText, UIMessage } from "ai";
 import { getServerSession } from "next-auth";
-import { MODE_CLASSIFIER_PROMPT } from "@/config/behaviour";
 
 export const maxDuration = 30;
 
@@ -69,7 +69,6 @@ export async function POST(req: Request) {
   });
 }
 
-
 export type Mode = "CRISIS" | "OPERATIONS" | "INFORMATION";
 
 async function detectModeWithLLM(userQuery: string): Promise<Mode> {
@@ -82,15 +81,10 @@ async function detectModeWithLLM(userQuery: string): Promise<Mode> {
 
   const label = text.trim();
 
-  if (
-    label === "CRISIS" ||
-    label === "OPERATIONS" ||
-    label === "INFORMATION"
-  ) {
+  if (label === "CRISIS" || label === "OPERATIONS" || label === "INFORMATION") {
     return label;
   }
 
   // Safety fallback
   return "INFORMATION";
 }
-

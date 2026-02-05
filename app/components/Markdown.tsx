@@ -11,7 +11,9 @@ const MemoizedMarkdown = React.memo(
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
-          p: ({ children }) => <p className="m-[0.1rem] whitespace-pre-line last:mb-0">{children}</p>,
+          p: ({ children }) => (
+            <p className="m-[0.1rem] whitespace-pre-line last:mb-0">{children}</p>
+          ),
           ul: ({ children }) => <ul className="mb-4 ml-4 list-disc">{children}</ul>,
           ol: ({ children }) => <ol className="mb-4 ml-4 list-decimal">{children}</ol>,
           code: ({ children }) => (

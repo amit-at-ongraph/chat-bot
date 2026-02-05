@@ -33,7 +33,7 @@ export default function RegisterPage() {
       } else {
         setSuccess(true);
       }
-    } catch (err: any) {
+    } catch (_: any) {
       setError("An unexpected error occurred");
     } finally {
       setLoading(false);

@@ -261,8 +261,7 @@ Rules:
 - Do NOT explain.
 - Do NOT add punctuation.
 - Do NOT add extra words.
-`
-
+`;
 
 // Deprecated
 

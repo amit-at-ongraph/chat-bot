@@ -1,5 +1,14 @@
 "use client";
 
+// import {
+//   Dialog,
+//   DialogContent,
+//   DialogDescription,
+//   DialogHeader,
+//   DialogTitle,
+//   DialogTrigger,
+// } from "@/components/ui/dialog";
+// import { Input } from "@/components/ui/input";
 import { ArrowUp, SquareIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -56,35 +65,58 @@ export const PromptInput = ({
   };
 
   return (
-    <div
-      className={`border-border-base bg-prompt-input shadow-outline relative border transition-all duration-200 ${
-        isMultiline ? "rounded-[28px]" : "rounded-[32px]"
-      }`}
-    >
-      <textarea
-        ref={textareaRef}
-        placeholder={placeholder}
-        rows={1}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onKeyDown={handleKeyDown}
-        className="no-scrollbar w-full resize-none border border-transparent bg-transparent py-3 pr-14 pl-6 text-[16px] transition-all duration-300 focus:outline-none"
-      />
+    <div className="flex items-center gap-2">
+      {/* <Dialog>
+        <DialogTrigger asChild>
+          <button
+            type={"button"}
+            className="hover:bg-border-base flex h-10 w-10 cursor-pointer items-center justify-center rounded-full transition-all active:scale-90"
+          >
+            <PlusIcon className="h-5 w-5" fill={theme === "dark" ? "rgb(24,24,24)" : "black"} />
+          </button>
+        </DialogTrigger>
 
-      <button
-        type={isStreaming ? "button" : "submit"}
-        className="bg-primary hover:bg-primary-hover absolute right-3 bottom-0 flex h-10 w-10 -translate-y-2 cursor-pointer items-center justify-center rounded-full shadow-lg transition-all active:scale-90"
-        onClick={isStreaming ? onStop : undefined}
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Attachment</DialogTitle>
+            <DialogDescription>Select an option to add to your prompt.</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <Input id="file" type="file" />
+          </div>
+        </DialogContent>
+      </Dialog> */}
+
+      <div
+        className={`border-border-base bg-prompt-input shadow-outline relative w-full border transition-all duration-200 ${
+          isMultiline ? "rounded-[28px]" : "rounded-4xl"
+        }`}
       >
-        {isStreaming ? (
-          <SquareIcon
-            fill={theme === "dark" ? "rgb(24,24,24)" : "white"}
-            className="text-app-bg h-4 w-4"
-          />
-        ) : (
-          <ArrowUp className="text-app-bg h-5 w-5" />
-        )}
-      </button>
+        <textarea
+          ref={textareaRef}
+          placeholder={placeholder}
+          rows={1}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onKeyDown={handleKeyDown}
+          className="no-scrollbar w-full resize-none border border-transparent bg-transparent py-3 pr-14 pl-6 text-[16px] transition-all duration-300 focus:outline-none"
+        />
+
+        <button
+          type={isStreaming ? "button" : "submit"}
+          className="bg-primary hover:bg-primary-hover absolute right-3 bottom-0 flex h-10 w-10 -translate-y-2 cursor-pointer items-center justify-center rounded-full shadow-lg transition-all active:scale-90"
+          onClick={isStreaming ? onStop : undefined}
+        >
+          {isStreaming ? (
+            <SquareIcon
+              fill={theme === "dark" ? "rgb(24,24,24)" : "white"}
+              className="text-app-bg h-4 w-4"
+            />
+          ) : (
+            <ArrowUp className="text-app-bg h-5 w-5" />
+          )}
+        </button>
+      </div>
     </div>
   );
 };
