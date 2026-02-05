@@ -2,24 +2,19 @@
 
 import { UI_CONFIG } from "@/config";
 import { Menu, Moon, Sun } from "lucide-react";
-import { Session } from "next-auth";
 import { signIn, signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
+import { useSessionContext } from "../contexts";
 import { Button } from "./ui/Button";
 
 interface HeaderProps {
-  session: Session | null;
   skippedAuth: boolean;
   onToggleSidebar: () => void;
   isSidebarOpen?: boolean;
 }
 
-export default function Header({
-  session,
-  skippedAuth,
-  onToggleSidebar,
-  isSidebarOpen,
-}: HeaderProps) {
+export default function Header({ skippedAuth, onToggleSidebar, isSidebarOpen }: HeaderProps) {
+  const { session } = useSessionContext();
   const { setTheme, resolvedTheme } = useTheme();
 
   return (

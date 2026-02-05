@@ -2,6 +2,7 @@
 
 import { Button } from "@/app/components/ui/Button";
 import { PasswordInput } from "@/app/components/ui/PasswordInput";
+import axios from "axios";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { Suspense, useState } from "react";
@@ -58,23 +59,17 @@ function ResetPasswordForm() {
     }
 
     try {
-      const res = await fetch("/api/auth/update-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        // Send either code or accessToken/refreshToken
-        body: JSON.stringify({ code, accessToken, refreshToken, password }),
+      await axios.post("/api/auth/update-password", {
+        code,
+        accessToken,
+        refreshToken,
+        password,
       });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Something went wrong");
-      }
 
       setSuccess(true);
       setTimeout(() => {
         router.push("/login");
-      }, 3000);
+      }, 2000);
     } catch (err: any) {
       setError(err.message);
     } finally {

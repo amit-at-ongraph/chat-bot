@@ -8,7 +8,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { FileText, PlusIcon, Upload } from "lucide-react";
+import axios from "axios";
+import { FileText, Loader2, PlusIcon, Upload } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import Spinner from "../Spinner";
 import { Button } from "./Button";
@@ -29,16 +30,10 @@ export const UploadDoc = () => {
   const fetchDocuments = async () => {
     setIsLoadingDocs(true);
     try {
-      const response = await fetch("/api/documents");
-      const result = await response.json();
-
-      if (response.ok) {
-        setDocuments(result.documents || []);
-      } else {
-        console.error("Failed to fetch documents:", result.error);
-      }
+      const { data } = await axios.get("/api/documents");
+      setDocuments(data.documents || []);
     } catch (error) {
-      console.error("Error fetching documents:", error);
+      console.error("Failed to fetch documents:", error);
     } finally {
       setIsLoadingDocs(false);
     }
@@ -66,28 +61,23 @@ export const UploadDoc = () => {
         formData.append("files", file);
       });
 
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
+      await axios.post("/api/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
-      const result = await response.json();
-
-      if (response.ok) {
-        // Clear selected files after successful upload
-        setSelectedFiles([]);
-        if (fileInputRef.current) {
-          fileInputRef.current.value = "";
-        }
-        // Refresh documents list
-        await fetchDocuments();
-        // Close dialog after successful upload
-        setTimeout(() => setIsDialogOpen(false), 500);
-      } else {
-        console.error("Upload failed:", result.error || "Unknown error");
+      // Clear selected files after successful upload
+      setSelectedFiles([]);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
       }
+      // Refresh documents list
+      await fetchDocuments();
+      // Close dialog after successful upload
+      setTimeout(() => setIsDialogOpen(false), 500);
     } catch (error) {
-      console.error("Upload failed:", error instanceof Error ? error.message : "Network error");
+      console.error("Upload failed:", error);
     } finally {
       setIsUploading(false);
     }
@@ -122,7 +112,11 @@ export const UploadDoc = () => {
                 variant="primary"
                 size="md"
               >
-                {isUploading ? <Spinner /> : <Upload className="h-4 w-4" />}
+                {isUploading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Upload className="h-4 w-4" />
+                )}
               </Button>
             </Input>
             <p className="text-muted-foreground text-sm">

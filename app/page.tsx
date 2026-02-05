@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useState } from "react";
 import ChatFooter from "./components/ChatFooter";
@@ -10,11 +11,12 @@ import Welcome from "./components/Welcome";
 
 import { DBChat } from "@/types/chat";
 import Sidebar from "./components/Sidebar";
+import { SessionProvider, useSessionContext } from "./contexts";
 import { useChatLogic } from "./hooks/useChatLogic";
 import Loading from "./loading";
 
-export default function Home() {
-  const { data: session, status: authStatus } = useSession();
+function HomeContent() {
+  const { session, status: authStatus } = useSessionContext();
   const [skippedAuth, setSkippedAuth] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -44,11 +46,8 @@ export default function Home() {
     if (session?.user?.id) {
       try {
         setUserChatsLoading(true);
-        const res = await fetch("/api/chats");
-        if (res.ok) {
-          const data = await res.json();
-          setUserChats(data);
-        }
+        const { data } = await axios.get("/api/chats");
+        setUserChats(data);
       } catch (error) {
         console.error("Failed to fetch chats:", error);
       } finally {
@@ -82,13 +81,11 @@ export default function Home() {
 
   const handleDeleteChat = async (id: string) => {
     try {
-      const res = await fetch(`/api/chats/${id}`, { method: "DELETE" });
-      if (res.ok) {
-        if (chatId === id) {
-          startNewChat();
-        }
-        setUserChats((prev) => prev.filter((chat) => chat.id !== id));
+      await axios.delete(`/api/chats/${id}`);
+      if (chatId === id) {
+        startNewChat();
       }
+      setUserChats((prev) => prev.filter((chat) => chat.id !== id));
     } catch (error) {
       console.error("Failed to delete chat:", error);
     }
@@ -96,15 +93,10 @@ export default function Home() {
 
   const handleRenameChat = async (id: string, newTitle: string) => {
     try {
-      const res = await fetch(`/api/chats/${id}`, {
-        method: "PATCH",
-        body: JSON.stringify({ title: newTitle }),
-      });
-      if (res.ok) {
-        setUserChats((prev) =>
-          prev.map((chat) => (chat.id === id ? { ...chat, title: newTitle } : chat)),
-        );
-      }
+      await axios.patch(`/api/chats/${id}`, { title: newTitle });
+      setUserChats((prev) =>
+        prev.map((chat) => (chat.id === id ? { ...chat, title: newTitle } : chat)),
+      );
     } catch (error) {
       console.error("Failed to rename chat:", error);
     }
@@ -126,7 +118,6 @@ export default function Home() {
           onNewChat={startNewChat}
           onDeleteChat={handleDeleteChat}
           onRenameChat={handleRenameChat}
-          session={session}
         />
       )}
 
@@ -140,7 +131,6 @@ export default function Home() {
 
         {/* Header */}
         <Header
-          session={session}
           skippedAuth={skippedAuth}
           onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
           isSidebarOpen={session ? isSidebarOpen : false}
@@ -171,5 +161,13 @@ export default function Home() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <SessionProvider>
+      <HomeContent />
+    </SessionProvider>
   );
 }

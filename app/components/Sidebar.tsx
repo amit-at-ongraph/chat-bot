@@ -14,9 +14,9 @@ import {
   User,
   X,
 } from "lucide-react";
-import { Session } from "next-auth";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { useSessionContext } from "../contexts";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
 
@@ -33,7 +33,6 @@ interface SidebarProps {
   onRenameChat: (id: string, newTitle: string) => void;
   isLoadingChats?: boolean;
   selectedChatLoading?: boolean;
-  session: Session | null;
 }
 
 export default function Sidebar({
@@ -49,8 +48,8 @@ export default function Sidebar({
   onRenameChat,
   isLoadingChats: _,
   selectedChatLoading,
-  session,
 }: SidebarProps) {
+  const { session } = useSessionContext();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const [isDesktop, setIsDesktop] = useState(false);

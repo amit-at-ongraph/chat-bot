@@ -3,6 +3,7 @@
 import { DBMessage, ExtendedUIMessage } from "@/types/chat";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
+import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 
 export function useChatLogic() {
@@ -57,10 +58,11 @@ export function useChatLogic() {
     chatIdRef.current = id;
     setIsLoadingMessages(true);
     try {
-      const res = await fetch(`/api/chats/${id}/messages?limit=20`);
-      if (!res.ok) throw new Error("Failed to load chat history");
-      const { data, nextCursor }: { data: DBMessage[]; nextCursor: string | null } =
-        await res.json();
+      const { data: response } = await axios.get<{
+        data: DBMessage[];
+        nextCursor: string | null;
+      }>(`/api/chats/${id}/messages?limit=20`);
+      const { data, nextCursor } = response;
       setMessages(
         data.reverse().map(
           (m): ExtendedUIMessage => ({
@@ -92,10 +94,11 @@ export function useChatLogic() {
     if (!hasMore || !cursor || !chatId || isLoadingMore) return;
     setIsLoadingMore(true);
     try {
-      const res = await fetch(`/api/chats/${chatId}/messages?cursor=${cursor}&limit=20`);
-      if (!res.ok) throw new Error("Failed to load more messages");
-      const { data, nextCursor }: { data: DBMessage[]; nextCursor: string | null } =
-        await res.json();
+      const { data: response } = await axios.get<{
+        data: DBMessage[];
+        nextCursor: string | null;
+      }>(`/api/chats/${chatId}/messages?cursor=${cursor}&limit=20`);
+      const { data, nextCursor } = response;
       setMessages((prev) => [
         ...data.reverse().map(
           (m) =>

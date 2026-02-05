@@ -2,6 +2,7 @@
 
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
+import axios from "axios";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -18,18 +19,7 @@ export default function ForgotPasswordPage() {
     setSuccess(false);
 
     try {
-      const res = await fetch("/api/auth/forgot-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Something went wrong");
-      }
-
+      await axios.post("/api/auth/forgot-password", { email });
       setSuccess(true);
     } catch (err: any) {
       setError(err.message);
