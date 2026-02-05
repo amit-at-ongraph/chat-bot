@@ -1,5 +1,5 @@
 export const crisisModeText = `
-Following is example template for you to look before generating response and you have to generate response on basis of user with given fomatting and style:
+Following is example template for you to look before generating response and you have to generate response on basis of user with given fomatting and style, use your analysis to generate response:
 
 CANONICAL CRISIS RESPONSE TEMPLATE (STRUCTURE ONLY — DO NOT COPY TEXT):
 
@@ -52,6 +52,8 @@ Above given is only template you have to generate response on basis of user quer
 
 export const operationsModeText = `
 CANONICAL OPERATIONS RESPONSE TEMPLATE (STRUCTURE ONLY — DO NOT COPY TEXT):
+
+Following is example template for you to look before generating response and you have to generate response on basis of user with given fomatting and style, use your analysis to generate response:
 
 I'm sorry. Act quickly, calmly, and in this order.
 
