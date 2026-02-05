@@ -1,16 +1,12 @@
 export const crisisModeText = `
+Following is example template for you to look before generating response and you have to generate response on basis of user with given fomatting and style:
+
 CANONICAL CRISIS RESPONSE TEMPLATE (STRUCTURE ONLY — DO NOT COPY TEXT):
 
 Breathe. Slow your body. Stay where you are.
 
-**Do not open the door.**
-You have the right to keep it closed.
-
-**Speak through the door.**
-Say clearly and calmly:
-
-> “I do not consent to entry. Please leave.”
-
+[Ask about what he can do]
+Example:
 **Ask for a warrant.**
 Say:
 
@@ -49,6 +45,9 @@ All CRISIS responses MUST follow the same structure, ordering,
 spacing, and emphasis as the template above.
 Do NOT invent new layouts.
 Do NOT reorder sections.
+
+
+Above given is only template you have to generate response on basis of user query but maintaining similar structure and style.
 `;
 
 export const operationsModeText = `
