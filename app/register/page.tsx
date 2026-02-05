@@ -3,22 +3,23 @@
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
 import { PasswordInput } from "@/app/components/ui/PasswordInput";
+import { useAuthStore } from "@/app/store/authStore";
 import { signUpAction } from "@/lib/db/auth-actions";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect } from "react";
 
 export default function RegisterPage() {
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const { registerForm, setRegisterField, resetRegisterForm } = useAuthStore();
+  const { email, name, password, error, loading, success } = registerForm;
+
+  useEffect(() => {
+    return () => resetRegisterForm();
+  }, [resetRegisterForm]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
+    setRegisterField("loading", true);
+    setRegisterField("error", "");
 
     try {
       const result = await signUpAction({
@@ -29,14 +30,14 @@ export default function RegisterPage() {
       });
 
       if (result.error) {
-        setError(result.error);
+        setRegisterField("error", result.error);
       } else {
-        setSuccess(true);
+        setRegisterField("success", true);
       }
     } catch (_: any) {
-      setError("An unexpected error occurred");
+      setRegisterField("error", "An unexpected error occurred");
     } finally {
-      setLoading(false);
+      setRegisterField("loading", false);
     }
   };
 
@@ -82,7 +83,7 @@ export default function RegisterPage() {
               label="Full Name"
               required
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => setRegisterField("name", e.target.value)}
               placeholder="John Doe"
             />
             <Input
@@ -93,7 +94,7 @@ export default function RegisterPage() {
               autoComplete="email"
               required
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => setRegisterField("email", e.target.value)}
               placeholder="you@example.com"
             />
             <PasswordInput
@@ -103,7 +104,7 @@ export default function RegisterPage() {
               autoComplete="new-password"
               required
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => setRegisterField("password", e.target.value)}
               placeholder="••••••••"
             />
           </div>

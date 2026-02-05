@@ -1,27 +1,35 @@
 "use client";
 
 import axios from "axios";
-import { useSession } from "next-auth/react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import ChatFooter from "./components/ChatFooter";
 import ErrorToast from "./components/ErrorToast";
 import Header from "./components/Header";
 import MessageList from "./components/MessageList";
 import Welcome from "./components/Welcome";
 
-import { DBChat } from "@/types/chat";
 import Sidebar from "./components/Sidebar";
-import { SessionProvider, useSessionContext } from "./contexts";
 import { useChatLogic } from "./hooks/useChatLogic";
 import Loading from "./loading";
+import { useChatStore } from "./store/chatStore";
+import { useSessionContext } from "./contexts";
+import { SessionProvider } from "./contexts";
 
 function HomeContent() {
   const { session, status: authStatus } = useSessionContext();
-  const [skippedAuth, setSkippedAuth] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [userChats, setUserChats] = useState<DBChat[]>([]);
-  const [userChatsLoading, setUserChatsLoading] = useState(false);
+  const {
+    skippedAuth,
+    setSkippedAuth,
+    isSidebarOpen,
+    setIsSidebarOpen,
+    isCollapsed,
+    setIsCollapsed,
+    userChats,
+    setUserChats,
+    userChatsLoading,
+    setUserChatsLoading,
+    toggleSidebar,
+  } = useChatStore();
 
   const {
     messages,
@@ -85,7 +93,7 @@ function HomeContent() {
       if (chatId === id) {
         startNewChat();
       }
-      setUserChats((prev) => prev.filter((chat) => chat.id !== id));
+      setUserChats(userChats.filter((chat) => chat.id !== id));
     } catch (error) {
       console.error("Failed to delete chat:", error);
     }
@@ -94,9 +102,7 @@ function HomeContent() {
   const handleRenameChat = async (id: string, newTitle: string) => {
     try {
       await axios.patch(`/api/chats/${id}`, { title: newTitle });
-      setUserChats((prev) =>
-        prev.map((chat) => (chat.id === id ? { ...chat, title: newTitle } : chat)),
-      );
+      setUserChats(userChats.map((chat) => (chat.id === id ? { ...chat, title: newTitle } : chat)));
     } catch (error) {
       console.error("Failed to rename chat:", error);
     }
@@ -132,7 +138,7 @@ function HomeContent() {
         {/* Header */}
         <Header
           skippedAuth={skippedAuth}
-          onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
+          onToggleSidebar={toggleSidebar}
           isSidebarOpen={session ? isSidebarOpen : false}
         />
 

@@ -3,25 +3,29 @@
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
 import { PasswordInput } from "@/app/components/ui/PasswordInput";
+import { useAuthStore } from "@/app/store/authStore";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect } from "react";
 
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+
+  const { loginForm, setLoginField, resetLoginForm } = useAuthStore();
+  const { email, password, error, loading } = loginForm;
+
+  useEffect(() => {
+    return () => resetLoginForm();
+  }, [resetLoginForm]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
+    setLoginField("loading", true);
+    setLoginField("error", "");
 
     try {
       const result = await signIn("credentials", {
@@ -32,15 +36,16 @@ export default function LoginPage() {
       });
 
       if (result?.error) {
-        setError(result.error);
+        setLoginField("error", result.error);
       } else {
+        resetLoginForm();
         router.push(callbackUrl);
         router.refresh();
       }
     } catch (_err: any) {
-      setError("An unexpected error occurred");
+      setLoginField("error", "An unexpected error occurred");
     } finally {
-      setLoading(false);
+      setLoginField("loading", false);
     }
   };
 
@@ -67,7 +72,7 @@ export default function LoginPage() {
               autoComplete="email"
               required
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => setLoginField("email", e.target.value)}
               placeholder="you@example.com"
             />
             <PasswordInput
@@ -77,7 +82,7 @@ export default function LoginPage() {
               autoComplete="current-password"
               required
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => setLoginField("password", e.target.value)}
               placeholder="••••••••"
             />
             <div className="flex justify-end">

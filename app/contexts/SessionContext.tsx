@@ -2,7 +2,7 @@
 
 import { Session } from "next-auth";
 import { useSession } from "next-auth/react";
-import React, { createContext, useContext, ReactNode } from "react";
+import { createContext, ReactNode, useContext } from "react";
 
 interface SessionContextType {
   session: Session | null;
@@ -14,11 +14,7 @@ const SessionContext = createContext<SessionContextType | undefined>(undefined);
 export function SessionProvider({ children }: { children: ReactNode }) {
   const { data: session, status } = useSession();
 
-  return (
-    <SessionContext.Provider value={{ session, status }}>
-      {children}
-    </SessionContext.Provider>
-  );
+  return <SessionContext.Provider value={{ session, status }}>{children}</SessionContext.Provider>;
 }
 
 export function useSessionContext() {
