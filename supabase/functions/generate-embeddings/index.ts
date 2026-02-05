@@ -1,6 +1,7 @@
 // @ts-nocheck
 
 import { openai } from "@ai-sdk/openai";
+import { embedMany } from "ai";
 import { serve } from "https://deno.land/std@0.203.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -24,6 +25,9 @@ serve(async (req: Request) => {
 
     if (error) throw error;
 
+    // Extract user ID from path (assumes path is userId/filename)
+    const [userId, fileName] = path.split("/");
+
     const isPdf = path.toLowerCase().endsWith(".pdf");
 
     let text = "";
@@ -34,6 +38,7 @@ serve(async (req: Request) => {
       text = await data.text();
     }
 
+    const chunks = chunkText(text);
     const BATCH_SIZE = 100;
 
     for (let i = 0; i < chunks.length; i += BATCH_SIZE) {
@@ -45,10 +50,11 @@ serve(async (req: Request) => {
       });
 
       const rows = batch.map((chunk, j) => ({
-        file_path: path,
+        file_path: fileName ?? path,
         chunk_index: i + j,
         content: chunk,
         embedding: embeddings[j],
+        user_id: userId || null,
       }));
 
       await supabase.from("documents").insert(rows);

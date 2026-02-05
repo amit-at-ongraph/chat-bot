@@ -1,17 +1,9 @@
 "use client";
 
-// import {
-//   Dialog,
-//   DialogContent,
-//   DialogDescription,
-//   DialogHeader,
-//   DialogTitle,
-//   DialogTrigger,
-// } from "@/components/ui/dialog";
-// import { Input } from "@/components/ui/input";
 import { ArrowUp, SquareIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { UploadDoc } from "./UploadDoc";
 
 interface PromptInputProps {
   value: string;
@@ -66,26 +58,7 @@ export const PromptInput = ({
 
   return (
     <div className="flex items-center gap-2">
-      {/* <Dialog>
-        <DialogTrigger asChild>
-          <button
-            type={"button"}
-            className="hover:bg-border-base flex h-10 w-10 cursor-pointer items-center justify-center rounded-full transition-all active:scale-90"
-          >
-            <PlusIcon className="h-5 w-5" fill={theme === "dark" ? "rgb(24,24,24)" : "black"} />
-          </button>
-        </DialogTrigger>
-
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add Attachment</DialogTitle>
-            <DialogDescription>Select an option to add to your prompt.</DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <Input id="file" type="file" />
-          </div>
-        </DialogContent>
-      </Dialog> */}
+      <UploadDoc />
 
       <div
         className={`border-border-base bg-prompt-input shadow-outline relative w-full border transition-all duration-200 ${

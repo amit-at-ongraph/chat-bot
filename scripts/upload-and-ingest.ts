@@ -4,7 +4,7 @@ import path from "path";
 
 const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 
-async function uploadFile(filePath: string) {
+async function uploadFile(filePath: string, userId: string) {
   const absolutePath = path.resolve(process.cwd(), filePath);
 
   console.log("Absolute path:", absolutePath);
@@ -16,10 +16,12 @@ async function uploadFile(filePath: string) {
   const fileBuffer = fs.readFileSync(absolutePath);
   const fileName = path.basename(filePath);
 
-  const { error } = await supabase.storage.from("documents").upload(fileName, fileBuffer, {
-    upsert: true,
-    contentType: getMimeType(fileName),
-  });
+  const { error } = await supabase.storage
+    .from("documents")
+    .upload(`${userId}/${fileName}`, fileBuffer, {
+      upsert: true,
+      contentType: getMimeType(fileName),
+    });
 
   if (error) {
     console.error("Upload failed:", error.message);
@@ -35,12 +37,12 @@ function getMimeType(fileName: string): string {
   return "application/octet-stream";
 }
 
-// CLI usage: node upload-and-ingest.js ./files/doc.pdf
 const inputPath = process.argv[2];
+const userIdInput = process.argv[3];
 
-if (!inputPath) {
-  console.error("❌ Please provide file path");
+if (!inputPath || !userIdInput) {
+  console.error("❌ Please provide file path and userId");
   process.exit(1);
 }
 
-uploadFile(inputPath);
+uploadFile(inputPath, userIdInput);

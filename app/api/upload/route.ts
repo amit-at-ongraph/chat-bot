@@ -1,20 +1,18 @@
+import { authOptions } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs"; // IMPORTANT (pdf, buffers, fs safety)
 
 export async function POST(req: Request) {
   try {
-    // --- BASIC AUTH CHECK ---
-    const authHeader = req.headers.get("authorization");
-
-    if (!authHeader || !authHeader.startsWith("Basic ")) {
-      return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401, headers: { "WWW-Authenticate": 'Basic realm="Secure Area"' } },
-      );
+    // --- SESSION AUTH CHECK ---
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
     }
-    // END OF BASIC AUTH CHECK
+    // END OF SESSION AUTH CHECK
 
     const formData = await req.formData();
     const files = formData.getAll("files") as File[];
@@ -23,33 +21,46 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "No files provided" }, { status: 400 });
     }
 
-    const results: Array<{
-      fileName: string;
-      status: "uploaded" | "failed";
-      error?: string;
-    }> = [];
+    const uploadPromises = files.map(async (file) => {
+      try {
+        const buffer = Buffer.from(await file.arrayBuffer());
 
-    for (const file of files) {
-      const buffer = Buffer.from(await file.arrayBuffer());
+        const { error } = await supabase.storage
+          .from("documents")
+          .upload(`${session.user.id}/${file.name}`, buffer, {
+            upsert: true,
+            contentType: file.type || "application/octet-stream",
+          });
 
-      const { error } = await supabase.storage.from("documents").upload(file.name, buffer, {
-        upsert: true,
-        contentType: file.type || "application/octet-stream",
-      });
+        if (error) {
+          return {
+            fileName: file.name,
+            status: "failed" as const,
+            error: error.message,
+          };
+        }
 
-      if (error) {
-        results.push({
+        return {
           fileName: file.name,
-          status: "failed",
-          error: error.message,
-        });
-      } else {
-        results.push({
+          status: "uploaded" as const,
+        };
+      } catch (e: Error) {
+        return {
           fileName: file.name,
-          status: "uploaded",
-        });
+          status: "failed" as const,
+          error: e.message,
+        };
       }
-    }
+    });
+
+    const results = (await Promise.allSettled(uploadPromises)).map((r) => {
+      if (r.status === "fulfilled") return r.value;
+      return {
+        fileName: "unknown",
+        status: "failed" as const,
+        error: "Internal processing error",
+      };
+    });
 
     return NextResponse.json({
       success: true,
