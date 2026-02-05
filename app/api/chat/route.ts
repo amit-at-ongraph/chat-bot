@@ -13,6 +13,16 @@ export async function POST(req: Request) {
   const body = await req.json();
   const { messages }: { messages: UIMessage[] } = body;
   const headerChatId = req.headers.get("x-chat-id");
+  const selectedFilesHeader = req.headers.get("x-selected-files");
+  let selectedFilePaths: string[] = [];
+
+  if (selectedFilesHeader) {
+    try {
+      selectedFilePaths = JSON.parse(selectedFilesHeader);
+    } catch (e) {
+      console.error("Failed to parse x-selected-files header:", e);
+    }
+  }
 
   let chatId = headerChatId || body.chatId;
 
@@ -24,7 +34,10 @@ export async function POST(req: Request) {
       .map((p) => (p.type === "text" ? p.text : ""))
       .join("") || "";
 
-  const context = await findRelevantContent(userQuery);
+  const context = await findRelevantContent(userQuery, {
+    userId: session?.user?.id,
+    filePaths: selectedFilePaths,
+  });
 
   if (session?.user?.id) {
     if (!chatId) {

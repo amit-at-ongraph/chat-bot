@@ -12,7 +12,9 @@ import axios from "axios";
 import { FileText, Loader2, PlusIcon, Upload } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import Spinner from "../Spinner";
+import { useFileStore } from "@/app/store/fileStore";
 import { Button } from "./Button";
+import { Checkbox } from "./Checkbox";
 
 interface DocumentItem {
   fileName: string;
@@ -26,6 +28,7 @@ export const UploadDoc = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [isLoadingDocs, setIsLoadingDocs] = useState(false);
+  const { selectedFileNames, toggleFile, addFile } = useFileStore();
 
   const fetchDocuments = async () => {
     setIsLoadingDocs(true);
@@ -74,6 +77,12 @@ export const UploadDoc = () => {
       }
       // Refresh documents list
       await fetchDocuments();
+
+      // Auto-select newly uploaded files
+      selectedFiles.forEach((file) => {
+        addFile(file.name);
+      });
+
       // Close dialog after successful upload
       setTimeout(() => setIsDialogOpen(false), 500);
     } catch (error) {
@@ -86,8 +95,13 @@ export const UploadDoc = () => {
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button type="button" variant="ghost" size="icon">
+        <Button type="button" variant="ghost" size="icon" className="relative">
           <PlusIcon className="h-5 w-5" />
+          {selectedFileNames.length > 0 && (
+            <span className="bg-primary text-app-bg absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold">
+              {selectedFileNames.length}
+            </span>
+          )}
         </Button>
       </DialogTrigger>
 
@@ -142,6 +156,11 @@ export const UploadDoc = () => {
                     key={index}
                     className="border-border-base flex items-center gap-2 rounded-lg border p-2"
                   >
+                    <Checkbox
+                      id={`doc-${index}`}
+                      checked={selectedFileNames.includes(doc.fileName)}
+                      onCheckedChange={() => toggleFile(doc.fileName)}
+                    />
                     <FileText className="h-4 w-4 shrink-0" />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium">{doc.fileName}</p>

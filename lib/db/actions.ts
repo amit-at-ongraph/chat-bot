@@ -1,6 +1,6 @@
 import { DBChat, DBMessage } from "@/types/chat";
 import { embed } from "ai";
-import { and, desc, eq, isNull, lt, or, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, isNull, lt, or, sql } from "drizzle-orm";
 import { embeddingModel } from "../ai";
 import { db } from "./index";
 import { chats, documents, messages } from "./schema";
@@ -78,7 +78,7 @@ export async function renameChat(chatId: string, title: string) {
 
 export async function findRelevantContent(
   userQuery: string,
-  search?: { userId: string; filePath: string },
+  search?: { userId: string; filePaths?: string[] },
 ) {
   if (!userQuery) return "";
 
@@ -88,10 +88,18 @@ export async function findRelevantContent(
     value: userQuery,
   });
 
-  // 2. Query Supabase for the most relevant chunks
-  // We use the cosine distance operator <=>
-  // 1 - distance = similarity
-  // const similarity = sql<number>`1 - (${documents.embedding} <=> ${JSON.stringify(embedding)})`;
+  // 2. Query for the most relevant chunks
+  const whereConditions = [];
+
+  if (search?.userId) {
+    whereConditions.push(eq(documents.userId, search.userId));
+  } else {
+    whereConditions.push(isNull(documents.userId));
+  }
+
+  if (search?.filePaths && search.filePaths.length > 0) {
+    whereConditions.push(inArray(documents.filePath, search.filePaths));
+  }
 
   const relevantChunks = await db
     .select({
@@ -101,11 +109,7 @@ export async function findRelevantContent(
     `,
     })
     .from(documents)
-    .where(
-      search?.userId
-        ? and(eq(documents.userId, search.userId), eq(documents.filePath, search.filePath))
-        : isNull(documents.userId),
-    )
+    .where(and(...whereConditions))
     .orderBy((t) => t.distance) // ASC = most similar first
     .limit(15);
 
