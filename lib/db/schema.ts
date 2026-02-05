@@ -1,4 +1,4 @@
-import { integer, pgTable, primaryKey, text, timestamp, uuid, vector } from "drizzle-orm/pg-core";
+import { index, integer, pgTable, primaryKey, text, timestamp, uuid, vector } from "drizzle-orm/pg-core";
 import { AdapterAccount } from "next-auth/adapters";
 
 export const users = pgTable("user", {
@@ -65,12 +65,18 @@ export const messages = pgTable("message", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
-export const documents = pgTable("documents", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  filePath: text("file_path").notNull(),
-  chunkIndex: integer("chunk_index").notNull(),
-  content: text("content").notNull(),
-  embedding: vector("embedding", { dimensions: 1536 }),
-  userId: text("user_id").references(() => users.id, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+export const documents = pgTable(
+  "documents",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    filePath: text("file_path").notNull(),
+    chunkIndex: integer("chunk_index").notNull(),
+    content: text("content").notNull(),
+    embedding: vector("embedding", { dimensions: 1536 }),
+    userId: text("user_id").references(() => users.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    userFilePathIdx: index("user_file_path_idx").on(table.userId, table.filePath),
+  }),
+);
