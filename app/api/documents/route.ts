@@ -4,11 +4,12 @@ import { documents } from "@/lib/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
+import { UserRole } from "@/lib/constants";
 
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    if (!(session?.user?.id && session.user.role === UserRole.ADMIN)) {
       return NextResponse.json({ error: "Authentication required" }, { status: 401 });
     }
 

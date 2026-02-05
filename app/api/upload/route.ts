@@ -2,6 +2,7 @@ import { authOptions } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
+import { UserRole } from "@/lib/constants";
 
 export const runtime = "nodejs"; // IMPORTANT (pdf, buffers, fs safety)
 
@@ -9,7 +10,8 @@ export async function POST(req: Request) {
   try {
     // --- SESSION AUTH CHECK ---
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+
+    if (!(session?.user?.id && session.user.role === UserRole.ADMIN)) {
       // --- BASIC AUTH CHECK ---
       const authHeader = req.headers.get("authorization");
 
