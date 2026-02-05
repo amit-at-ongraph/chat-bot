@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
+import { UserRole } from "./constants";
 import { supabase } from "./supabase";
 
 import * as schema from "./db/schema";
@@ -78,6 +79,7 @@ export const authOptions: NextAuthOptions = {
               id: newUser.id,
               email: newUser.email,
               name: newUser.name,
+              role: newUser.role,
             };
           }
 
@@ -85,6 +87,7 @@ export const authOptions: NextAuthOptions = {
             id: dbUser.id,
             email: dbUser.email,
             name: dbUser.name,
+            role: dbUser.role,
           };
         }
         return null;
@@ -98,12 +101,14 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.role = user.role;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
+        session.user.role = token.role as UserRole;
       }
       return session;
     },

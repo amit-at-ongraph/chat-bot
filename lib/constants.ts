@@ -55,3 +55,8 @@ export const CHAT_ACTIONS: ChatAction[] = [
       "Explain the difference between ICE warrants and judicial warrants. When can ICE legally enter or detain someone?",
   },
 ];
+
+export enum UserRole {
+  USER = "user",
+  ADMIN = "admin",
+}

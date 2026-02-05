@@ -1,3 +1,4 @@
+import { UserRole } from "@/lib/constants";
 import { DefaultSession } from "next-auth";
 
 declare module "next-auth" {
@@ -8,10 +9,12 @@ declare module "next-auth" {
     user: {
       /** The user's postal address. */
       id: string;
+      role?: UserRole;
     } & DefaultSession["user"];
   }
 
   interface User {
     id: string;
+    role?: UserRole;
   }
 }

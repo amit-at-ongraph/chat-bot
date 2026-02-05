@@ -9,11 +9,10 @@ import MessageList from "./components/MessageList";
 import Welcome from "./components/Welcome";
 
 import Sidebar from "./components/Sidebar";
+import { SessionProvider, useSessionContext } from "./contexts";
 import { useChatLogic } from "./hooks/useChatLogic";
 import Loading from "./loading";
 import { useChatStore } from "./store/chatStore";
-import { useSessionContext } from "./contexts";
-import { SessionProvider } from "./contexts";
 
 function HomeContent() {
   const { session, status: authStatus } = useSessionContext();
