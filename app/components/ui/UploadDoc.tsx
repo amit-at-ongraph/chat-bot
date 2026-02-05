@@ -8,15 +8,47 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { PlusIcon, Upload } from "lucide-react";
-import React, { useRef, useState } from "react";
+import { FileText, PlusIcon, Upload } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import Spinner from "../Spinner";
 import { Button } from "./Button";
+
+interface DocumentItem {
+  fileName: string;
+  createdAt: Date;
+}
 
 export const UploadDoc = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [documents, setDocuments] = useState<DocumentItem[]>([]);
+  const [isLoadingDocs, setIsLoadingDocs] = useState(false);
+
+  const fetchDocuments = async () => {
+    setIsLoadingDocs(true);
+    try {
+      const response = await fetch("/api/documents");
+      const result = await response.json();
+
+      if (response.ok) {
+        setDocuments(result.documents || []);
+      } else {
+        console.error("Failed to fetch documents:", result.error);
+      }
+    } catch (error) {
+      console.error("Error fetching documents:", error);
+    } finally {
+      setIsLoadingDocs(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isDialogOpen) {
+      fetchDocuments();
+    }
+  }, [isDialogOpen]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -47,6 +79,8 @@ export const UploadDoc = () => {
         if (fileInputRef.current) {
           fileInputRef.current.value = "";
         }
+        // Refresh documents list
+        await fetchDocuments();
         // Close dialog after successful upload
         setTimeout(() => setIsDialogOpen(false), 500);
       } else {
@@ -81,25 +115,50 @@ export const UploadDoc = () => {
               multiple
               onChange={handleFileSelect}
               disabled={isUploading}
-            />
+            >
+              <Button
+                onClick={handleUpload}
+                disabled={selectedFiles.length === 0 || isUploading}
+                variant="primary"
+                size="md"
+              >
+                {isUploading ? <Spinner /> : <Upload className="h-4 w-4" />}
+              </Button>
+            </Input>
             <p className="text-muted-foreground text-sm">
               Select one or more .txt or .pdf files to upload
             </p>
           </div>
 
-          <div className="flex justify-end gap-2">
-            <Button
-              onClick={handleUpload}
-              disabled={selectedFiles.length === 0 || isUploading}
-              variant="primary"
-              size="md"
-            >
-              {isUploading ? (
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-              ) : (
-                <Upload className="h-4 w-4" />
-              )}
-            </Button>
+          {/* Documents List */}
+          <div className="border-border-base border-t pt-4">
+            <h3 className="mb-2 text-sm font-semibold">Uploaded Documents</h3>
+            {isLoadingDocs ? (
+              <div className="flex items-center justify-center py-4">
+                <Spinner />
+              </div>
+            ) : documents.length === 0 ? (
+              <p className="text-muted-foreground py-4 text-center text-sm">
+                No documents uploaded yet
+              </p>
+            ) : (
+              <div className="max-h-48 space-y-2 overflow-y-auto">
+                {documents.map((doc, index) => (
+                  <div
+                    key={index}
+                    className="border-border-base flex items-center gap-2 rounded-lg border p-2"
+                  >
+                    <FileText className="h-4 w-4 shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium">{doc.fileName}</p>
+                      <p className="text-muted-foreground text-xs">
+                        {new Date(doc.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </DialogContent>
