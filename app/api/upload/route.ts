@@ -10,7 +10,16 @@ export async function POST(req: Request) {
     // --- SESSION AUTH CHECK ---
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+      // --- BASIC AUTH CHECK ---
+      const authHeader = req.headers.get("authorization");
+
+      if (!authHeader || !authHeader.startsWith("Basic ")) {
+        return NextResponse.json(
+          { error: "Authentication required" },
+          { status: 401, headers: { "WWW-Authenticate": 'Basic realm="Secure Area"' } },
+        );
+      }
+      // END OF BASIC AUTH CHECK
     }
     // END OF SESSION AUTH CHECK
 
@@ -25,12 +34,12 @@ export async function POST(req: Request) {
       try {
         const buffer = Buffer.from(await file.arrayBuffer());
 
-        const { error } = await supabase.storage
-          .from("documents")
-          .upload(`${session.user.id}/${file.name}`, buffer, {
-            upsert: true,
-            contentType: file.type || "application/octet-stream",
-          });
+        const filePath = session?.user?.id ? `${session.user.id}/${file.name}` : file.name;
+
+        const { error } = await supabase.storage.from("documents").upload(filePath, buffer, {
+          upsert: true,
+          contentType: file.type || "application/octet-stream",
+        });
 
         if (error) {
           return {
