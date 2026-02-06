@@ -21,9 +21,9 @@ import { useEffect, useRef, useState } from "react";
 import { useSessionContext } from "../contexts";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
-import { UploadDoc } from "./ui/UploadDoc";
 import { UserRole } from "@/lib/constants";
 import HowToUse from "./HowToUse";
+import { useFileStore } from "../store/fileStore";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -57,6 +57,7 @@ export default function Sidebar({
   const { session } = useSessionContext();
   const [activeView, setActiveView] = useState<"main" | "how-to">("main");
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const { setUploadDialogOpen } = useFileStore();
   const userMenuRef = useRef<HTMLDivElement>(null);
   const [isDesktop, setIsDesktop] = useState(false);
 
@@ -171,26 +172,23 @@ export default function Sidebar({
                 </Button>
 
                 {session?.user?.role === UserRole.ADMIN && (
-                  <UploadDoc
-                    trigger={
-                      <Button
-                        variant="none"
-                        size="none"
-                        onClick={() => {
-                          if (window.innerWidth < 1024) {
-                            onClose();
-                          }
-                        }}
-                        className="w-full gap-3 text-[14px]"
-                        title={effectivelyCollapsed ? UI_CONFIG.UPLOAD_BTN_TITLE : ""}
-                      >
-                        <Upload className="h-4 w-4 shrink-0" />
-                        {!effectivelyCollapsed && (
-                          <span className="whitespace-nowrap">{UI_CONFIG.UPLOAD_BTN_TITLE}</span>
-                        )}
-                      </Button>
-                    }
-                  />
+                  <Button
+                    variant="none"
+                    size="none"
+                    onClick={() => {
+                      setUploadDialogOpen(true);
+                      if (window.innerWidth < 1024) {
+                        onClose();
+                      }
+                    }}
+                    className="w-full gap-3 text-[14px]"
+                    title={effectivelyCollapsed ? UI_CONFIG.UPLOAD_BTN_TITLE : ""}
+                  >
+                    <Upload className="h-4 w-4 shrink-0" />
+                    {!effectivelyCollapsed && (
+                      <span className="whitespace-nowrap">{UI_CONFIG.UPLOAD_BTN_TITLE}</span>
+                    )}
+                  </Button>
                 )}
               </div>
 

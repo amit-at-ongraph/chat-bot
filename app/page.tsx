@@ -13,6 +13,8 @@ import { SessionProvider, useSessionContext } from "./contexts";
 import { useChatLogic } from "./hooks/useChatLogic";
 import Loading from "./loading";
 import { useChatStore } from "./store/chatStore";
+import { UploadDoc } from "./components/ui/UploadDoc";
+import { UserRole } from "../lib/constants";
 
 function HomeContent() {
   const { session, status: authStatus } = useSessionContext();
@@ -165,6 +167,7 @@ function HomeContent() {
           <ErrorToast error={errorToast} onRetry={handleRetry} onClear={handleClearError} />
         )}
       </div>
+      {session?.user?.role === UserRole.ADMIN && <UploadDoc />}
     </div>
   );
 }

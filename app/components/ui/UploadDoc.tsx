@@ -32,10 +32,16 @@ export const UploadDoc = ({ trigger }: UploadDocProps) => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [isLoadingDocs, setIsLoadingDocs] = useState(false);
-  const { selectedFileNames, toggleFile, addFile, clearSelection } = useFileStore();
+  const {
+    selectedFileNames,
+    toggleFile,
+    addFile,
+    clearSelection,
+    isUploadDialogOpen,
+    setUploadDialogOpen,
+  } = useFileStore();
 
   const fetchDocuments = async () => {
     setIsLoadingDocs(true);
@@ -50,10 +56,10 @@ export const UploadDoc = ({ trigger }: UploadDocProps) => {
   };
 
   useEffect(() => {
-    if (isDialogOpen) {
+    if (isUploadDialogOpen) {
       fetchDocuments();
     }
-  }, [isDialogOpen]);
+  }, [isUploadDialogOpen]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -89,7 +95,7 @@ export const UploadDoc = ({ trigger }: UploadDocProps) => {
       await fetchDocuments();
 
       // Close dialog after successful upload
-      setTimeout(() => setIsDialogOpen(false), 500);
+      setTimeout(() => setUploadDialogOpen(false), 500);
     } catch (error) {
       console.error("Upload failed:", error);
       toast.error("Upload failed. Please try again.", { id: uploadToast });
@@ -99,7 +105,7 @@ export const UploadDoc = ({ trigger }: UploadDocProps) => {
   };
 
   return (
-    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+    <Dialog open={isUploadDialogOpen} onOpenChange={setUploadDialogOpen}>
       <DialogTrigger asChild>
         {trigger || (
           <Button type="button" variant="ghost" size="icon" className="relative">
