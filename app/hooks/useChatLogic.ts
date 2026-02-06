@@ -6,6 +6,7 @@ import { DefaultChatTransport } from "ai";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { useFileStore } from "../store/fileStore";
+import { useLanguageStore } from "../store/languageStore";
 
 export function useChatLogic() {
   const [errorToast, setErrorToast] = useState<string | null>(null);
@@ -17,6 +18,7 @@ export function useChatLogic() {
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
   const chatIdRef = useRef<string | null>(null);
   const { selectedFileNames } = useFileStore();
+  const { language } = useLanguageStore();
 
   // Keep ref in sync with state
   useEffect(() => {
@@ -34,6 +36,7 @@ export function useChatLogic() {
         if (selectedFileNames.length > 0) {
           headers.set("x-selected-files", JSON.stringify(selectedFileNames));
         }
+        headers.set("x-language", language);
         const response = await fetch(url, { ...init, headers });
         const id = response.headers.get("x-chat-id");
         if (id) {

@@ -14,6 +14,7 @@ export async function POST(req: Request) {
   const { messages }: { messages: UIMessage[] } = body;
   const headerChatId = req.headers.get("x-chat-id");
   const selectedFilesHeader = req.headers.get("x-selected-files");
+  const language = req.headers.get("x-language") || "en";
   let selectedFilePaths: string[] = [];
 
   if (selectedFilesHeader) {
@@ -52,7 +53,7 @@ export async function POST(req: Request) {
 
   const mode = await detectModeWithLLM(userQuery);
 
-  const systemPrompt = getSystemMessage(context, mode);
+  const systemPrompt = getSystemMessage(context, mode, language);
 
   const result = streamText({
     model: chatModel,

@@ -62,10 +62,11 @@ export enum UserRole {
 }
 
 export const LANGUAGES = [
-  { label: "English", value: "en" },
-  { label: "Spanish", value: "es" },
-  { label: "French", value: "fr" },
-  { label: "Hindi", value: "hi" },
-  { label: "Chinese", value: "zh" },
-  { label: "Arabic", value: "ar" },
+  { native: "English", english: "English", value: "en" },
+  { native: "Español", english: "Spanish", value: "es" },
+  { native: "Français", english: "French", value: "fr" },
+  { native: "हिन्दी", english: "Hindi", value: "hi" },
+  { native: "中文", english: "Chinese", value: "zh" },
+  { native: "العربية", english: "Arabic", value: "ar" },
+  { native: "Português", english: "Portuguese", value: "pt" },
 ];

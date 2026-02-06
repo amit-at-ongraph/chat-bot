@@ -1,5 +1,6 @@
 "use client";
 
+import { useFileStore } from "@/app/store/fileStore";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +13,6 @@ import axios from "axios";
 import { FileText, Loader2, PlusIcon, Upload } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import Spinner from "../Spinner";
-import { useFileStore } from "@/app/store/fileStore";
 import { Button } from "./Button";
 import { Checkbox } from "./Checkbox";
 
@@ -98,14 +98,14 @@ export const UploadDoc = () => {
         <Button type="button" variant="ghost" size="icon" className="relative">
           <PlusIcon className="h-5 w-5" />
           {selectedFileNames.length > 0 && (
-            <span className="bg-primary text-app-bg absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold">
+            <span className="bg-primary text-app-bg absolute -top-1 right-0 flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold">
               {selectedFileNames.length}
             </span>
           )}
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-md">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Add Attachment</DialogTitle>
         </DialogHeader>
@@ -150,7 +150,7 @@ export const UploadDoc = () => {
                 No documents uploaded yet
               </p>
             ) : (
-              <div className="max-h-48 space-y-2 overflow-y-auto">
+              <div className="max-h-[40vh] space-y-2 overflow-y-auto">
                 {documents.map((doc, index) => (
                   <div
                     key={index}

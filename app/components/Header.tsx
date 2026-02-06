@@ -1,5 +1,3 @@
-"use client";
-
 import { UI_CONFIG } from "@/config";
 import { Menu, Moon, Sun } from "lucide-react";
 import { signIn, signOut } from "next-auth/react";
@@ -7,6 +5,7 @@ import { useTheme } from "next-themes";
 import { useSessionContext } from "../contexts";
 import { useFileStore } from "../store/fileStore";
 import { Button } from "./ui/Button";
+import { LanguageSelector } from "./ui/LanguageSelector";
 
 interface HeaderProps {
   skippedAuth: boolean;
@@ -41,6 +40,8 @@ export default function Header({ skippedAuth, onToggleSidebar, isSidebarOpen }: 
       </div>
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-1">
+          <LanguageSelector />
+
           <Button
             variant="ghost"
             size="icon"

@@ -18,11 +18,13 @@ export function loadPrompt(): any {
   }
 }
 
-export function getSystemMessage(context: string, mode?: Mode): string {
+export function getSystemMessage(context: string, mode?: Mode, _language: string = "en"): string {
   const config = loadPrompt();
 
   // Convert the complex YAML object into a readable text format for the system prompt
   const mainPrompt = typeof config === "string" ? config : JSON.stringify(config, null, 2);
+
+  // const languageInstruction = `IMPORTANT: Always respond in the following language: ${language}. If the user asks in a different language, still respond in ${language} unless explicitly told otherwise.`;
 
   return `Follow these instructions and behavioral guidelines strictly:\n\n${mode === "CRISIS" ? crisisModeText : mode === "OPERATIONS" ? operationsModeText : infoModeText}\n\n${mainPrompt}\n\nRetrieved Context to use for the user's question:\n${context}`;
 }
