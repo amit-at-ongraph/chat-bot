@@ -14,6 +14,7 @@ import {
   Upload,
   User,
   X,
+  Info,
 } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
@@ -22,6 +23,7 @@ import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
 import { UploadDoc } from "./ui/UploadDoc";
 import { UserRole } from "@/lib/constants";
+import HowToUse from "./HowToUse";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -53,6 +55,7 @@ export default function Sidebar({
   selectedChatLoading,
 }: SidebarProps) {
   const { session } = useSessionContext();
+  const [activeView, setActiveView] = useState<"main" | "how-to">("main");
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const [isDesktop, setIsDesktop] = useState(false);
@@ -101,7 +104,15 @@ export default function Sidebar({
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             className="bg-header-bg border-border-dark fixed top-0 bottom-0 left-0 z-50 transform border-r"
           >
-            <div className="flex h-full w-full flex-col overflow-hidden">
+            <AnimatePresence mode="wait">
+              {activeView === "main" ? (
+                <motion.div
+                  key="main"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="flex h-full w-full flex-col overflow-hidden"
+                >
               {/* Sidebar Header */}
               <div className="flex h-16.25 items-center justify-start gap-4 px-4 py-3">
                 <div className="flex items-center gap-2">
@@ -136,6 +147,26 @@ export default function Sidebar({
                   <Edit className="h-4 w-4 shrink-0" />
                   {!effectivelyCollapsed && (
                     <span className="whitespace-nowrap">{UI_CONFIG.CHAT_BTN_TITLE}</span>
+                  )}
+                </Button>
+
+                <Button
+                  variant="none"
+                  size="none"
+                  onClick={() => {
+                    if (effectivelyCollapsed) {
+                      onToggleCollapse();
+                    }
+                    setActiveView("how-to");
+                  }}
+                  className="w-full gap-3 text-[14px]"
+                  title={effectivelyCollapsed ? "How To Use PAXIS" : ""}
+                >
+                  <Info className="h-4 w-4 shrink-0" />
+                  {!effectivelyCollapsed && (
+                    <span className="flex-1 text-left whitespace-nowrap">
+                      How To Use PAXIS
+                    </span>
                   )}
                 </Button>
 
@@ -243,7 +274,19 @@ export default function Sidebar({
                   )}
                 </div>
               </div>
-            </div>
+            </motion.div>
+          ) : (
+                <motion.div
+                  key="how-to"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  className="h-full w-full overflow-hidden"
+                >
+                  <HowToUse onBack={() => setActiveView("main")} />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.aside>
         )}
       </AnimatePresence>
