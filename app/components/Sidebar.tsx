@@ -1,6 +1,5 @@
 "use client";
 
-import { UI_CONFIG } from "@/config";
 import { UserRole } from "@/lib/constants";
 import { DBChat } from "@/types/chat";
 import { AnimatePresence, motion } from "framer-motion";
@@ -24,6 +23,9 @@ import { useFileStore } from "../store/fileStore";
 import HowToUse from "./HowToUse";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
+import { useTranslation } from "../i18n/useTranslation";
+import { useLanguageStore } from "../store/languageStore";
+import { Languages } from "lucide-react";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -58,6 +60,8 @@ export default function Sidebar({
   const [activeView, setActiveView] = useState<"main" | "how-to">("main");
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const { setUploadDialogOpen } = useFileStore();
+  const { t } = useTranslation();
+  const { language, setLanguage } = useLanguageStore();
   const userMenuRef = useRef<HTMLDivElement>(null);
   const [isDesktop, setIsDesktop] = useState(false);
 
@@ -143,11 +147,11 @@ export default function Sidebar({
                         }
                       }}
                       className="w-full gap-3 text-[14px]"
-                      title={effectivelyCollapsed ? UI_CONFIG.CHAT_BTN_TITLE : ""}
+                      title={effectivelyCollapsed ? t("common.new_chat") : ""}
                     >
                       <Edit className="h-4 w-4 shrink-0" />
                       {!effectivelyCollapsed && (
-                        <span className="whitespace-nowrap">{UI_CONFIG.CHAT_BTN_TITLE}</span>
+                        <span className="whitespace-nowrap">{t("common.new_chat")}</span>
                       )}
                     </Button>
 
@@ -161,11 +165,11 @@ export default function Sidebar({
                         setActiveView("how-to");
                       }}
                       className="w-full gap-3 text-[14px]"
-                      title={effectivelyCollapsed ? "How To Use PAXIS" : ""}
+                      title={effectivelyCollapsed ? t("common.how_to_use") : ""}
                     >
                       <Info className="h-4 w-4 shrink-0" />
                       {!effectivelyCollapsed && (
-                        <span className="flex-1 text-left whitespace-nowrap">How To Use PAXIS</span>
+                        <span className="flex-1 text-left whitespace-nowrap">{t("common.how_to_use")}</span>
                       )}
                     </Button>
 
@@ -180,11 +184,11 @@ export default function Sidebar({
                           }
                         }}
                         className="w-full gap-3 text-[14px]"
-                        title={effectivelyCollapsed ? UI_CONFIG.UPLOAD_BTN_TITLE : ""}
+                        title={effectivelyCollapsed ? t("common.upload_files") : ""}
                       >
                         <Upload className="h-4 w-4 shrink-0" />
                         {!effectivelyCollapsed && (
-                          <span className="whitespace-nowrap">{UI_CONFIG.UPLOAD_BTN_TITLE}</span>
+                          <span className="whitespace-nowrap">{t("common.upload_files")}</span>
                         )}
                       </Button>
                     )}
@@ -193,14 +197,14 @@ export default function Sidebar({
                   {/* Navigation Items */}
                   <nav className="flex-1 space-y-1 overflow-y-auto">
                     {!effectivelyCollapsed && (
-                      <div className="text-text-muted px-4 py-2 text-[14px]">Recent Chats</div>
+                      <div className="text-text-muted px-4 py-2 text-[14px]">{t("common.recent_chats")}</div>
                     )}
                     {!isCollapsed &&
                       chats.map((chat) => (
                         <SidebarItem
                           key={chat.id}
                           icon={MessageSquare}
-                          label={chat.title || "Untitled Chat"}
+                          label={chat.title || t("common.untitled_chat")}
                           active={currentChatId === chat.id}
                           loading={selectedChatLoading && currentChatId === chat.id}
                           isCollapsed={effectivelyCollapsed}
@@ -216,7 +220,7 @@ export default function Sidebar({
                       ))}
                     {chats.length === 0 && !effectivelyCollapsed && (
                       <div className="text-text-muted px-4 py-4 text-sm italic">
-                        No recent chats
+                        {t("common.no_recent_chats")}
                       </div>
                     )}
                   </nav>
@@ -242,7 +246,19 @@ export default function Sidebar({
                             }}
                           >
                             <Settings className="h-5 w-5" />
-                            Settings
+                            {t("common.settings")}
+                          </Button>
+
+                          <Button
+                            variant="ghost"
+                            className="text-text-main hover:bg-border-light w-full justify-start gap-3 rounded-full px-2 py-2 font-medium"
+                            onClick={() => {
+                              setLanguage(language === "en" ? "hi" : "en");
+                              setIsUserMenuOpen(false);
+                            }}
+                          >
+                            <Languages className="h-5 w-5" />
+                            {language === "en" ? "Hindi (हिंदी)" : "English (अंग्रेज़ी)"}
                           </Button>
                         </motion.div>
                       )}
@@ -267,7 +283,7 @@ export default function Sidebar({
                       </div>
                       {!effectivelyCollapsed && (
                         <div className="text-text-main max-w-37.5 truncate text-[14px]">
-                          {session?.user?.name || "Guest User"}
+                          {session?.user?.name || t("common.guest_user")}
                         </div>
                       )}
                     </div>
@@ -316,6 +332,7 @@ function SidebarItem({
   const [editValue, setEditValue] = useState(label);
   const menuRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -344,7 +361,7 @@ function SidebarItem({
 
   const menuItems = [
     {
-      label: "Rename",
+      label: t("common.rename"),
       icon: Edit2,
       action: () => {
         setIsRenaming(true);
@@ -352,11 +369,11 @@ function SidebarItem({
       },
     },
     {
-      label: "Delete",
+      label: t("common.delete"),
       icon: Trash2,
       danger: true,
       action: () => {
-        if (confirm("Are you sure you want to delete this chat?")) {
+        if (confirm(t("upload.delete_confirm"))) {
           onDelete?.();
         }
         setShowMenu(false);

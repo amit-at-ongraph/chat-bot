@@ -17,6 +17,7 @@ import Spinner from "../Spinner";
 import { Button } from "./Button";
 import { Checkbox } from "./Checkbox";
 import { formatDistanceToNow, isToday, isYesterday } from "date-fns";
+import { useTranslation } from "@/app/i18n/useTranslation";
 
 interface DocumentItem {
   fileName: string;
@@ -38,6 +39,7 @@ export const UploadDoc = () => {
     isUploadDialogOpen,
     setUploadDialogOpen,
   } = useFileStore();
+  const { t } = useTranslation();
 
   const fetchDocuments = async () => {
     setIsLoadingDocs(true);
@@ -66,7 +68,7 @@ export const UploadDoc = () => {
     if (selectedFiles.length === 0) return;
 
     setIsUploading(true);
-    const uploadToast = toast.loading("Uploading files...");
+    const uploadToast = toast.loading(t("upload.uploading"));
 
     try {
       const formData = new FormData();
@@ -80,7 +82,7 @@ export const UploadDoc = () => {
         },
       });
 
-      toast.success("Files uploaded and ingestion triggered!", { id: uploadToast });
+      toast.success(t("upload.upload_success"), { id: uploadToast });
 
       // Clear selected files after successful upload
       setSelectedFiles([]);
@@ -94,7 +96,7 @@ export const UploadDoc = () => {
       setTimeout(() => setUploadDialogOpen(false), 500);
     } catch (error) {
       console.error("Upload failed:", error);
-      toast.error("Upload failed. Please try again.", { id: uploadToast });
+      toast.error(t("upload.upload_failed"), { id: uploadToast });
     } finally {
       setIsUploading(false);
     }
@@ -112,7 +114,7 @@ export const UploadDoc = () => {
 
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Upload Document</DialogTitle>
+          <DialogTitle>{t("upload.title")}</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 overflow-hidden py-4">
           <div className="grid min-w-0 gap-2">
@@ -144,7 +146,7 @@ export const UploadDoc = () => {
               </Button>
             </div>
             <p className="text-muted-foreground truncate text-sm">
-              Select one or more .txt or .pdf files to upload
+              {t("upload.select_files")}
             </p>
           </div>
 
@@ -186,26 +188,26 @@ export const UploadDoc = () => {
                       onCheckedChange={() => {}}
                     />
                     <span className="text-muted-foreground group-hover:text-foreground cursor-pointer text-xs font-medium">
-                      Select All
+                      {t("upload.select_all")}
                     </span>
                   </div>
                   <button
                     disabled={isDeleting || isUploading}
                     onClick={async (e) => {
                       e.stopPropagation();
-                      if (confirm(`Delete ${selectedFileNames.length} selected files?`)) {
+                      if (confirm(t("upload.delete_bulk_confirm", { count: selectedFileNames.length }))) {
                         setIsDeleting(true);
-                        const deleteToast = toast.loading("Deleting files...");
+                        const deleteToast = toast.loading(t("upload.deleting") || "Deleting...");
                         try {
                           await axios.post("/api/documents/bulk-delete", {
                             fileNames: selectedFileNames,
                           });
-                          toast.success("Files deleted successfully!", { id: deleteToast });
+                          toast.success(t("upload.delete_success"), { id: deleteToast });
                           clearSelection();
                           await fetchDocuments();
                         } catch (e) {
                           console.error(e);
-                          toast.error("Deletion failed. Please try again.", { id: deleteToast });
+                          toast.error(t("upload.delete_failed"), { id: deleteToast });
                         } finally {
                           setIsDeleting(false);
                         }
@@ -214,11 +216,11 @@ export const UploadDoc = () => {
                     className="flex cursor-pointer items-center gap-1.5 text-xs font-semibold text-red-500 transition-colors hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <Trash2 className="h-4 w-4" />
-                    <span>Delete</span>
+                    <span>{t("common.delete")}</span>
                   </button>
                 </>
               ) : (
-                <h3 className="truncate text-sm font-semibold">Uploaded Documents</h3>
+                <h3 className="truncate text-sm font-semibold">{t("upload.uploaded_docs")}</h3>
               )}
             </div>
 
@@ -228,7 +230,7 @@ export const UploadDoc = () => {
               </div>
             ) : documents.length === 0 ? (
               <p className="text-muted-foreground py-4 text-center text-sm">
-                No documents uploaded yet
+                {t("upload.no_docs")}
               </p>
             ) : (
               <div className="max-h-[36vh] space-y-1 overflow-y-auto pr-1">
@@ -284,9 +286,12 @@ export const UploadDoc = () => {
                         <p className="text-muted-foreground text-[10px]">
                           {(() => {
                             const date = new Date(doc.createdAt);
-                            if (isToday(date)) return "Today";
-                            if (isYesterday(date)) return "Yesterday";
-                            return formatDistanceToNow(date, { addSuffix: true });
+                            if (isToday(date)) return t("common.today");
+                            if (isYesterday(date)) return t("common.yesterday");
+                            // Fallback for relative time
+                            const diffInDays = Math.floor((new Date().getTime() - date.getTime()) / (1000 * 3600 * 24));
+                            if (diffInDays < 1) return t("common.just_now");
+                            return t("common.n_days_ago", { n: diffInDays }) || formatDistanceToNow(date, { addSuffix: true });
                           })()}
                         </p>
                       </div>
