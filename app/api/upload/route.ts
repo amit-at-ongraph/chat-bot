@@ -36,7 +36,7 @@ export async function POST(req: Request) {
       try {
         const buffer = Buffer.from(await file.arrayBuffer());
 
-        const filePath = session?.user?.id ? `${session.user.id}/${file.name}` : file.name;
+        const filePath = file.name;
 
         const { error } = await supabase.storage.from("documents").upload(filePath, buffer, {
           upsert: true,

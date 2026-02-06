@@ -22,10 +22,7 @@ export async function POST(req: Request) {
     }
 
     // 1. Storage Cleanup
-    // Prepare all paths (prefixed and legacy)
-    const pathsToDelete = fileNames.flatMap((name) => [`${session.user.id}/${name}`, name]);
-
-    const { error: storageError } = await supabase.storage.from("documents").remove(pathsToDelete);
+    const { error: storageError } = await supabase.storage.from("documents").remove(fileNames);
 
     if (storageError) {
       console.warn("Bulk storage deletion warning:", storageError.message);

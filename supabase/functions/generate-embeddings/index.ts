@@ -54,7 +54,8 @@ serve(async (req: Request) => {
         chunk_index: i + j,
         content: chunk,
         embedding: embeddings[j],
-        user_id: userId || null,
+        // No userId
+        user_id: null,
       }));
 
       await supabase.from("documents").insert(rows);
