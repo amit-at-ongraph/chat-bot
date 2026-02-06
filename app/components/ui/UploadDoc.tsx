@@ -12,9 +12,11 @@ import { Input } from "@/components/ui/input";
 import axios from "axios";
 import { FileText, Loader2, PlusIcon, Trash2, Upload } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import Spinner from "../Spinner";
 import { Button } from "./Button";
 import { Checkbox } from "./Checkbox";
+import { cn } from "@/lib/utils";
 
 interface DocumentItem {
   fileName: string;
@@ -29,6 +31,7 @@ export const UploadDoc = ({ trigger }: UploadDocProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [isLoadingDocs, setIsLoadingDocs] = useState(false);
@@ -61,6 +64,7 @@ export const UploadDoc = ({ trigger }: UploadDocProps) => {
     if (selectedFiles.length === 0) return;
 
     setIsUploading(true);
+    const uploadToast = toast.loading("Uploading files...");
 
     try {
       const formData = new FormData();
@@ -74,6 +78,8 @@ export const UploadDoc = ({ trigger }: UploadDocProps) => {
         },
       });
 
+      toast.success("Files uploaded and ingestion triggered!", { id: uploadToast });
+      
       // Clear selected files after successful upload
       setSelectedFiles([]);
       if (fileInputRef.current) {
@@ -86,6 +92,7 @@ export const UploadDoc = ({ trigger }: UploadDocProps) => {
       setTimeout(() => setIsDialogOpen(false), 500);
     } catch (error) {
       console.error("Upload failed:", error);
+      toast.error("Upload failed. Please try again.", { id: uploadToast });
     } finally {
       setIsUploading(false);
     }
@@ -116,13 +123,13 @@ export const UploadDoc = ({ trigger }: UploadDocProps) => {
                   accept=".txt,.pdf"
                   multiple
                   onChange={handleFileSelect}
-                  disabled={isUploading}
+                  disabled={isUploading || isDeleting}
                   className="w-full"
                 />
               </div>
               <Button
                 onClick={handleUpload}
-                disabled={selectedFiles.length === 0 || isUploading}
+                disabled={selectedFiles.length === 0 || isUploading || isDeleting}
                 variant="primary"
                 size="md"
                 className="shrink-0"
@@ -145,8 +152,12 @@ export const UploadDoc = ({ trigger }: UploadDocProps) => {
               {documents.length > 0 && selectedFileNames.length > 0 ? (
                 <>
                   <div
-                    className="group flex cursor-pointer items-center gap-2"
+                    className={cn(
+                      "group flex cursor-pointer items-center gap-2",
+                      (isDeleting || isUploading) && "opacity-50 cursor-not-allowed pointer-events-none"
+                    )}
                     onClick={(e) => {
+                      if (isDeleting || isUploading) return;
                       e.preventDefault();
                       const allNames = documents.map((d) => d.fileName);
                       const allSelected = allNames.every((name) =>
@@ -176,21 +187,28 @@ export const UploadDoc = ({ trigger }: UploadDocProps) => {
                     </span>
                   </div>
                   <button
+                    disabled={isDeleting || isUploading}
                     onClick={async (e) => {
                       e.stopPropagation();
                       if (confirm(`Delete ${selectedFileNames.length} selected files?`)) {
+                        setIsDeleting(true);
+                        const deleteToast = toast.loading("Deleting files...");
                         try {
                           await axios.post("/api/documents/bulk-delete", {
                             fileNames: selectedFileNames,
                           });
+                          toast.success("Files deleted successfully!", { id: deleteToast });
                           clearSelection();
                           await fetchDocuments();
                         } catch (e) {
                           console.error(e);
+                          toast.error("Deletion failed. Please try again.", { id: deleteToast });
+                        } finally {
+                          setIsDeleting(false);
                         }
                       }
                     }}
-                    className="flex cursor-pointer items-center gap-1.5 text-xs font-semibold text-red-500 transition-colors hover:text-red-600"
+                    className="flex cursor-pointer items-center gap-1.5 text-xs font-semibold text-red-500 transition-colors hover:text-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Trash2 className="h-4 w-4" />
                     <span>Delete</span>
@@ -216,10 +234,12 @@ export const UploadDoc = ({ trigger }: UploadDocProps) => {
                   return (
                     <div
                       key={index}
-                      className={`group flex cursor-pointer items-center gap-2 rounded-lg p-2 transition-colors ${
-                        isSelected ? "bg-primary/5 hover:bg-primary/10" : "hover:bg-muted/50"
-                      }`}
-                      onClick={() => toggleFile(doc.fileName)}
+                      className={cn(
+                        "group flex cursor-pointer items-center gap-2 rounded-lg p-2 transition-colors",
+                        isSelected ? "bg-primary/5 hover:bg-primary/10" : "hover:bg-muted/50",
+                        (isUploading || isDeleting) && "opacity-50 pointer-events-none cursor-not-allowed"
+                      )}
+                      onClick={() => !isUploading && !isDeleting && toggleFile(doc.fileName)}
                     >
                       <div className="relative flex h-4 w-4 shrink-0 items-center justify-center">
                         <div
@@ -241,8 +261,9 @@ export const UploadDoc = ({ trigger }: UploadDocProps) => {
                         >
                           <Checkbox
                             checked={isSelected}
-                            onCheckedChange={() => toggleFile(doc.fileName)}
+                            onCheckedChange={() => !isUploading && !isDeleting && toggleFile(doc.fileName)}
                             className="h-4 w-4"
+                            disabled={isUploading || isDeleting}
                           />
                         </div>
                       </div>
