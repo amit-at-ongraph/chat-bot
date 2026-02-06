@@ -6,12 +6,11 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import axios from "axios";
-import { FileText, Loader2, PlusIcon, Trash2, Upload } from "lucide-react";
+import { FileText, Loader2, Trash2, Upload } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import Spinner from "../Spinner";
@@ -23,11 +22,7 @@ interface DocumentItem {
   createdAt: Date;
 }
 
-interface UploadDocProps {
-  trigger?: React.ReactNode;
-}
-
-export const UploadDoc = ({ trigger }: UploadDocProps) => {
+export const UploadDoc = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -106,13 +101,13 @@ export const UploadDoc = ({ trigger }: UploadDocProps) => {
 
   return (
     <Dialog open={isUploadDialogOpen} onOpenChange={setUploadDialogOpen}>
-      <DialogTrigger asChild>
+      {/* <DialogTrigger asChild>
         {trigger || (
           <Button type="button" variant="ghost" size="icon" className="relative">
             <PlusIcon className="h-5 w-5" />
           </Button>
         )}
-      </DialogTrigger>
+      </DialogTrigger> */}
 
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>

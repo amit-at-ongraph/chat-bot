@@ -31,7 +31,7 @@ export default function Header({ skippedAuth, onToggleSidebar, isSidebarOpen }: 
           </Button>
         )}
         <div className="flex items-center gap-2">
-          <h1 className="text-text-main hidden text-xl font-bold tracking-tight sm:block sm:truncate md:max-w-md">
+          <h1 className="text-text-main hidden text-xl font-bold tracking-tight sm:block sm:truncate md:max-w-md m-0">
             {UI_CONFIG.HEADER_TITLE}
           </h1>
         </div>
