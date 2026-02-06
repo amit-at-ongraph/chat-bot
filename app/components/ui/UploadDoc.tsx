@@ -234,7 +234,7 @@ export const UploadDoc = ({ trigger }: UploadDocProps) => {
                 No documents uploaded yet
               </p>
             ) : (
-              <div className="max-h-[45vh] space-y-1 overflow-y-auto pr-1">
+              <div className="max-h-[36vh] space-y-1 overflow-y-auto pr-1">
                 {documents.map((doc, index) => {
                   const isSelected = selectedFileNames.includes(doc.fileName);
                   return (
