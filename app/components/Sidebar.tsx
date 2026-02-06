@@ -11,6 +11,7 @@ import {
   MoreVertical,
   Settings,
   Trash2,
+  Upload,
   User,
   X,
 } from "lucide-react";
@@ -19,6 +20,8 @@ import { useEffect, useRef, useState } from "react";
 import { useSessionContext } from "../contexts";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
+import { UploadDoc } from "./ui/UploadDoc";
+import { UserRole } from "@/lib/constants";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -117,7 +120,7 @@ export default function Sidebar({
               </div>
 
               {/* New Chat Button */}
-              <div className="flex justify-start p-4 px-4">
+              <div className="flex flex-col justify-start p-4 px-4 gap-4">
                 <Button
                   variant="none"
                   size="none"
@@ -130,11 +133,34 @@ export default function Sidebar({
                   className="w-full gap-3 text-[14px]"
                   title={effectivelyCollapsed ? UI_CONFIG.CHAT_BTN_TITLE : ""}
                 >
-                  <Edit className="h-5 w-5 shrink-0" />
+                  <Edit className="h-4 w-4 shrink-0" />
                   {!effectivelyCollapsed && (
                     <span className="whitespace-nowrap">{UI_CONFIG.CHAT_BTN_TITLE}</span>
                   )}
                 </Button>
+
+                {session?.user?.role === UserRole.ADMIN && (
+                  <UploadDoc
+                    trigger={
+                      <Button
+                        variant="none"
+                        size="none"
+                        onClick={() => {
+                          if (window.innerWidth < 1024) {
+                            onClose();
+                          }
+                        }}
+                        className="w-full gap-3 text-[14px]"
+                        title={effectivelyCollapsed ? UI_CONFIG.UPLOAD_BTN_TITLE : ""}
+                      >
+                        <Upload className="h-4 w-4 shrink-0" />
+                        {!effectivelyCollapsed && (
+                          <span className="whitespace-nowrap">{UI_CONFIG.UPLOAD_BTN_TITLE}</span>
+                        )}
+                      </Button>
+                    }
+                  />
+                )}
               </div>
 
               {/* Navigation Items */}

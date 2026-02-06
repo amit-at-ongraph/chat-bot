@@ -21,7 +21,11 @@ interface DocumentItem {
   createdAt: Date;
 }
 
-export const UploadDoc = () => {
+interface UploadDocProps {
+  trigger?: React.ReactNode;
+}
+
+export const UploadDoc = ({ trigger }: UploadDocProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -78,11 +82,6 @@ export const UploadDoc = () => {
       // Refresh documents list
       await fetchDocuments();
 
-      // Auto-select newly uploaded files
-      selectedFiles.forEach((file) => {
-        addFile(file.name);
-      });
-
       // Close dialog after successful upload
       setTimeout(() => setIsDialogOpen(false), 500);
     } catch (error) {
@@ -95,9 +94,11 @@ export const UploadDoc = () => {
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button type="button" variant="ghost" size="icon" className="relative">
-          <PlusIcon className="h-5 w-5" />
-        </Button>
+        {trigger || (
+          <Button type="button" variant="ghost" size="icon" className="relative">
+            <PlusIcon className="h-5 w-5" />
+          </Button>
+        )}
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-lg">
@@ -248,7 +249,7 @@ export const UploadDoc = () => {
                       <div className="min-w-0 flex-1">
                         <p
                           className={`truncate text-sm transition-colors ${
-                            isSelected ? "text-primary font-medium" : "text-foreground"
+                            isSelected ? "text-primary" : "text-foreground"
                           }`}
                         >
                           {doc.fileName}

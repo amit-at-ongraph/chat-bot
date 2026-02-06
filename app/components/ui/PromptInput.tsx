@@ -1,11 +1,8 @@
 "use client";
 
-import { UserRole } from "@/lib/constants";
 import { ArrowUp, SquareIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSessionContext } from "../../contexts";
-import { UploadDoc } from "./UploadDoc";
 
 interface PromptInputProps {
   value: string;
@@ -26,7 +23,6 @@ export const PromptInput = ({
   placeholder = "Ask a question...",
   maxHeight = 160,
 }: PromptInputProps) => {
-  const { session } = useSessionContext();
   const { theme } = useTheme();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isMultiline, setIsMultiline] = useState(false);
@@ -61,8 +57,6 @@ export const PromptInput = ({
 
   return (
     <div className="flex items-center gap-2">
-      {session?.user?.role === UserRole.ADMIN && <UploadDoc />}
-
       <div
         className={`border-border-base bg-prompt-input shadow-outline relative w-full border transition-all duration-200 ${
           isMultiline ? "rounded-[28px]" : "rounded-4xl"
