@@ -60,3 +60,12 @@ export enum UserRole {
   USER = "user",
   ADMIN = "admin",
 }
+
+export const LANGUAGES = [
+  { label: "English", value: "en" },
+  { label: "Spanish", value: "es" },
+  { label: "French", value: "fr" },
+  { label: "Hindi", value: "hi" },
+  { label: "Chinese", value: "zh" },
+  { label: "Arabic", value: "ar" },
+];
