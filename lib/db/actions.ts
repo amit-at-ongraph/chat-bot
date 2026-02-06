@@ -1,6 +1,6 @@
 import { DBChat, DBMessage } from "@/types/chat";
 import { embed } from "ai";
-import { and, desc, eq, inArray, isNull, lt, or, sql } from "drizzle-orm";
+import { and, desc, eq, or, sql } from "drizzle-orm";
 import { embeddingModel } from "../ai";
 import { db } from "./index";
 import { chats, documents, messages } from "./schema";
@@ -76,10 +76,7 @@ export async function renameChat(chatId: string, title: string) {
   return await db.update(chats).set({ title }).where(eq(chats.id, chatId)).returning();
 }
 
-export async function findRelevantContent(
-  userQuery: string,
-  search?: { userId: string; filePaths?: string[] },
-) {
+export async function findRelevantContent(userQuery: string) {
   if (!userQuery) return "";
 
   // 1. Generate embedding for the user's question
@@ -88,19 +85,7 @@ export async function findRelevantContent(
     value: userQuery,
   });
 
-  // 2. Query for the most relevant chunks
-  const whereConditions = [];
-
-  if (search?.userId) {
-    whereConditions.push(eq(documents.userId, search.userId));
-  } else {
-    whereConditions.push(isNull(documents.userId));
-  }
-
-  if (search?.filePaths && search.filePaths.length > 0) {
-    whereConditions.push(inArray(documents.filePath, search.filePaths));
-  }
-
+  // 2. Query for the most relevant chunks globally
   const relevantChunks = await db
     .select({
       content: documents.content,
@@ -109,7 +94,6 @@ export async function findRelevantContent(
     `,
     })
     .from(documents)
-    .where(and(...whereConditions))
     .orderBy((t) => t.distance) // ASC = most similar first
     .limit(15);
 

@@ -14,13 +14,15 @@ export async function GET() {
     }
 
     // Query to get distinct file names with their earliest created_at timestamp
+    const whereCondition = session.user.role === UserRole.ADMIN ? undefined : eq(documents.userId, session.user.id);
+
     const userDocuments = await db
       .select({
         fileName: documents.filePath,
         createdAt: sql<Date>`MIN(${documents.createdAt})`.as("created_at"),
       })
       .from(documents)
-      .where(eq(documents.userId, session.user.id))
+      .where(whereCondition)
       .groupBy(documents.filePath)
       .orderBy(sql`MIN(${documents.createdAt}) DESC`);
 

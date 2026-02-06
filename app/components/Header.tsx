@@ -3,7 +3,6 @@ import { Menu, Moon, Sun } from "lucide-react";
 import { signIn, signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useSessionContext } from "../contexts";
-import { useFileStore } from "../store/fileStore";
 import { Button } from "./ui/Button";
 import { LanguageSelector } from "./ui/LanguageSelector";
 
@@ -16,7 +15,6 @@ interface HeaderProps {
 export default function Header({ skippedAuth, onToggleSidebar, isSidebarOpen }: HeaderProps) {
   const { session } = useSessionContext();
   const { setTheme, resolvedTheme } = useTheme();
-  const { clearSelection } = useFileStore();
 
   return (
     <header className="sticky top-0 z-10 flex items-center justify-between bg-transparent px-4 py-3">
@@ -62,7 +60,6 @@ export default function Header({ skippedAuth, onToggleSidebar, isSidebarOpen }: 
           <Button
             variant="ghost"
             onClick={() => {
-              clearSelection();
               signOut({ redirect: true });
             }}
             className="text-text-muted px-2 py-1 text-xs font-bold transition-colors hover:text-red-400"
