@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import Spinner from "../Spinner";
 import { Button } from "./Button";
 import { Checkbox } from "./Checkbox";
+import { formatDistanceToNow, isToday, isYesterday } from "date-fns";
 
 interface DocumentItem {
   fileName: string;
@@ -281,7 +282,12 @@ export const UploadDoc = () => {
                           {doc.fileName}
                         </p>
                         <p className="text-muted-foreground text-[10px]">
-                          {new Date(doc.createdAt).toLocaleDateString()}
+                          {(() => {
+                            const date = new Date(doc.createdAt);
+                            if (isToday(date)) return "Today";
+                            if (isYesterday(date)) return "Yesterday";
+                            return formatDistanceToNow(date, { addSuffix: true });
+                          })()}
                         </p>
                       </div>
                     </div>
