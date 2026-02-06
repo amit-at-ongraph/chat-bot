@@ -69,4 +69,4 @@ export const LANGUAGES = [
   { native: "中文", english: "Chinese", value: "zh" },
   { native: "العربية", english: "Arabic", value: "ar" },
   { native: "Português", english: "Portuguese", value: "pt" },
-];
+] as const;

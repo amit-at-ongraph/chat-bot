@@ -10,7 +10,7 @@ import {
 import { LANGUAGES } from "@/lib/constants";
 import { Globe } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { useLanguageStore } from "../../store/languageStore";
+import { useLanguageStore, Language } from "../../store/languageStore";
 import { Button } from "./Button";
 
 export const LanguageSelector = () => {
@@ -57,7 +57,7 @@ export const LanguageSelector = () => {
                   : "hover:bg-selected border-transparent"
               }`}
               onClick={() => {
-                setLanguage(lang.value);
+                setLanguage(lang.value as Language);
                 setIsLangOpen(false);
               }}
             >
