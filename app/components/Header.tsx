@@ -5,6 +5,7 @@ import { useTheme } from "next-themes";
 import { useSessionContext } from "../contexts";
 import { Button } from "./ui/Button";
 import { LanguageSelector } from "./ui/LanguageSelector";
+import { useTranslation } from "../i18n/useTranslation";
 
 interface HeaderProps {
   skippedAuth: boolean;
@@ -15,6 +16,7 @@ interface HeaderProps {
 export default function Header({ skippedAuth, onToggleSidebar, isSidebarOpen }: HeaderProps) {
   const { session } = useSessionContext();
   const { setTheme, resolvedTheme } = useTheme();
+  const { t } = useTranslation();
 
   return (
     <header className="sticky top-0 z-10 flex items-center justify-between bg-transparent px-4 py-3">
@@ -25,7 +27,7 @@ export default function Header({ skippedAuth, onToggleSidebar, isSidebarOpen }: 
             size="icon"
             onClick={onToggleSidebar}
             className={`transition-opacity lg:hidden ${isSidebarOpen ? "pointer-events-none opacity-0" : ""}`}
-            aria-label="Toggle sidebar"
+            aria-label={t("common.toggle_sidebar")}
           >
             <Menu className="h-6 w-6" />
           </Button>
@@ -45,7 +47,7 @@ export default function Header({ skippedAuth, onToggleSidebar, isSidebarOpen }: 
             size="icon"
             onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
             className="text-text-muted hover:text-text-main h-9 w-9 transition-colors"
-            aria-label="Toggle theme"
+            aria-label={t("common.toggle_theme")}
           >
             {!typeof window ? (
               <div className="h-5 w-5" />
@@ -64,11 +66,11 @@ export default function Header({ skippedAuth, onToggleSidebar, isSidebarOpen }: 
             }}
             className="text-text-muted px-2 py-1 text-xs font-bold transition-colors hover:text-red-400"
           >
-            Sign Out
+            {t("common.sign_out")}
           </Button>
         ) : skippedAuth ? (
           <Button onClick={() => signIn()} className="px-3 py-1.5 text-xs font-bold">
-            Sign In
+            {t("common.sign_in")}
           </Button>
         ) : null}
       </div>

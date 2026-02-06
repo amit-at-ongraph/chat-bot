@@ -2,12 +2,15 @@
 
 import { ChevronLeft } from "lucide-react";
 import { Button } from "./ui/Button";
+import { useTranslation } from "../i18n/useTranslation";
 
 interface HowToUseProps {
   onBack: () => void;
 }
 
 export default function HowToUse({ onBack }: HowToUseProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="bg-background flex h-full flex-col">
       {/* Header with Back Button */}
@@ -21,7 +24,7 @@ export default function HowToUse({ onBack }: HowToUseProps) {
           <ChevronLeft className="h-5 w-5" />
         </Button>
         <h2 className="text-text-main m-0 text-[18px] font-semibold">
-          How To Use <span className="text-red-500">PAXIS</span>
+          {t("common.how_to_use")}
         </h2>
       </div>
 
@@ -31,63 +34,62 @@ export default function HowToUse({ onBack }: HowToUseProps) {
 
         <section className="space-y-2">
           <h3 className="text-text-main flex items-center gap-2 text-[14px] font-semibold">
-            You can ask about:
+            {t("how_to.ask_about")}
           </h3>
           <ul className="space-y-3 pl-1">
             <li className="flex gap-3 text-[14px]">
               <span className="mt-1 shrink-0 text-sm leading-none">🚪</span>
-              <span className="text-text-secondary">ICE at your door or work</span>
+              <span className="text-text-secondary">{t("how_to.ice_door")}</span>
             </li>
             <li className="flex gap-3 text-[14px]">
               <span className="mt-1 shrink-0 text-sm leading-none">⚖️</span>
-              <span className="text-text-secondary">Legal rights or immigration court</span>
+              <span className="text-text-secondary">{t("how_to.legal_rights")}</span>
             </li>
             <li className="flex gap-3 text-[14px]">
               <span className="mt-1 shrink-0 text-sm leading-none">🆘</span>
-              <span className="text-text-secondary">If someone has been detained</span>
+              <span className="text-text-secondary">{t("how_to.detained")}</span>
             </li>
             <li className="flex gap-3 text-[14px]">
               <span className="mt-1 shrink-0 text-sm leading-none">📝</span>
-              <span className="text-text-secondary">How to check a warrant or find help</span>
+              <span className="text-text-secondary">{t("how_to.warrant_help")}</span>
             </li>
             <li className="flex gap-3 text-[14px]">
               <span className="mt-1 shrink-0 text-sm leading-none">✊</span>
-              <span className="text-text-secondary">Preparing for a protest or public action</span>
+              <span className="text-text-secondary">{t("how_to.protest_action")}</span>
             </li>
           </ul>
         </section>
 
         <p className="text-text-secondary text-[14px]">
-          Ask in English, Spanish, or your language.
+          {t("how_to.languages")}
         </p>
 
         <section className="space-y-2">
           <h3 className="text-text-main text-[16px] font-bold">
-            <span className="text-red-500">PAXIS</span> will reply with:
+            <span className="text-red-500">{t("common.paxis")}</span> {t("how_to.replies_with")}
           </h3>
           <ul className="mt-1 space-y-2">
             <li className="flex gap-3 text-[14px]">
               <span className="mt-1 shrink-0 text-xs leading-none">✅</span>
-              <span className="text-text-secondary">What to say or not say</span>
+              <span className="text-text-secondary">{t("how_to.say_not_say")}</span>
             </li>
             <li className="flex gap-3 text-[14px]">
               <span className="mt-1 shrink-0 text-xs leading-none">✅</span>
-              <span className="text-text-secondary">What rights apply</span>
+              <span className="text-text-secondary">{t("how_to.rights_apply")}</span>
             </li>
             <li className="flex gap-3 text-[14px]">
               <span className="mt-1 shrink-0 text-xs leading-none">✅</span>
-              <span className="text-text-secondary">What to do next — calmly and lawfully</span>
+              <span className="text-text-secondary">{t("how_to.do_next")}</span>
             </li>
           </ul>
         </section>
 
         <div className="border-border-base space-y-4 border-t pt-4">
           <p className="text-text-secondary text-[14px]">
-            If it&apos;s urgent, use the quick reply buttons to get help fast.
+            {t("how_to.urgent_note")}
           </p>
           <p className="text-text-main text-[14px] leading-snug font-semibold">
-            <span className="text-red-500">PAXIS</span> is here for lawful, nonviolent response —
-            not fear.
+            <span className="text-red-500">{t("common.paxis")}</span> {t("how_to.purpose_note")}
           </p>
         </div>
       </div>
