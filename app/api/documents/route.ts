@@ -1,10 +1,10 @@
 import { authOptions } from "@/lib/auth";
+import { UserRole } from "@/lib/constants";
 import { db } from "@/lib/db";
 import { documents } from "@/lib/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { UserRole } from "@/lib/constants";
 
 export async function GET() {
   try {
@@ -14,7 +14,8 @@ export async function GET() {
     }
 
     // Query to get distinct file names with their earliest created_at timestamp
-    const whereCondition = session.user.role === UserRole.ADMIN ? undefined : eq(documents.userId, session.user.id);
+    const whereCondition =
+      session.user.role === UserRole.ADMIN ? undefined : eq(documents.userId, session.user.id);
 
     const userDocuments = await db
       .select({

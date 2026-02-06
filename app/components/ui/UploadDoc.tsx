@@ -1,5 +1,6 @@
 "use client";
 
+import { useFileStore } from "@/app/store/fileStore";
 import {
   Dialog,
   DialogContent,
@@ -9,10 +10,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
-import { FileText, Loader2, PlusIcon, Upload } from "lucide-react";
+import { FileText, Loader2, PlusIcon, Trash2, Upload } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import Spinner from "../Spinner";
-import { useFileStore } from "@/app/store/fileStore";
 import { Button } from "./Button";
 import { Checkbox } from "./Checkbox";
 
@@ -28,7 +28,7 @@ export const UploadDoc = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [isLoadingDocs, setIsLoadingDocs] = useState(false);
-  const { selectedFileNames, toggleFile, addFile } = useFileStore();
+  const { selectedFileNames, toggleFile, addFile, clearSelection } = useFileStore();
 
   const fetchDocuments = async () => {
     setIsLoadingDocs(true);
@@ -100,14 +100,14 @@ export const UploadDoc = () => {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Add Attachment</DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-4 overflow-hidden">
-          <div className="grid gap-2 min-w-0">
-            <div className="flex items-center gap-2 min-w-0">
-              <div className="flex-1 min-w-0">
+        <div className="grid gap-4 overflow-hidden py-4">
+          <div className="grid min-w-0 gap-2">
+            <div className="flex min-w-0 items-center gap-2">
+              <div className="min-w-0 flex-1">
                 <Input
                   ref={fileInputRef}
                   id="file"
@@ -133,14 +133,73 @@ export const UploadDoc = () => {
                 )}
               </Button>
             </div>
-            <p className="text-muted-foreground text-sm truncate">
+            <p className="text-muted-foreground truncate text-sm">
               Select one or more .txt or .pdf files to upload
             </p>
           </div>
 
           {/* Documents List */}
-          <div className="border-border-base border-t pt-4 min-w-0">
-            <h3 className="mb-2 text-sm font-semibold truncate">Uploaded Documents</h3>
+          <div className="border-border-base flex min-w-0 flex-col border-t pt-4">
+            <div className="mb-4 flex h-6 items-center justify-between">
+              {documents.length > 0 && selectedFileNames.length > 0 ? (
+                <>
+                  <div
+                    className="group flex cursor-pointer items-center gap-2"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const allNames = documents.map((d) => d.fileName);
+                      const allSelected = allNames.every((name) =>
+                        selectedFileNames.includes(name),
+                      );
+                      if (allSelected) {
+                        allNames.forEach((name) => {
+                          if (selectedFileNames.includes(name)) toggleFile(name);
+                        });
+                      } else {
+                        allNames.forEach((name) => {
+                          if (!selectedFileNames.includes(name)) addFile(name);
+                        });
+                      }
+                    }}
+                  >
+                    <Checkbox
+                      checked={
+                        documents.length > 0 &&
+                        documents.every((d) => selectedFileNames.includes(d.fileName))
+                      }
+                      className="h-4 w-4"
+                      onCheckedChange={() => {}}
+                    />
+                    <span className="text-muted-foreground group-hover:text-foreground cursor-pointer text-xs font-medium">
+                      Select All
+                    </span>
+                  </div>
+                  <button
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      if (confirm(`Delete ${selectedFileNames.length} selected files?`)) {
+                        try {
+                          await axios.post("/api/documents/bulk-delete", {
+                            fileNames: selectedFileNames,
+                          });
+                          clearSelection();
+                          await fetchDocuments();
+                        } catch (e) {
+                          console.error(e);
+                        }
+                      }
+                    }}
+                    className="flex cursor-pointer items-center gap-1.5 text-xs font-semibold text-red-500 transition-colors hover:text-red-600"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    <span>Delete</span>
+                  </button>
+                </>
+              ) : (
+                <h3 className="truncate text-sm font-semibold">Uploaded Documents</h3>
+              )}
+            </div>
+
             {isLoadingDocs ? (
               <div className="flex items-center justify-center py-4">
                 <Spinner />
@@ -150,26 +209,57 @@ export const UploadDoc = () => {
                 No documents uploaded yet
               </p>
             ) : (
-              <div className="max-h-48 space-y-2 overflow-y-auto">
-                {documents.map((doc, index) => (
-                  <div
-                    key={index}
-                    className="border-border-base flex items-center gap-2 rounded-lg border p-2"
-                  >
-                    <Checkbox
-                      id={`doc-${index}`}
-                      checked={selectedFileNames.includes(doc.fileName)}
-                      onCheckedChange={() => toggleFile(doc.fileName)}
-                    />
-                    <FileText className="h-4 w-4 shrink-0" />
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium">{doc.fileName}</p>
-                      <p className="text-muted-foreground text-xs">
-                        {new Date(doc.createdAt).toLocaleDateString()}
-                      </p>
+              <div className="max-h-60 space-y-1 overflow-y-auto pr-1">
+                {documents.map((doc, index) => {
+                  const isSelected = selectedFileNames.includes(doc.fileName);
+                  return (
+                    <div
+                      key={index}
+                      className={`group flex cursor-pointer items-center gap-2 rounded-lg p-2 transition-colors ${
+                        isSelected ? "bg-primary/5 hover:bg-primary/10" : "hover:bg-muted/50"
+                      }`}
+                      onClick={() => toggleFile(doc.fileName)}
+                    >
+                      <div className="relative flex h-4 w-4 shrink-0 items-center justify-center">
+                        <div
+                          className={`absolute inset-0 transition-opacity duration-200 ${
+                            isSelected
+                              ? "scale-75 opacity-0"
+                              : "scale-100 opacity-100 group-hover:scale-75 group-hover:opacity-0"
+                          }`}
+                        >
+                          <FileText className="text-muted-foreground h-4 w-4" />
+                        </div>
+                        <div
+                          className={`absolute inset-0 transition-all duration-200 ${
+                            isSelected
+                              ? "scale-100 opacity-100"
+                              : "scale-75 opacity-0 group-hover:scale-100 group-hover:opacity-100"
+                          }`}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Checkbox
+                            checked={isSelected}
+                            onCheckedChange={() => toggleFile(doc.fileName)}
+                            className="h-4 w-4"
+                          />
+                        </div>
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p
+                          className={`truncate text-sm transition-colors ${
+                            isSelected ? "text-primary font-medium" : "text-foreground"
+                          }`}
+                        >
+                          {doc.fileName}
+                        </p>
+                        <p className="text-muted-foreground text-[10px]">
+                          {new Date(doc.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
