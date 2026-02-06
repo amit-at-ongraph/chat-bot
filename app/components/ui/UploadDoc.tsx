@@ -7,11 +7,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import axios from "axios";
 import { FileText, Loader2, PlusIcon, Upload } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import Spinner from "../Spinner";
+import { useFileStore } from "@/app/store/fileStore";
 import { Button } from "./Button";
+import { Checkbox } from "./Checkbox";
 
 interface DocumentItem {
   fileName: string;
@@ -25,6 +28,7 @@ export const UploadDoc = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [isLoadingDocs, setIsLoadingDocs] = useState(false);
+  const { selectedFileNames, toggleFile, addFile } = useFileStore();
 
   const fetchDocuments = async () => {
     setIsLoadingDocs(true);
@@ -66,11 +70,20 @@ export const UploadDoc = () => {
         },
       });
 
+      // Clear selected files after successful upload
       setSelectedFiles([]);
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
+      // Refresh documents list
       await fetchDocuments();
+
+      // Auto-select newly uploaded files
+      selectedFiles.forEach((file) => {
+        addFile(file.name);
+      });
+
+      // Close dialog after successful upload
       setTimeout(() => setIsDialogOpen(false), 500);
     } catch (error) {
       console.error("Upload failed:", error);
@@ -82,120 +95,77 @@ export const UploadDoc = () => {
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className="text-text-muted hover:text-text-main transition-colors"
-        >
+        <Button type="button" variant="ghost" size="icon" className="relative">
           <PlusIcon className="h-5 w-5" />
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-md md:max-w-lg">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">Manage Knowledge Base</DialogTitle>
+          <DialogTitle>Add Attachment</DialogTitle>
         </DialogHeader>
-
-        <div className="space-y-6 pt-4">
-          {/* Upload Section */}
-          <div className="space-y-3">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".txt,.pdf"
-              multiple
-              onChange={handleFileSelect}
-              className="hidden"
-            />
-            <div
-              className={`border-primary/20 bg-primary/5 flex flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed p-8 transition-all ${
-                isUploading ? "pointer-events-none opacity-50" : "hover:border-primary/40"
-              }`}
-            >
-              <div className="bg-primary/10 text-primary flex h-12 w-12 items-center justify-center rounded-full">
-                <Upload className="h-6 w-6" />
-              </div>
-              <div className="text-center">
-                <p className="text-sm font-semibold">Click to select files</p>
-                <p className="text-text-muted text-xs">Support for PDF and TXT files</p>
+        <div className="grid gap-4 py-4 overflow-hidden">
+          <div className="grid gap-2 min-w-0">
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="flex-1 min-w-0">
+                <Input
+                  ref={fileInputRef}
+                  id="file"
+                  type="file"
+                  accept=".txt,.pdf"
+                  multiple
+                  onChange={handleFileSelect}
+                  disabled={isUploading}
+                  className="w-full"
+                />
               </div>
               <Button
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isUploading}
-                variant="primary-action"
-                size="sm"
-                className="px-6"
+                onClick={handleUpload}
+                disabled={selectedFiles.length === 0 || isUploading}
+                variant="primary"
+                size="md"
+                className="shrink-0"
               >
-                Browse Files
+                {isUploading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Upload className="h-4 w-4" />
+                )}
               </Button>
             </div>
-
-            {selectedFiles.length > 0 && (
-              <div className="bg-selected animate-in fade-in slide-in-from-top-2 rounded-lg p-3">
-                <p className="mb-2 text-xs font-bold uppercase tracking-wider text-primary">
-                  Ready to Upload ({selectedFiles.length})
-                </p>
-                <div className="space-y-1.5">
-                  {selectedFiles.map((file, i) => (
-                    <div key={i} className="flex items-center gap-2 text-sm font-medium">
-                      <FileText className="text-primary h-4 w-4" />
-                      <span className="truncate">{file.name}</span>
-                    </div>
-                  ))}
-                </div>
-                <Button
-                  onClick={handleUpload}
-                  disabled={isUploading}
-                  variant="primary"
-                  className="mt-4 w-full"
-                >
-                  {isUploading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Uploading...
-                    </>
-                  ) : (
-                    "Confirm Upload"
-                  )}
-                </Button>
-              </div>
-            )}
+            <p className="text-muted-foreground text-sm truncate">
+              Select one or more .txt or .pdf files to upload
+            </p>
           </div>
 
           {/* Documents List */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold">Existing Documents</h3>
-              <span className="bg-selected text-text-muted rounded-full px-2.5 py-0.5 text-[10px] font-bold">
-                {documents.length} Total
-              </span>
-            </div>
-
+          <div className="border-border-base border-t pt-4 min-w-0">
+            <h3 className="mb-2 text-sm font-semibold truncate">Uploaded Documents</h3>
             {isLoadingDocs ? (
-              <div className="flex items-center justify-center py-12">
+              <div className="flex items-center justify-center py-4">
                 <Spinner />
               </div>
             ) : documents.length === 0 ? (
-              <div className="bg-selected rounded-xl py-12 text-center">
-                <p className="text-text-muted text-sm italic">Your knowledge base is empty</p>
-              </div>
+              <p className="text-muted-foreground py-4 text-center text-sm">
+                No documents uploaded yet
+              </p>
             ) : (
-              <div className="space-y-2">
+              <div className="max-h-48 space-y-2 overflow-y-auto">
                 {documents.map((doc, index) => (
                   <div
                     key={index}
-                    className="border-border-base group flex items-center gap-3 rounded-xl border p-3 transition-all hover:bg-selected"
+                    className="border-border-base flex items-center gap-2 rounded-lg border p-2"
                   >
-                    <div className="bg-primary/10 text-primary flex h-10 w-10 shrink-0 items-center justify-center rounded-lg group-hover:bg-primary group-hover:text-white transition-colors">
-                      <FileText className="h-5 w-5" />
-                    </div>
+                    <Checkbox
+                      id={`doc-${index}`}
+                      checked={selectedFileNames.includes(doc.fileName)}
+                      onCheckedChange={() => toggleFile(doc.fileName)}
+                    />
+                    <FileText className="h-4 w-4 shrink-0" />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-[13px] font-bold group-hover:text-primary transition-colors">
-                        {doc.fileName}
-                      </p>
-                      <p className="text-text-muted text-[11px] font-medium">
-                        Added {new Date(doc.createdAt).toLocaleDateString()}
+                      <p className="truncate text-sm font-medium">{doc.fileName}</p>
+                      <p className="text-muted-foreground text-xs">
+                        {new Date(doc.createdAt).toLocaleDateString()}
                       </p>
                     </div>
                   </div>

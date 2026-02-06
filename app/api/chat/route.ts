@@ -24,7 +24,10 @@ export async function POST(req: Request) {
       .map((p) => (p.type === "text" ? p.text : ""))
       .join("") || "";
 
-  const context = await findRelevantContent(userQuery);
+  const context = await findRelevantContent(userQuery, {
+    userId: session?.user?.id,
+    filePaths: selectedFilePaths,
+  });
 
   if (session?.user?.id) {
     if (!chatId) {
