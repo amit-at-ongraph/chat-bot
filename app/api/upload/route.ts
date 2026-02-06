@@ -55,7 +55,7 @@ export async function POST(req: Request) {
           fileName: file.name,
           status: "uploaded" as const,
         };
-      } catch (e: Error) {
+      } catch (e: any) {
         return {
           fileName: file.name,
           status: "failed" as const,

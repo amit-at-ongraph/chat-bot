@@ -8,13 +8,13 @@ import Header from "./components/Header";
 import MessageList from "./components/MessageList";
 import Welcome from "./components/Welcome";
 
+import { UserRole } from "../lib/constants";
 import Sidebar from "./components/Sidebar";
+import { UploadDoc } from "./components/ui/UploadDoc";
 import { SessionProvider, useSessionContext } from "./contexts";
 import { useChatLogic } from "./hooks/useChatLogic";
 import Loading from "./loading";
 import { useChatStore } from "./store/chatStore";
-import { UploadDoc } from "./components/ui/UploadDoc";
-import { UserRole } from "../lib/constants";
 
 function HomeContent() {
   const { session, status: authStatus } = useSessionContext();

@@ -1,6 +1,6 @@
 import { DBChat, DBMessage } from "@/types/chat";
 import { embed } from "ai";
-import { and, desc, eq, or, sql } from "drizzle-orm";
+import { and, desc, eq, lt, or, sql } from "drizzle-orm";
 import { embeddingModel } from "../ai";
 import { db } from "./index";
 import { chats, documents, messages } from "./schema";

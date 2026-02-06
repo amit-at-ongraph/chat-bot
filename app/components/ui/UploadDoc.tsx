@@ -9,6 +9,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import axios from "axios";
 import { FileText, Loader2, PlusIcon, Trash2, Upload } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
@@ -16,7 +17,6 @@ import { toast } from "sonner";
 import Spinner from "../Spinner";
 import { Button } from "./Button";
 import { Checkbox } from "./Checkbox";
-import { cn } from "@/lib/utils";
 
 interface DocumentItem {
   fileName: string;
@@ -85,7 +85,7 @@ export const UploadDoc = ({ trigger }: UploadDocProps) => {
       });
 
       toast.success("Files uploaded and ingestion triggered!", { id: uploadToast });
-      
+
       // Clear selected files after successful upload
       setSelectedFiles([]);
       if (fileInputRef.current) {
@@ -160,7 +160,8 @@ export const UploadDoc = ({ trigger }: UploadDocProps) => {
                   <div
                     className={cn(
                       "group flex cursor-pointer items-center gap-2",
-                      (isDeleting || isUploading) && "opacity-50 cursor-not-allowed pointer-events-none"
+                      (isDeleting || isUploading) &&
+                        "pointer-events-none cursor-not-allowed opacity-50",
                     )}
                     onClick={(e) => {
                       if (isDeleting || isUploading) return;
@@ -214,7 +215,7 @@ export const UploadDoc = ({ trigger }: UploadDocProps) => {
                         }
                       }
                     }}
-                    className="flex cursor-pointer items-center gap-1.5 text-xs font-semibold text-red-500 transition-colors hover:text-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex cursor-pointer items-center gap-1.5 text-xs font-semibold text-red-500 transition-colors hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <Trash2 className="h-4 w-4" />
                     <span>Delete</span>
@@ -243,7 +244,8 @@ export const UploadDoc = ({ trigger }: UploadDocProps) => {
                       className={cn(
                         "group flex cursor-pointer items-center gap-2 rounded-lg p-2 transition-colors",
                         isSelected ? "bg-primary/5 hover:bg-primary/10" : "hover:bg-muted/50",
-                        (isUploading || isDeleting) && "opacity-50 pointer-events-none cursor-not-allowed"
+                        (isUploading || isDeleting) &&
+                          "pointer-events-none cursor-not-allowed opacity-50",
                       )}
                       onClick={() => !isUploading && !isDeleting && toggleFile(doc.fileName)}
                     >
@@ -267,7 +269,9 @@ export const UploadDoc = ({ trigger }: UploadDocProps) => {
                         >
                           <Checkbox
                             checked={isSelected}
-                            onCheckedChange={() => !isUploading && !isDeleting && toggleFile(doc.fileName)}
+                            onCheckedChange={() =>
+                              !isUploading && !isDeleting && toggleFile(doc.fileName)
+                            }
                             className="h-4 w-4"
                             disabled={isUploading || isDeleting}
                           />

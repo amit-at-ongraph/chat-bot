@@ -1,11 +1,13 @@
 "use client";
 
 import { UI_CONFIG } from "@/config";
+import { UserRole } from "@/lib/constants";
 import { DBChat } from "@/types/chat";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Edit,
   Edit2,
+  Info,
   Menu,
   MessageSquare,
   MoreVertical,
@@ -14,16 +16,14 @@ import {
   Upload,
   User,
   X,
-  Info,
 } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useSessionContext } from "../contexts";
+import { useFileStore } from "../store/fileStore";
+import HowToUse from "./HowToUse";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
-import { UserRole } from "@/lib/constants";
-import HowToUse from "./HowToUse";
-import { useFileStore } from "../store/fileStore";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -114,166 +114,166 @@ export default function Sidebar({
                   exit={{ opacity: 0, x: -20 }}
                   className="flex h-full w-full flex-col overflow-hidden"
                 >
-              {/* Sidebar Header */}
-              <div className="flex h-16.25 items-center justify-start gap-4 px-4 py-3">
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="none"
-                    size="none"
-                    onClick={onToggleCollapse}
-                    className="text-text-muted hidden shrink-0 cursor-pointer max-lg:hidden lg:block"
-                  >
-                    <Menu className="h-6 w-6" />
-                  </Button>
-                  <Button variant="ghost" size="icon" onClick={onClose} className="lg:hidden">
-                    <X className="h-6 w-6" />
-                  </Button>
-                </div>
-              </div>
+                  {/* Sidebar Header */}
+                  <div className="flex h-16.25 items-center justify-start gap-4 px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="none"
+                        size="none"
+                        onClick={onToggleCollapse}
+                        className="text-text-muted hidden shrink-0 cursor-pointer max-lg:hidden lg:block"
+                      >
+                        <Menu className="h-6 w-6" />
+                      </Button>
+                      <Button variant="ghost" size="icon" onClick={onClose} className="lg:hidden">
+                        <X className="h-6 w-6" />
+                      </Button>
+                    </div>
+                  </div>
 
-              {/* New Chat Button */}
-              <div className="flex flex-col justify-start p-4 px-4 gap-4">
-                <Button
-                  variant="none"
-                  size="none"
-                  onClick={() => {
-                    onNewChat();
-                    if (window.innerWidth < 1024) {
-                      onClose();
-                    }
-                  }}
-                  className="w-full gap-3 text-[14px]"
-                  title={effectivelyCollapsed ? UI_CONFIG.CHAT_BTN_TITLE : ""}
-                >
-                  <Edit className="h-4 w-4 shrink-0" />
-                  {!effectivelyCollapsed && (
-                    <span className="whitespace-nowrap">{UI_CONFIG.CHAT_BTN_TITLE}</span>
-                  )}
-                </Button>
-
-                <Button
-                  variant="none"
-                  size="none"
-                  onClick={() => {
-                    if (effectivelyCollapsed) {
-                      onToggleCollapse();
-                    }
-                    setActiveView("how-to");
-                  }}
-                  className="w-full gap-3 text-[14px]"
-                  title={effectivelyCollapsed ? "How To Use PAXIS" : ""}
-                >
-                  <Info className="h-4 w-4 shrink-0" />
-                  {!effectivelyCollapsed && (
-                    <span className="flex-1 text-left whitespace-nowrap">
-                      How To Use PAXIS
-                    </span>
-                  )}
-                </Button>
-
-                {session?.user?.role === UserRole.ADMIN && (
-                  <Button
-                    variant="none"
-                    size="none"
-                    onClick={() => {
-                      setUploadDialogOpen(true);
-                      if (window.innerWidth < 1024) {
-                        onClose();
-                      }
-                    }}
-                    className="w-full gap-3 text-[14px]"
-                    title={effectivelyCollapsed ? UI_CONFIG.UPLOAD_BTN_TITLE : ""}
-                  >
-                    <Upload className="h-4 w-4 shrink-0" />
-                    {!effectivelyCollapsed && (
-                      <span className="whitespace-nowrap">{UI_CONFIG.UPLOAD_BTN_TITLE}</span>
-                    )}
-                  </Button>
-                )}
-              </div>
-
-              {/* Navigation Items */}
-              <nav className="flex-1 space-y-1 overflow-y-auto">
-                {!effectivelyCollapsed && (
-                  <div className="text-text-muted px-4 py-2 text-[14px]">Recent Chats</div>
-                )}
-                {!isCollapsed &&
-                  chats.map((chat) => (
-                    <SidebarItem
-                      key={chat.id}
-                      icon={MessageSquare}
-                      label={chat.title || "Untitled Chat"}
-                      active={currentChatId === chat.id}
-                      loading={selectedChatLoading && currentChatId === chat.id}
-                      isCollapsed={effectivelyCollapsed}
+                  {/* New Chat Button */}
+                  <div className="flex flex-col justify-start gap-4 p-4 px-4">
+                    <Button
+                      variant="none"
+                      size="none"
                       onClick={() => {
-                        onSelectChat(chat.id);
+                        onNewChat();
                         if (window.innerWidth < 1024) {
                           onClose();
                         }
                       }}
-                      onRename={(newTitle) => onRenameChat(chat.id, newTitle)}
-                      onDelete={() => onDeleteChat(chat.id)}
-                    />
-                  ))}
-                {chats.length === 0 && !effectivelyCollapsed && (
-                  <div className="text-text-muted px-4 py-4 text-sm italic">No recent chats</div>
-                )}
-              </nav>
-
-              {/* Sidebar Footer */}
-              <div className="border-border-base relative flex h-15 items-center justify-start border-t px-2">
-                <AnimatePresence>
-                  {isUserMenuOpen && session && (
-                    <motion.div
-                      ref={userMenuRef}
-                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      className={`border-border-base bg-app-bg absolute bottom-full z-50 mb-1 w-[90%] overflow-hidden rounded-2xl border p-1 text-[14px] shadow-lg ${
-                        effectivelyCollapsed ? "left-1/2 -translate-x-1/2" : "left-4"
-                      }`}
+                      className="w-full gap-3 text-[14px]"
+                      title={effectivelyCollapsed ? UI_CONFIG.CHAT_BTN_TITLE : ""}
                     >
-                      <Button
-                        variant="ghost"
-                        className="text-text-main hover:bg-border-light w-full justify-start gap-3 rounded-full px-2 py-2 font-medium"
-                        onClick={() => {
-                          setIsUserMenuOpen(false);
-                        }}
-                      >
-                        <Settings className="h-5 w-5" />
-                        Settings
-                      </Button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                      <Edit className="h-4 w-4 shrink-0" />
+                      {!effectivelyCollapsed && (
+                        <span className="whitespace-nowrap">{UI_CONFIG.CHAT_BTN_TITLE}</span>
+                      )}
+                    </Button>
 
-                <div
-                  className="hover:bg-border-light flex w-full cursor-pointer items-center gap-4 rounded-[10px] px-2 py-2 transition-colors"
-                  onClick={() => session && setIsUserMenuOpen(!isUserMenuOpen)}
-                >
-                  <div className="border-border-base bg-app-bg flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border shadow-sm">
-                    {session?.user?.image ? (
-                      <Image
-                        src={session.user.image}
-                        alt="logo"
-                        className="h-full w-full object-cover"
-                        width={24}
-                        height={24}
-                      />
-                    ) : (
-                      <User className="text-text-main h-5 w-5" />
+                    <Button
+                      variant="none"
+                      size="none"
+                      onClick={() => {
+                        if (effectivelyCollapsed) {
+                          onToggleCollapse();
+                        }
+                        setActiveView("how-to");
+                      }}
+                      className="w-full gap-3 text-[14px]"
+                      title={effectivelyCollapsed ? "How To Use PAXIS" : ""}
+                    >
+                      <Info className="h-4 w-4 shrink-0" />
+                      {!effectivelyCollapsed && (
+                        <span className="flex-1 text-left whitespace-nowrap">How To Use PAXIS</span>
+                      )}
+                    </Button>
+
+                    {session?.user?.role === UserRole.ADMIN && (
+                      <Button
+                        variant="none"
+                        size="none"
+                        onClick={() => {
+                          setUploadDialogOpen(true);
+                          if (window.innerWidth < 1024) {
+                            onClose();
+                          }
+                        }}
+                        className="w-full gap-3 text-[14px]"
+                        title={effectivelyCollapsed ? UI_CONFIG.UPLOAD_BTN_TITLE : ""}
+                      >
+                        <Upload className="h-4 w-4 shrink-0" />
+                        {!effectivelyCollapsed && (
+                          <span className="whitespace-nowrap">{UI_CONFIG.UPLOAD_BTN_TITLE}</span>
+                        )}
+                      </Button>
                     )}
                   </div>
-                  {!effectivelyCollapsed && (
-                    <div className="text-text-main max-w-37.5 truncate text-[14px]">
-                      {session?.user?.name || "Guest User"}
+
+                  {/* Navigation Items */}
+                  <nav className="flex-1 space-y-1 overflow-y-auto">
+                    {!effectivelyCollapsed && (
+                      <div className="text-text-muted px-4 py-2 text-[14px]">Recent Chats</div>
+                    )}
+                    {!isCollapsed &&
+                      chats.map((chat) => (
+                        <SidebarItem
+                          key={chat.id}
+                          icon={MessageSquare}
+                          label={chat.title || "Untitled Chat"}
+                          active={currentChatId === chat.id}
+                          loading={selectedChatLoading && currentChatId === chat.id}
+                          isCollapsed={effectivelyCollapsed}
+                          onClick={() => {
+                            onSelectChat(chat.id);
+                            if (window.innerWidth < 1024) {
+                              onClose();
+                            }
+                          }}
+                          onRename={(newTitle) => onRenameChat(chat.id, newTitle)}
+                          onDelete={() => onDeleteChat(chat.id)}
+                        />
+                      ))}
+                    {chats.length === 0 && !effectivelyCollapsed && (
+                      <div className="text-text-muted px-4 py-4 text-sm italic">
+                        No recent chats
+                      </div>
+                    )}
+                  </nav>
+
+                  {/* Sidebar Footer */}
+                  <div className="border-border-base relative flex h-15 items-center justify-start border-t px-2">
+                    <AnimatePresence>
+                      {isUserMenuOpen && session && (
+                        <motion.div
+                          ref={userMenuRef}
+                          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                          className={`border-border-base bg-app-bg absolute bottom-full z-50 mb-1 w-[90%] overflow-hidden rounded-2xl border p-1 text-[14px] shadow-lg ${
+                            effectivelyCollapsed ? "left-1/2 -translate-x-1/2" : "left-4"
+                          }`}
+                        >
+                          <Button
+                            variant="ghost"
+                            className="text-text-main hover:bg-border-light w-full justify-start gap-3 rounded-full px-2 py-2 font-medium"
+                            onClick={() => {
+                              setIsUserMenuOpen(false);
+                            }}
+                          >
+                            <Settings className="h-5 w-5" />
+                            Settings
+                          </Button>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    <div
+                      className="hover:bg-border-light flex w-full cursor-pointer items-center gap-4 rounded-[10px] px-2 py-2 transition-colors"
+                      onClick={() => session && setIsUserMenuOpen(!isUserMenuOpen)}
+                    >
+                      <div className="border-border-base bg-app-bg flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border shadow-sm">
+                        {session?.user?.image ? (
+                          <Image
+                            src={session.user.image}
+                            alt="logo"
+                            className="h-full w-full object-cover"
+                            width={24}
+                            height={24}
+                          />
+                        ) : (
+                          <User className="text-text-main h-5 w-5" />
+                        )}
+                      </div>
+                      {!effectivelyCollapsed && (
+                        <div className="text-text-main max-w-37.5 truncate text-[14px]">
+                          {session?.user?.name || "Guest User"}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          ) : (
+                  </div>
+                </motion.div>
+              ) : (
                 <motion.div
                   key="how-to"
                   initial={{ opacity: 0, x: 20 }}
