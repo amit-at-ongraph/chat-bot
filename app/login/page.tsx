@@ -9,11 +9,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
+import { useTranslation } from "@/app/i18n/useTranslation";
 
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const { t } = useTranslation();
 
   const { loginForm, setLoginField, resetLoginForm } = useAuthStore();
   const { email, password, error, loading } = loginForm;
@@ -43,7 +45,7 @@ export default function LoginPage() {
         router.refresh();
       }
     } catch (_err: any) {
-      setLoginField("error", "An unexpected error occurred");
+      setLoginField("error", t("auth.unexpected_error"));
     } finally {
       setLoginField("loading", false);
     }
@@ -53,8 +55,8 @@ export default function LoginPage() {
     <div className="bg-app-bg flex min-h-screen flex-col items-center justify-center p-6">
       <div className="border-border-light bg-app-bg w-full max-w-md space-y-8 rounded-3xl border p-10 shadow-2xl">
         <div className="text-center">
-          <h2 className="text-text-main mt-6 text-3xl font-bold">Welcome Back</h2>
-          <p className="text-text-muted mt-2">Sign in to your account</p>
+          <h2 className="text-text-main mt-6 text-3xl font-bold">{t("auth.welcome_back")}</h2>
+          <p className="text-text-muted mt-2">{t("auth.sign_in_title")}</p>
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -68,7 +70,7 @@ export default function LoginPage() {
               id="email"
               name="email"
               type="email"
-              label="Email Address"
+              label={t("auth.email_address")}
               autoComplete="email"
               required
               value={email}
@@ -78,7 +80,7 @@ export default function LoginPage() {
             <PasswordInput
               id="password"
               name="password"
-              label="Password"
+              label={t("auth.password")}
               autoComplete="current-password"
               required
               value={password}
@@ -90,14 +92,14 @@ export default function LoginPage() {
                 href="/forgot-password"
                 className="text-primary text-sm font-medium hover:underline"
               >
-                Forgot Password?
+                {t("auth.forgot_password")}
               </Link>
             </div>
           </div>
 
           <div>
             <Button type="submit" disabled={loading} className="w-full py-4 text-lg font-bold">
-              {loading ? "Signing in..." : "Sign In"}
+              {loading ? t("auth.signing_in") : t("auth.sign_in")}
             </Button>
           </div>
         </form>
@@ -107,7 +109,7 @@ export default function LoginPage() {
             <div className="border-border-light w-full border-t"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="bg-app-bg text-text-muted px-2">Or continue with</span>
+            <span className="bg-app-bg text-text-muted px-2">{t("auth.or_continue_with")}</span>
           </div>
         </div>
 
@@ -124,14 +126,14 @@ export default function LoginPage() {
               width={24}
               height={24}
             />
-            Google
+            {t("auth.google")}
           </Button>
         </div>
 
         <p className="text-text-muted text-center text-sm">
-          {"Don't have an account? "}
+          {t("auth.dont_have_account")}{" "}
           <Link href="/register" className="text-primary font-semibold hover:underline">
-            Register here
+            {t("auth.register_here")}
           </Link>
         </p>
       </div>

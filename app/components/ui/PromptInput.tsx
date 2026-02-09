@@ -3,6 +3,7 @@
 import { ArrowUp, SquareIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "@/app/i18n/useTranslation";
 
 interface PromptInputProps {
   value: string;
@@ -20,10 +21,13 @@ export const PromptInput = ({
   onSubmit,
   onStop,
   isStreaming = false,
-  placeholder = "Ask a question...",
+  placeholder,
   maxHeight = 160,
 }: PromptInputProps) => {
   const { theme } = useTheme();
+  const { t } = useTranslation();
+  const defaultPlaceholder = t("common.ask_question");
+  const finalPlaceholder = placeholder || defaultPlaceholder;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isMultiline, setIsMultiline] = useState(false);
 
@@ -64,7 +68,7 @@ export const PromptInput = ({
       >
         <textarea
           ref={textareaRef}
-          placeholder={placeholder}
+          placeholder={finalPlaceholder}
           rows={1}
           value={value}
           onChange={(e) => onChange(e.target.value)}

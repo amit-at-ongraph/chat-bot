@@ -6,18 +6,23 @@ import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/Button";
+import { useTranslation } from "../i18n/useTranslation";
 
 interface WelcomeProps {
   onSkip: () => void;
 }
 
 export default function Welcome({ onSkip }: WelcomeProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="bg-app-bg/80 absolute inset-0 z-50 flex items-center justify-center p-6 backdrop-blur-sm">
       <div className="border-border-light bg-app-bg w-full max-w-sm space-y-6 rounded-3xl border p-8 text-center shadow-2xl">
         <div>
-          <h2 className="text-text-main text-2xl font-bold">Welcome</h2>
-          <p className="text-text-muted mt-2">Please sign in to access the {APP_NAME}.</p>
+          <h2 className="text-text-main text-2xl font-bold">{t("auth.welcome")}</h2>
+          <p className="text-text-muted mt-2">
+            {t("auth.please_sign_in", { appName: APP_NAME })}
+          </p>
         </div>
         <div className="space-y-3">
           <Button
@@ -31,7 +36,7 @@ export default function Welcome({ onSkip }: WelcomeProps) {
               width={24}
               height={24}
             />
-            Sign in with Google
+            {t("auth.sign_in_with_google")}
           </Button>
 
           <Link href="/login" className="block">
@@ -40,7 +45,7 @@ export default function Welcome({ onSkip }: WelcomeProps) {
               className="border-border-base text-text-main flex w-full items-center justify-center gap-3 border py-4 font-bold"
             >
               <Mail className="h-5 w-5" />
-              Sign in with Email
+              {t("auth.sign_in_with_email")}
             </Button>
           </Link>
 
@@ -50,7 +55,7 @@ export default function Welcome({ onSkip }: WelcomeProps) {
             </div>
             <div className="relative flex justify-center text-xs">
               <span className="bg-app-bg text-text-muted px-2 tracking-wider uppercase">
-                New here?
+                {t("auth.new_here")}
               </span>
             </div>
           </div>
@@ -60,7 +65,7 @@ export default function Welcome({ onSkip }: WelcomeProps) {
               variant="ghost"
               className="text-primary hover:bg-primary/10 w-full py-3 font-bold"
             >
-              Create an account
+              {t("auth.create_account")}
             </Button>
           </Link>
 
@@ -69,7 +74,7 @@ export default function Welcome({ onSkip }: WelcomeProps) {
             onClick={onSkip}
             className="bg-border-light text-text-secondary hover:bg-border-base w-full py-3 font-semibold"
           >
-            Skip for now
+            {t("auth.skip_for_now")}
           </Button>
         </div>
       </div>

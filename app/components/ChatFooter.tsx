@@ -1,10 +1,11 @@
 "use client";
 
 import { CHAT_ACTIONS } from "@/lib/constants";
-import { ChatAction } from "@/types/chat";
 import React from "react";
 import { ChatActionButton } from "./ui/ChatActionButton";
 import { PromptInput } from "./ui/PromptInput";
+
+import { useTranslation } from "../i18n/useTranslation";
 
 interface ChatFooterProps {
   input: string;
@@ -24,6 +25,7 @@ export default function ChatFooter({
   hasMessages,
 }: ChatFooterProps) {
   const isStreaming = status === "submitted" || status === "streaming";
+  const { t } = useTranslation();
 
   return (
     <>
@@ -31,13 +33,13 @@ export default function ChatFooter({
       {!hasMessages && (
         <div className="bg-selected px-4 py-6">
           <div className="mx-auto grid max-w-xl grid-cols-1 gap-3 max-sm:grid-cols-2 sm:grid-cols-3">
-            {CHAT_ACTIONS.map((action: ChatAction, idx: number) => (
+            {CHAT_ACTIONS.map((action, idx: number) => (
               <ChatActionButton
                 key={idx}
                 icon={action.icon}
-                label={action.label}
+                label={t(`chat_actions.${action.id}_label`) || action.label}
                 color={action.color}
-                onClick={() => setInput(action.prompt)}
+                onClick={() => setInput(t(`chat_actions.${action.id}_prompt`) || action.prompt)}
               />
             ))}
           </div>

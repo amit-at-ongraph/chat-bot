@@ -7,10 +7,12 @@ import { useAuthStore } from "@/app/store/authStore";
 import { signUpAction } from "@/lib/db/auth-actions";
 import Link from "next/link";
 import { useEffect } from "react";
+import { useTranslation } from "@/app/i18n/useTranslation";
 
 export default function RegisterPage() {
   const { registerForm, setRegisterField, resetRegisterForm } = useAuthStore();
   const { email, name, password, error, loading, success } = registerForm;
+  const { t } = useTranslation();
 
   useEffect(() => {
     return () => resetRegisterForm();
@@ -35,7 +37,7 @@ export default function RegisterPage() {
         setRegisterField("success", true);
       }
     } catch (_: any) {
-      setRegisterField("error", "An unexpected error occurred");
+      setRegisterField("error", t("auth.unexpected_error"));
     } finally {
       setRegisterField("loading", false);
     }
@@ -45,15 +47,13 @@ export default function RegisterPage() {
     return (
       <div className="bg-app-bg flex min-h-screen flex-col items-center justify-center p-6 text-center">
         <div className="border-border-light bg-app-bg w-full max-w-md space-y-8 rounded-3xl border p-10 shadow-2xl">
-          <h2 className="text-text-main text-3xl font-bold">Check your email</h2>
+          <h2 className="text-text-main text-3xl font-bold">{t("auth.check_email")}</h2>
           <p className="text-text-muted mt-2">
-            {"We've sent a verification link to "}
-            <span className="text-text-main font-semibold">{email}</span>. Please verify your email
-            to finish setting up your account.
+            {t("auth.verification_sent", { email })} {t("auth.verify_note")}
           </p>
           <div className="mt-8">
             <Link href="/login">
-              <Button className="w-full py-4 text-lg font-bold">Go to Login</Button>
+              <Button className="w-full py-4 text-lg font-bold">{t("auth.go_to_login")}</Button>
             </Link>
           </div>
         </div>
@@ -65,8 +65,8 @@ export default function RegisterPage() {
     <div className="bg-app-bg flex min-h-screen flex-col items-center justify-center p-6">
       <div className="border-border-light bg-app-bg w-full max-w-md space-y-8 rounded-3xl border p-10 shadow-2xl">
         <div className="text-center">
-          <h2 className="text-text-main mt-6 text-3xl font-bold">Create Account</h2>
-          <p className="text-text-muted mt-2">Join us today!</p>
+          <h2 className="text-text-main mt-6 text-3xl font-bold">{t("auth.create_account")}</h2>
+          <p className="text-text-muted mt-2">{t("auth.join_us")}</p>
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -80,7 +80,7 @@ export default function RegisterPage() {
               id="name"
               name="name"
               type="text"
-              label="Full Name"
+              label={t("auth.full_name")}
               required
               value={name}
               onChange={(e) => setRegisterField("name", e.target.value)}
@@ -90,7 +90,7 @@ export default function RegisterPage() {
               id="email"
               name="email"
               type="email"
-              label="Email Address"
+              label={t("auth.email_address")}
               autoComplete="email"
               required
               value={email}
@@ -100,7 +100,7 @@ export default function RegisterPage() {
             <PasswordInput
               id="password"
               name="password"
-              label="Password"
+              label={t("auth.password")}
               autoComplete="new-password"
               required
               value={password}
@@ -111,15 +111,15 @@ export default function RegisterPage() {
 
           <div>
             <Button type="submit" disabled={loading} className="w-full py-4 text-lg font-bold">
-              {loading ? "Creating account..." : "Register"}
+              {loading ? t("auth.creating_account") : t("auth.register")}
             </Button>
           </div>
         </form>
 
         <p className="text-text-muted text-center text-sm">
-          Already have an account?{" "}
+          {t("auth.already_have_account")}{" "}
           <Link href="/login" className="text-primary font-semibold hover:underline">
-            Sign In
+            {t("auth.sign_in")}
           </Link>
         </p>
       </div>

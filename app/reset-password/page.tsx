@@ -6,11 +6,13 @@ import axios from "axios";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { Suspense, useState } from "react";
+import { useTranslation } from "@/app/i18n/useTranslation";
 
 function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
+  const { t } = useTranslation();
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -47,13 +49,13 @@ function ResetPasswordForm() {
     setError("");
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError(t("auth.passwords_dont_match"));
       setLoading(false);
       return;
     }
 
     if (!code && !accessToken) {
-      setError("Invalid or expired reset link (missing code or token).");
+      setError(t("auth.link_expired"));
       setLoading(false);
       return;
     }
@@ -82,20 +84,20 @@ function ResetPasswordForm() {
       return (
         <div className="flex min-h-[300px] flex-col items-center justify-center">
           <div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent"></div>
-          <p className="text-text-muted mt-4">Verifying link...</p>
+          <p className="text-text-muted mt-4">{t("auth.verifying_link")}</p>
         </div>
       );
     }
 
     return (
       <div className="text-center">
-        <h2 className="text-text-main mt-6 text-2xl font-bold">Invalid Link</h2>
-        <p className="text-text-muted mt-2">The password reset link is invalid or has expired.</p>
+        <h2 className="text-text-main mt-6 text-2xl font-bold">{t("auth.invalid_link")}</h2>
+        <p className="text-text-muted mt-2">{t("auth.link_expired")}</p>
         {/** Debug info for user/dev */}
-        <p className="mt-2 text-xs text-red-400">Error: Missing auth code or access token.</p>
+        <p className="mt-2 text-xs text-red-400">{t("common.error")}: Missing auth code or access token.</p>
         <div className="mt-6">
           <Link href="/forgot-password" className="text-primary font-semibold hover:underline">
-            Request a new link
+            {t("auth.request_new_link")}
           </Link>
         </div>
       </div>
@@ -105,8 +107,8 @@ function ResetPasswordForm() {
   return (
     <div className="border-border-light bg-app-bg w-full max-w-md space-y-8 rounded-3xl border p-10 shadow-2xl">
       <div className="text-center">
-        <h2 className="text-text-main mt-6 text-3xl font-bold">Set New Password</h2>
-        <p className="text-text-muted mt-2">Please enter your new password below</p>
+        <h2 className="text-text-main mt-6 text-3xl font-bold">{t("auth.set_new_password")}</h2>
+        <p className="text-text-muted mt-2">{t("auth.enter_new_password")}</p>
       </div>
 
       <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -117,7 +119,7 @@ function ResetPasswordForm() {
         )}
         {success && (
           <div className="rounded-xl bg-green-500/10 p-4 text-center text-sm font-medium text-green-500">
-            Password updated successfully! Redirecting to login...
+            {t("auth.password_updated")}
           </div>
         )}
 
@@ -125,7 +127,7 @@ function ResetPasswordForm() {
           <PasswordInput
             id="password"
             name="password"
-            label="New Password"
+            label={t("auth.new_password")}
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -135,7 +137,7 @@ function ResetPasswordForm() {
           <PasswordInput
             id="confirmPassword"
             name="confirmPassword"
-            label="Confirm Password"
+            label={t("auth.confirm_password")}
             required
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
@@ -150,7 +152,7 @@ function ResetPasswordForm() {
             disabled={loading || success}
             className="w-full py-4 text-lg font-bold"
           >
-            {loading ? "Updating..." : "Update Password"}
+            {loading ? t("auth.updating") : t("auth.update_password")}
           </Button>
         </div>
       </form>
@@ -159,9 +161,10 @@ function ResetPasswordForm() {
 }
 
 export default function ResetPasswordPage() {
+  const { t } = useTranslation();
   return (
     <div className="bg-app-bg flex min-h-screen flex-col items-center justify-center p-6">
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div>{t("common.loading")}</div>}>
         <ResetPasswordForm />
       </Suspense>
     </div>

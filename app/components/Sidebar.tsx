@@ -24,8 +24,6 @@ import HowToUse from "./HowToUse";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
 import { useTranslation } from "../i18n/useTranslation";
-import { useLanguageStore } from "../store/languageStore";
-import { Languages } from "lucide-react";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -61,7 +59,6 @@ export default function Sidebar({
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const { setUploadDialogOpen } = useFileStore();
   const { t } = useTranslation();
-  const { language, setLanguage } = useLanguageStore();
   const userMenuRef = useRef<HTMLDivElement>(null);
   const [isDesktop, setIsDesktop] = useState(false);
 
@@ -247,18 +244,6 @@ export default function Sidebar({
                           >
                             <Settings className="h-5 w-5" />
                             {t("common.settings")}
-                          </Button>
-
-                          <Button
-                            variant="ghost"
-                            className="text-text-main hover:bg-border-light w-full justify-start gap-3 rounded-full px-2 py-2 font-medium"
-                            onClick={() => {
-                              setLanguage(language === "en" ? "hi" : "en");
-                              setIsUserMenuOpen(false);
-                            }}
-                          >
-                            <Languages className="h-5 w-5" />
-                            {language === "en" ? "Hindi (हिंदी)" : "English (अंग्रेज़ी)"}
                           </Button>
                         </motion.div>
                       )}

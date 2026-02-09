@@ -5,6 +5,7 @@ import { Check, Copy } from "lucide-react";
 import React from "react";
 import MemoizedMarkdown from "./Markdown";
 import TypingIndicator from "./TypingIndicator";
+import { useTranslation } from "../i18n/useTranslation";
 
 interface MessageListProps {
   messages: ExtendedUIMessage[];
@@ -27,6 +28,7 @@ export default function MessageList({
   const mainRef = React.useRef<HTMLElement>(null);
   const initialScrollDone = React.useRef(false);
   const [hasSubmitted, setHasSubmitted] = React.useState(false);
+  const { t } = useTranslation();
 
   const isStreaming = status === "submitted" || status === "streaming";
 
@@ -114,7 +116,7 @@ export default function MessageList({
         {isLoadingMore && (
           <div className="py-4 text-center">
             <div className="border-primary inline-block h-6 w-6 animate-spin rounded-full border-b-2"></div>
-            <p className="text-text-secondary mt-2">Loading more messages...</p>
+            <p className="text-text-secondary mt-2">{t("common.loading_more")}</p>
           </div>
         )}
 
@@ -165,7 +167,7 @@ export default function MessageList({
                           setTimeout(() => setCopiedId(null), 3000);
                         }}
                         className="text-text-muted hover:text-text-secondary transition-colors hover:cursor-pointer"
-                        title="Copy response"
+                        title={t("common.copy_response")}
                       >
                         {copiedId === message.id ? (
                           <Check className="h-4 w-4" />

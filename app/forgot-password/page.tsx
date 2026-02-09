@@ -5,12 +5,14 @@ import { Input } from "@/app/components/ui/Input";
 import axios from "axios";
 import Link from "next/link";
 import { useState } from "react";
+import { useTranslation } from "@/app/i18n/useTranslation";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,8 +34,8 @@ export default function ForgotPasswordPage() {
     <div className="bg-app-bg flex min-h-screen flex-col items-center justify-center p-6">
       <div className="border-border-light bg-app-bg w-full max-w-md space-y-8 rounded-3xl border p-10 shadow-2xl">
         <div className="text-center">
-          <h2 className="text-text-main mt-6 text-3xl font-bold">Reset Password</h2>
-          <p className="text-text-muted mt-2">Enter your email to receive a reset link</p>
+          <h2 className="text-text-main mt-6 text-3xl font-bold">{t("auth.reset_password")}</h2>
+          <p className="text-text-muted mt-2">{t("auth.enter_email_reset")}</p>
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -44,7 +46,7 @@ export default function ForgotPasswordPage() {
           )}
           {success && (
             <div className="rounded-xl bg-green-500/10 p-4 text-center text-sm font-medium text-green-500">
-              Check your email for the reset link!
+              {t("auth.reset_link_sent")}
             </div>
           )}
 
@@ -53,7 +55,7 @@ export default function ForgotPasswordPage() {
               id="email"
               name="email"
               type="email"
-              label="Email Address"
+              label={t("auth.email_address")}
               autoComplete="email"
               required
               value={email}
@@ -69,14 +71,14 @@ export default function ForgotPasswordPage() {
               disabled={loading || success}
               className="w-full py-4 text-lg font-bold"
             >
-              {loading ? "Sending Link..." : "Send Reset Link"}
+              {loading ? t("auth.sending_link") : t("auth.send_reset_link")}
             </Button>
           </div>
         </form>
 
         <div className="flex justify-end">
           <Link href="/login" className="text-primary text-sm font-medium hover:underline">
-            Back to Login
+            {t("common.back_to_login")}
           </Link>
         </div>
       </div>
