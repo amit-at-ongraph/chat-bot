@@ -2,10 +2,10 @@
 
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
+import { useTranslation } from "@/app/i18n/useTranslation";
 import axios from "axios";
 import Link from "next/link";
 import { useState } from "react";
-import { useTranslation } from "@/app/i18n/useTranslation";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");

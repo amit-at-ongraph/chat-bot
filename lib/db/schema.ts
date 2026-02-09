@@ -13,7 +13,7 @@ import {
   vector,
 } from "drizzle-orm/pg-core";
 import { AdapterAccount } from "next-auth/adapters";
-import { UserRole } from "../constants";
+import { Jurisdiction, UserRole } from "../constants";
 
 export const userRoleEnum = pgEnum("user_role", [UserRole.USER, UserRole.ADMIN]);
 export const scopeEnum = pgEnum("scope", ["global", "regional", "local"]);
@@ -24,6 +24,13 @@ export const lifecycleStateEnum = pgEnum("lifecycle_state", [
   "draft",
 ]);
 export const applicableRoleEnum = pgEnum("applicable_role", ["general", "advocate"]);
+export const jurisdictionEnum = pgEnum("jurisdiction", [
+  Jurisdiction.GLOBAL,
+  Jurisdiction.US_FEDERAL_BASELINE,
+  Jurisdiction.US_STATE,
+  Jurisdiction.EU_UNION,
+  Jurisdiction.UK_NATIONAL,
+]);
 
 export const users = pgTable("user", {
   id: text("id").primaryKey(),
@@ -107,13 +114,10 @@ export const documents = pgTable(
 );
 
 // RAG related tables
-export const ragChunks = pgTable("rag_chunks", {
-  chunkId: text("chunk_id")
-    .primaryKey()
-    .default(sql`substring(md5(random()::text), 1, 12)`),
-  content: text("content").notNull(),
+export const ragMetadata = pgTable("rag_metadata", {
+  id: uuid("id").defaultRandom().primaryKey(),
   topic: text("topic"),
-  jurisdiction: text("jurisdiction"),
+  jurisdiction: jurisdictionEnum("jurisdiction"),
   scope: scopeEnum("scope"),
   applicableRoles: applicableRoleEnum("applicable_roles").array(),
   authorityLevel: integer("authority_level").default(0),
@@ -125,8 +129,22 @@ export const ragChunks = pgTable("rag_chunks", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
+export const ragChunks = pgTable("rag_chunks", {
+  chunkId: text("chunk_id")
+    .primaryKey()
+    .default(sql`substring(md5(random()::text), 1, 12)`),
+  metadataId: uuid("metadata_id")
+    .notNull()
+    .references(() => ragMetadata.id, { onDelete: "cascade" }),
+  content: text("content").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
 export const ragEmbeddings = pgTable("rag_embeddings", {
   id: uuid("id").defaultRandom().primaryKey(),
+  metadataId: uuid("metadata_id")
+    .notNull()
+    .references(() => ragMetadata.id, { onDelete: "cascade" }),
   chunkId: text("chunk_id")
     .notNull()
     .references(() => ragChunks.chunkId, { onDelete: "cascade" }),

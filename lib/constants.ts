@@ -67,6 +67,14 @@ export enum UserRole {
   ADMIN = "admin",
 }
 
+export enum Jurisdiction {
+  GLOBAL = "global",
+  US_FEDERAL_BASELINE = "US_federal_baseline",
+  US_STATE = "US_state",
+  EU_UNION = "EU_union",
+  UK_NATIONAL = "UK_national",
+}
+
 export const LANGUAGES = [
   { native: "English", english: "English", value: "en" },
   { native: "हिन्दी", english: "Hindi", value: "hi" },

@@ -1,6 +1,6 @@
+import { LANGUAGES } from "@/lib/constants";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { LANGUAGES } from "@/lib/constants";
 
 export type Language = (typeof LANGUAGES)[number]["value"];
 

@@ -27,6 +27,8 @@ export async function POST(req: Request) {
 
     const formData = await req.formData();
     const files = formData.getAll("files") as File[];
+    const metadataStr = formData.get("metadata") as string;
+    const metadata = metadataStr ? JSON.parse(metadataStr) : null;
 
     if (!files || files.length === 0) {
       return NextResponse.json({ error: "No files provided" }, { status: 400 });
@@ -38,17 +40,32 @@ export async function POST(req: Request) {
 
         const filePath = file.name;
 
-        const { error } = await supabase.storage.from("documents").upload(filePath, buffer, {
-          upsert: true,
-          contentType: file.type || "application/octet-stream",
-        });
+        const { error: uploadError } = await supabase.storage
+          .from("documents")
+          .upload(filePath, buffer, {
+            upsert: true,
+            contentType: file.type || "application/octet-stream",
+          });
 
-        if (error) {
+        if (uploadError) {
           return {
             fileName: file.name,
             status: "failed" as const,
-            error: error.message,
+            error: uploadError.message,
           };
+        }
+
+        try {
+          await supabase.functions.invoke("generate-embeddings", {
+            body: {
+              bucket: "documents",
+              path: filePath,
+              metadata,
+            },
+          });
+        } catch (invokeError) {
+          console.error("Failed to trigger ingestion for", file.name, invokeError);
+          // Non-fatal error for the upload itself, but should be logged
         }
 
         return {
@@ -76,7 +93,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       uploaded: results,
-      triggered: true, // ingestion pipeline triggered automatically
+      triggered: true,
     });
   } catch (err) {
     console.error("Upload API error:", err);

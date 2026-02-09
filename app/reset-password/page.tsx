@@ -2,11 +2,11 @@
 
 import { Button } from "@/app/components/ui/Button";
 import { PasswordInput } from "@/app/components/ui/PasswordInput";
+import { useTranslation } from "@/app/i18n/useTranslation";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { Suspense, useState } from "react";
-import { useTranslation } from "@/app/i18n/useTranslation";
 
 function ResetPasswordForm() {
   const router = useRouter();
@@ -94,7 +94,9 @@ function ResetPasswordForm() {
         <h2 className="text-text-main mt-6 text-2xl font-bold">{t("auth.invalid_link")}</h2>
         <p className="text-text-muted mt-2">{t("auth.link_expired")}</p>
         {/** Debug info for user/dev */}
-        <p className="mt-2 text-xs text-red-400">{t("common.error")}: Missing auth code or access token.</p>
+        <p className="mt-2 text-xs text-red-400">
+          {t("common.error")}: Missing auth code or access token.
+        </p>
         <div className="mt-6">
           <Link href="/forgot-password" className="text-primary font-semibold hover:underline">
             {t("auth.request_new_link")}

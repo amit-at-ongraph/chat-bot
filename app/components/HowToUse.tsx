@@ -1,8 +1,8 @@
 "use client";
 
 import { ChevronLeft } from "lucide-react";
-import { Button } from "./ui/Button";
 import { useTranslation } from "../i18n/useTranslation";
+import { Button } from "./ui/Button";
 
 interface HowToUseProps {
   onBack: () => void;
@@ -23,9 +23,7 @@ export default function HowToUse({ onBack }: HowToUseProps) {
         >
           <ChevronLeft className="h-5 w-5" />
         </Button>
-        <h2 className="text-text-main m-0 text-[18px] font-semibold">
-          {t("common.how_to_use")}
-        </h2>
+        <h2 className="text-text-main m-0 text-[18px] font-semibold">{t("common.how_to_use")}</h2>
       </div>
 
       {/* Content */}
@@ -60,9 +58,7 @@ export default function HowToUse({ onBack }: HowToUseProps) {
           </ul>
         </section>
 
-        <p className="text-text-secondary text-[14px]">
-          {t("how_to.languages")}
-        </p>
+        <p className="text-text-secondary text-[14px]">{t("how_to.languages")}</p>
 
         <section className="space-y-2">
           <h3 className="text-text-main text-[16px] font-bold">
@@ -85,9 +81,7 @@ export default function HowToUse({ onBack }: HowToUseProps) {
         </section>
 
         <div className="border-border-base space-y-4 border-t pt-4">
-          <p className="text-text-secondary text-[14px]">
-            {t("how_to.urgent_note")}
-          </p>
+          <p className="text-text-secondary text-[14px]">{t("how_to.urgent_note")}</p>
           <p className="text-text-main text-[14px] leading-snug font-semibold">
             <span className="text-red-500">{t("common.paxis")}</span> {t("how_to.purpose_note")}
           </p>

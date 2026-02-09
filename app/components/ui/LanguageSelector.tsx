@@ -10,7 +10,7 @@ import {
 import { LANGUAGES } from "@/lib/constants";
 import { Globe } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { useLanguageStore, Language } from "../../store/languageStore";
+import { Language, useLanguageStore } from "../../store/languageStore";
 import { Button } from "./Button";
 
 export const LanguageSelector = () => {

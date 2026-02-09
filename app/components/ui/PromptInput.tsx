@@ -1,9 +1,9 @@
 "use client";
 
+import { useTranslation } from "@/app/i18n/useTranslation";
 import { ArrowUp, SquareIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useTranslation } from "@/app/i18n/useTranslation";
 
 interface PromptInputProps {
   value: string;

@@ -3,9 +3,9 @@ import { Menu, Moon, Sun } from "lucide-react";
 import { signIn, signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useSessionContext } from "../contexts";
+import { useTranslation } from "../i18n/useTranslation";
 import { Button } from "./ui/Button";
 import { LanguageSelector } from "./ui/LanguageSelector";
-import { useTranslation } from "../i18n/useTranslation";
 
 interface HeaderProps {
   skippedAuth: boolean;
@@ -33,7 +33,7 @@ export default function Header({ skippedAuth, onToggleSidebar, isSidebarOpen }: 
           </Button>
         )}
         <div className="flex items-center gap-2">
-          <h1 className="text-text-main hidden text-xl font-bold tracking-tight sm:block sm:truncate md:max-w-md m-0">
+          <h1 className="text-text-main m-0 hidden text-xl font-bold tracking-tight sm:block sm:truncate md:max-w-md">
             {UI_CONFIG.HEADER_TITLE}
           </h1>
         </div>

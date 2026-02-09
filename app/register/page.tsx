@@ -3,11 +3,11 @@
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
 import { PasswordInput } from "@/app/components/ui/PasswordInput";
+import { useTranslation } from "@/app/i18n/useTranslation";
 import { useAuthStore } from "@/app/store/authStore";
 import { signUpAction } from "@/lib/db/auth-actions";
 import Link from "next/link";
 import { useEffect } from "react";
-import { useTranslation } from "@/app/i18n/useTranslation";
 
 export default function RegisterPage() {
   const { registerForm, setRegisterField, resetRegisterForm } = useAuthStore();

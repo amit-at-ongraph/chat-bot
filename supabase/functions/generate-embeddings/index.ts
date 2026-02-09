@@ -7,14 +7,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 serve(async (req: Request) => {
   try {
-    const { bucket, path } = await req.json();
-
-    // console.log(Deno.env.get("SUPABASE_URL"));
-    // console.log(Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"));
-    // console.log("ENV CHECK:", {
-    //   hasOpenAI: Deno.env.get("OPENAI_API_KEY"),
-    //   hasPdfUrl: Deno.env.get("PDF_PARSER_URL"),
-    // });
+    const { bucket, path, metadata } = await req.json();
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -25,7 +18,6 @@ serve(async (req: Request) => {
 
     if (error) throw error;
 
-    // Extract user ID from path (assumes path is userId/filename)
     const [userId, fileName] = path.split("/");
 
     const isPdf = path.toLowerCase().endsWith(".pdf");
@@ -41,6 +33,30 @@ serve(async (req: Request) => {
     const chunks = chunkText(text);
     const BATCH_SIZE = 100;
 
+    // Insert metadata once for the whole document
+    const { data: metaData, error: metaError } = await supabase
+      .from("rag_metadata")
+      .insert({
+        topic: metadata?.topic || null,
+        jurisdiction: metadata?.jurisdiction || null,
+        scope: metadata?.scope || null,
+        applicable_roles: metadata?.applicableRoles || [],
+        authority_level: metadata?.authorityLevel || 0,
+        lifecycle_state: metadata?.lifecycleState || "active",
+        last_reviewed: metadata?.lastReviewed || null,
+        lexical_triggers: metadata?.lexicalTriggers || [],
+        retrieval_weight: metadata?.retrievalWeight || 1.0,
+        source_ids: [fileName || path],
+      })
+      .select("id")
+      .single();
+
+    if (metaError) {
+      throw new Error(`Failed to insert metadata: ${metaError.message}`);
+    }
+
+    const metadataId = metaData.id;
+
     for (let i = 0; i < chunks.length; i += BATCH_SIZE) {
       const batch = chunks.slice(i, i + BATCH_SIZE);
 
@@ -49,16 +65,37 @@ serve(async (req: Request) => {
         values: batch,
       });
 
-      const rows = batch.map((chunk, j) => ({
-        file_path: fileName ?? path,
-        chunk_index: i + j,
-        content: chunk,
-        embedding: embeddings[j],
-        // No userId
-        user_id: null,
-      }));
+      for (let j = 0; j < batch.length; j++) {
+        const chunk = batch[j];
+        const embedding = embeddings[j];
 
-      await supabase.from("documents").insert(rows);
+        // Insert into rag_chunks
+        const { data: chunkData, error: chunkError } = await supabase
+          .from("rag_chunks")
+          .insert({
+            content: chunk,
+            metadata_id: metadataId,
+          })
+          .select("chunk_id")
+          .single();
+
+        if (chunkError) {
+          console.error("Error inserting chunk:", chunkError);
+          continue;
+        }
+
+        // Insert into rag_embeddings
+        const { error: embedError } = await supabase.from("rag_embeddings").insert({
+          chunk_id: chunkData.chunk_id,
+          metadata_id: metadataId,
+          embedding: embedding,
+          model: "text-embedding-3-small",
+        });
+
+        if (embedError) {
+          console.error("Error inserting embedding:", embedError);
+        }
+      }
     }
 
     return new Response(JSON.stringify({ success: true }), { status: 200 });

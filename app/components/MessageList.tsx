@@ -3,9 +3,9 @@
 import { ExtendedUIMessage, MessagePart } from "@/types/chat";
 import { Check, Copy } from "lucide-react";
 import React from "react";
+import { useTranslation } from "../i18n/useTranslation";
 import MemoizedMarkdown from "./Markdown";
 import TypingIndicator from "./TypingIndicator";
-import { useTranslation } from "../i18n/useTranslation";
 
 interface MessageListProps {
   messages: ExtendedUIMessage[];

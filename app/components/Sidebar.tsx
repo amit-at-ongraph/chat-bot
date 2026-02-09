@@ -19,11 +19,11 @@ import {
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useSessionContext } from "../contexts";
+import { useTranslation } from "../i18n/useTranslation";
 import { useFileStore } from "../store/fileStore";
 import HowToUse from "./HowToUse";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
-import { useTranslation } from "../i18n/useTranslation";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -166,7 +166,9 @@ export default function Sidebar({
                     >
                       <Info className="h-4 w-4 shrink-0" />
                       {!effectivelyCollapsed && (
-                        <span className="flex-1 text-left whitespace-nowrap">{t("common.how_to_use")}</span>
+                        <span className="flex-1 text-left whitespace-nowrap">
+                          {t("common.how_to_use")}
+                        </span>
                       )}
                     </Button>
 
@@ -194,7 +196,9 @@ export default function Sidebar({
                   {/* Navigation Items */}
                   <nav className="flex-1 space-y-1 overflow-y-auto">
                     {!effectivelyCollapsed && (
-                      <div className="text-text-muted px-4 py-2 text-[14px]">{t("common.recent_chats")}</div>
+                      <div className="text-text-muted px-4 py-2 text-[14px]">
+                        {t("common.recent_chats")}
+                      </div>
                     )}
                     {!isCollapsed &&
                       chats.map((chat) => (
