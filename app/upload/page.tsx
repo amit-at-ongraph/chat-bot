@@ -81,7 +81,7 @@ export default function ChunksPage() {
         header: "Content",
         cell: ({ row }) => (
           <div className="max-w-sm text-[13px] leading-relaxed">
-            <div className="line-clamp-2">{row.getValue("content")}</div>
+            <div className="line-clamp-2 w-full">{row.getValue("content")}</div>
           </div>
         ),
       },
@@ -92,7 +92,7 @@ export default function ChunksPage() {
           const topic = row.getValue("topic") as string;
           return (
             <span className="border-primary/10 bg-primary/5 text-primary inline-flex items-center rounded-full border px-2.5 py-0.5 text-[12px] font-semibold">
-              {topic || "General"}
+              {topic ?? "-"}
             </span>
           );
         },
