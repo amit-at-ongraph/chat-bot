@@ -4,10 +4,12 @@ import { DBMessage, ExtendedUIMessage } from "@/types/chat";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLanguageStore } from "../store/languageStore";
 
 export function useChatLogic() {
+  const searchParams = useSearchParams();
   const [errorToast, setErrorToast] = useState<string | null>(null);
   const [input, setInput] = useState("");
   const [chatId, setChatId] = useState<string | null>(null);
@@ -56,42 +58,45 @@ export function useChatLogic() {
     },
   });
 
-  const loadChat = async (id: string) => {
-    setChatId(id);
-    chatIdRef.current = id;
-    setIsLoadingMessages(true);
-    try {
-      const { data: response } = await axios.get<{
-        data: DBMessage[];
-        nextCursor: string | null;
-      }>(`/api/chats/${id}/messages?limit=20`);
-      const { data, nextCursor } = response;
-      setMessages(
-        data.reverse().map(
-          (m): ExtendedUIMessage => ({
-            id: m.id,
-            role: m.role as "user" | "assistant",
-            parts: [{ type: "text", text: m.content }],
-            createdAt: new Date(m.createdAt),
-          }),
-        ),
-      );
-      if (data.length === 20) {
-        setCursor(nextCursor);
-        setHasMore(true);
-      } else {
-        setHasMore(false);
-        setCursor(null);
+  const loadChat = useCallback(
+    async (id: string) => {
+      setChatId(id);
+      chatIdRef.current = id;
+      setIsLoadingMessages(true);
+      try {
+        const { data: response } = await axios.get<{
+          data: DBMessage[];
+          nextCursor: string | null;
+        }>(`/api/chats/${id}/messages?limit=20`);
+        const { data, nextCursor } = response;
+        setMessages(
+          data.reverse().map(
+            (m): ExtendedUIMessage => ({
+              id: m.id,
+              role: m.role as "user" | "assistant",
+              parts: [{ type: "text", text: m.content }],
+              createdAt: new Date(m.createdAt),
+            }),
+          ),
+        );
+        if (data.length === 20) {
+          setCursor(nextCursor);
+          setHasMore(true);
+        } else {
+          setHasMore(false);
+          setCursor(null);
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          setErrorToast(error.message);
+        } else {
+          setErrorToast(String(error));
+        }
       }
-    } catch (error) {
-      if (error instanceof Error) {
-        setErrorToast(error.message);
-      } else {
-        setErrorToast(String(error));
-      }
-    }
-    setIsLoadingMessages(false);
-  };
+      setIsLoadingMessages(false);
+    },
+    [setMessages],
+  );
 
   const loadMore = async () => {
     if (!hasMore || !cursor || !chatId || isLoadingMore) return;
@@ -127,7 +132,7 @@ export function useChatLogic() {
     }
   };
 
-  const startNewChat = () => {
+  const startNewChat = useCallback(() => {
     setChatId(null);
     chatIdRef.current = null;
     setMessages([]);
@@ -137,7 +142,7 @@ export function useChatLogic() {
     setIsLoadingMessages(false);
     // Dispatch event to signal a new chat has been created
     window.dispatchEvent(new Event("new-chat-created"));
-  };
+  }, [setMessages]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -158,6 +163,19 @@ export function useChatLogic() {
     clearError();
     setErrorToast(null);
   };
+
+  useEffect(() => {
+    const urlChatId = searchParams.get("chatId");
+    if (urlChatId) {
+      if (urlChatId !== chatIdRef.current) {
+        loadChat(urlChatId);
+      }
+    } else {
+      if (chatIdRef.current) {
+        startNewChat();
+      }
+    }
+  }, [searchParams, loadChat, startNewChat]);
 
   return {
     messages,

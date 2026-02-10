@@ -94,7 +94,7 @@ export default function NewChunkPage() {
         JSON.stringify({
           ...metadata,
           lexicalTriggers: metadata.lexicalTriggers
-            ? metadata.lexicalTriggers.split(",").map((s) => s.trim())
+            ? metadata.lexicalTriggers.split(";").map((s) => s.trim())
             : [],
         }),
       );
@@ -218,7 +218,7 @@ export default function NewChunkPage() {
                 <Input
                   value={metadata.lexicalTriggers}
                   onChange={(e) => handleMetadataChange("lexicalTriggers", e.target.value)}
-                  placeholder="keyword1, keyword2..."
+                  placeholder="keyword1; keyword2..."
                   disabled={isUploading}
                   className="dark:bg-background bg-white text-[13px]"
                 />
