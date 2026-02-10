@@ -195,5 +195,17 @@ function buildRetrievalScore(ctx: z.infer<typeof queryMetadataSchema>, embedding
       )`;
   }
 
+  // Boost: Recency / Freshness
+  score = sql`
+    ${score} * (
+      CASE
+        WHEN ${ragMetadata.lastReviewed} IS NULL THEN 1.0
+        WHEN ${ragMetadata.lastReviewed} >= NOW() - INTERVAL '180 days' THEN 1.10
+        WHEN ${ragMetadata.lastReviewed} >= NOW() - INTERVAL '365 days' THEN 1.00
+        WHEN ${ragMetadata.lastReviewed} >= NOW() - INTERVAL '730 days' THEN 0.90
+        ELSE 0.80
+      END
+    )`;
+
   return score;
 }
