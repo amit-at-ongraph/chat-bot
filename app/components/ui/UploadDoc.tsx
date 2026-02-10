@@ -4,7 +4,7 @@ import { useTranslation } from "@/app/i18n/useTranslation";
 import { useFileStore } from "@/app/store/fileStore";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Jurisdiction } from "@/lib/constants";
+import { ApplicableRole, Jurisdiction, LifecycleState, Scope } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import axios from "axios";
 import { formatDistanceToNow, isToday, isYesterday } from "date-fns";
@@ -57,12 +57,12 @@ export const UploadDoc = () => {
   const [metadata, setMetadata] = useState({
     topic: "",
     jurisdiction: Jurisdiction.GLOBAL as string,
-    scope: "global" as "global" | "regional" | "local",
+    scope: Scope.GLOBAL as string,
     applicableRoles: [] as string[],
-    authorityLevel: 0,
-    lifecycleState: "active" as "active" | "inactive" | "archived" | "draft",
+    authorityLevel: 0 as string | number,
+    lifecycleState: LifecycleState.ACTIVE as string,
     lastReviewed: "",
-    retrievalWeight: 1.0,
+    retrievalWeight: 1.0 as string | number,
     lexicalTriggers: "",
   });
 
@@ -120,6 +120,8 @@ export const UploadDoc = () => {
         "metadata",
         JSON.stringify({
           ...metadata,
+          authorityLevel: Number(metadata.authorityLevel) || 0,
+          retrievalWeight: Number(metadata.retrievalWeight) || 0,
           lexicalTriggers: metadata.lexicalTriggers
             ? metadata.lexicalTriggers.split(",").map((s) => s.trim())
             : [],
@@ -400,9 +402,11 @@ export const UploadDoc = () => {
                     disabled={isUploading}
                     className="border-border-base bg-app-bg text-text-main focus:ring-primary/20 h-10 w-full rounded-xl border px-3 text-sm focus:ring-2 focus:outline-none"
                   >
-                    <option value="global">{t("upload.global")}</option>
-                    <option value="regional">{t("upload.regional")}</option>
-                    <option value="local">{t("upload.local")}</option>
+                    {Object.values(Scope).map((s) => (
+                      <option key={s} value={s}>
+                        {t(`upload.${s}`)}
+                      </option>
+                    ))}
                   </select>
                 </FormField>
 
@@ -413,10 +417,11 @@ export const UploadDoc = () => {
                     disabled={isUploading}
                     className="border-border-base bg-app-bg text-text-main focus:ring-primary/20 h-10 w-full rounded-xl border px-3 text-sm focus:ring-2 focus:outline-none"
                   >
-                    <option value="active">{t("upload.active")}</option>
-                    <option value="inactive">{t("upload.inactive")}</option>
-                    <option value="archived">{t("upload.archived")}</option>
-                    <option value="draft">{t("upload.draft")}</option>
+                    {Object.values(LifecycleState).map((s) => (
+                      <option key={s} value={s}>
+                        {t(`upload.${s}`)}
+                      </option>
+                    ))}
                   </select>
                 </FormField>
 
@@ -424,9 +429,7 @@ export const UploadDoc = () => {
                   <Input
                     type="number"
                     value={metadata.authorityLevel}
-                    onChange={(e) =>
-                      handleMetadataChange("authorityLevel", parseInt(e.target.value) || 0)
-                    }
+                    onChange={(e) => handleMetadataChange("authorityLevel", e.target.value)}
                     disabled={isUploading}
                   />
                 </FormField>
@@ -436,9 +439,7 @@ export const UploadDoc = () => {
                     type="number"
                     step="0.1"
                     value={metadata.retrievalWeight}
-                    onChange={(e) =>
-                      handleMetadataChange("retrievalWeight", parseFloat(e.target.value) || 0)
-                    }
+                    onChange={(e) => handleMetadataChange("retrievalWeight", e.target.value)}
                     disabled={isUploading}
                   />
                 </FormField>
@@ -463,7 +464,7 @@ export const UploadDoc = () => {
 
                 <FormField label={t("upload.applicable_roles")} className="sm:col-span-2">
                   <div className="flex flex-wrap gap-4 pt-1">
-                    {["general", "advocate"].map((role) => (
+                    {Object.values(ApplicableRole).map((role) => (
                       <div key={role} className="flex items-center gap-2">
                         <Checkbox
                           id={`role-${role}`}

@@ -13,18 +13,29 @@ import {
   vector,
 } from "drizzle-orm/pg-core";
 import { AdapterAccount } from "next-auth/adapters";
-import { Jurisdiction, UserRole } from "../constants";
+import { ApplicableRole, Jurisdiction, LifecycleState, Scope, UserRole } from "../constants";
 
-export const userRoleEnum = pgEnum("user_role", [UserRole.USER, UserRole.ADMIN]);
-export const scopeEnum = pgEnum("scope", ["global", "regional", "local"]);
-export const lifecycleStateEnum = pgEnum("lifecycle_state", [
-  "active",
-  "inactive",
-  "archived",
-  "draft",
+export const ENUM_NAMES = {
+  jurisdiction: "jurisdiction",
+  user_role: "user_role",
+  scope: "scope",
+  lifecycle_state: "lifecycle_state",
+  applicable_role: "applicable_role",
+} as const;
+
+export const userRoleEnum = pgEnum(ENUM_NAMES.user_role, [UserRole.USER, UserRole.ADMIN]);
+export const scopeEnum = pgEnum(ENUM_NAMES.scope, [Scope.GLOBAL, Scope.REGIONAL, Scope.LOCAL]);
+export const lifecycleStateEnum = pgEnum(ENUM_NAMES.lifecycle_state, [
+  LifecycleState.ACTIVE,
+  LifecycleState.INACTIVE,
+  LifecycleState.ARCHIVED,
+  LifecycleState.DRAFT,
 ]);
-export const applicableRoleEnum = pgEnum("applicable_role", ["general", "advocate"]);
-export const jurisdictionEnum = pgEnum("jurisdiction", [
+export const applicableRoleEnum = pgEnum(ENUM_NAMES.applicable_role, [
+  ApplicableRole.GENERAL,
+  ApplicableRole.ADVOCATE,
+]);
+export const jurisdictionEnum = pgEnum(ENUM_NAMES.jurisdiction, [
   Jurisdiction.GLOBAL,
   Jurisdiction.US_FEDERAL_BASELINE,
   Jurisdiction.US_STATE,
@@ -121,7 +132,7 @@ export const ragMetadata = pgTable("rag_metadata", {
   scope: scopeEnum("scope"),
   applicableRoles: applicableRoleEnum("applicable_roles").array(),
   authorityLevel: integer("authority_level").default(0),
-  lifecycleState: lifecycleStateEnum("lifecycle_state").default("active"),
+  lifecycleState: lifecycleStateEnum("lifecycle_state").default(LifecycleState.ACTIVE),
   lastReviewed: date("last_reviewed"),
   sourceIds: text("source_ids").array(),
   lexicalTriggers: text("lexical_triggers").array(),

@@ -1,5 +1,5 @@
 import { MODE_CLASSIFIER_PROMPT } from "@/config/behaviour";
-import { chatModel } from "@/lib/ai";
+import { chatModel, extractQueryMetadata } from "@/lib/ai";
 import { authOptions } from "@/lib/auth";
 import { createChat, findRelevantContent, saveMessage } from "@/lib/db/actions";
 import { getSystemMessage } from "@/lib/prompts";
@@ -24,7 +24,13 @@ export async function POST(req: Request) {
       .map((p) => (p.type === "text" ? p.text : ""))
       .join("") || "";
 
-  const context = await findRelevantContent(userQuery);
+    
+  const contextRetrieval = await extractQueryMetadata(userQuery);
+
+  console.log("contextRetrieval", contextRetrieval);
+  
+  const context = await findRelevantContent(userQuery, contextRetrieval);
+
 
   if (session?.user?.id) {
     if (!chatId) {

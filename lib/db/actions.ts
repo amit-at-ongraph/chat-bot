@@ -1,9 +1,18 @@
 import { DBChat, DBMessage } from "@/types/chat";
 import { embed } from "ai";
-import { and, desc, eq, lt, or, sql } from "drizzle-orm";
-import { embeddingModel } from "../ai";
+import { and, desc, eq, gte, lt, or, sql } from "drizzle-orm";
+import z from "zod";
+import { embeddingModel, queryMetadataSchema } from "../ai";
+import { LifecycleState } from "../constants";
 import { db } from "./index";
-import { chats, documents, messages } from "./schema";
+import {
+  ENUM_NAMES,
+  chats,
+  messages,
+  ragChunks,
+  ragEmbeddings,
+  ragMetadata,
+} from "./schema";
 
 export async function createChat(userId: string, title?: string): Promise<DBChat> {
   const [newChat] = await db
@@ -76,26 +85,110 @@ export async function renameChat(chatId: string, title: string) {
   return await db.update(chats).set({ title }).where(eq(chats.id, chatId)).returning();
 }
 
-export async function findRelevantContent(userQuery: string) {
+/**
+ * Pipeline-based context retrieval system.
+ */
+export async function findRelevantContent(
+  userQuery: string,
+  ctx: z.infer<typeof queryMetadataSchema>,
+) {
   if (!userQuery) return "";
 
-  // 1. Generate embedding for the user's question
+  // 1. Generate embedding for query
   const { embedding } = await embed({
     model: embeddingModel,
     value: userQuery,
   });
 
-  // 2. Query for the most relevant chunks globally
+  const embeddingJson = JSON.stringify(embedding);
+
+  // 2. Build Pipeline Components
+  const filters = buildRetrievalFilters(ctx);
+  const scoreSql = buildRetrievalScore(ctx, embeddingJson);
+
+  // 3. Execute Query
   const relevantChunks = await db
     .select({
-      content: documents.content,
-      distance: sql<number>`
-      ${documents.embedding} <=> ${JSON.stringify(embedding)}
-    `,
+      content: ragChunks.content,
+      score: scoreSql,
     })
-    .from(documents)
-    .orderBy((t) => t.distance) // ASC = most similar first
-    .limit(15);
+    .from(ragEmbeddings)
+    .innerJoin(ragChunks, eq(ragChunks.chunkId, ragEmbeddings.chunkId))
+    .innerJoin(ragMetadata, eq(ragMetadata.id, ragEmbeddings.metadataId))
+    .where(and(...filters))
+    .orderBy((t) => t.score)
+    .limit(10);
+
+  console.log("Retrieval pipeline results:", relevantChunks, "chunks found");
 
   return relevantChunks.map((chunk) => chunk.content).join("\n\n");
+}
+
+/**
+ * Builds the WHERE clause filters based on user context and metadata.
+ */
+function buildRetrievalFilters(ctx: z.infer<typeof queryMetadataSchema>) {
+  const filters = [eq(ragMetadata.lifecycleState, LifecycleState.ACTIVE)];
+
+  // Jurisdiction filter (array inclusion)
+  if (ctx.jurisdiction && ctx.jurisdiction.length > 0) {
+    const jurisdictions = ctx.jurisdiction.map((j) => `'${j}'`).join(",");
+    filters.push(
+      sql`${ragMetadata.jurisdiction} = ANY(ARRAY[${sql.raw(jurisdictions)}]::${sql.raw(ENUM_NAMES.jurisdiction)}[])`,
+    );
+  }
+
+  // Applicable Roles filter (array intersection)
+  if (ctx.applicableRoles && ctx.applicableRoles.length > 0) {
+    const roles = ctx.applicableRoles.map((r) => `'${r}'`).join(",");
+    filters.push(
+      sql`${ragMetadata.applicableRoles} && ARRAY[${sql.raw(roles)}]::${sql.raw(ENUM_NAMES.applicable_role)}[]`,
+    );
+  }
+
+  // Authority Level filter (minimum requirement)
+  if (ctx.authorityLevel !== null && ctx.authorityLevel !== undefined) {
+    filters.push(gte(ragMetadata.authorityLevel, ctx.authorityLevel));
+  }
+
+  return filters;
+}
+
+
+function buildRetrievalScore(ctx: z.infer<typeof queryMetadataSchema>, embeddingJson: string) {
+  // Base Score: Vector Similarity (Cosine Distance)
+  let score = sql<number>`(${ragEmbeddings.embedding} <=> ${embeddingJson})`;
+
+  // Multiply by Retrieval Weight (User-defined importance)
+  score = sql`${score} * COALESCE(${ragMetadata.retrievalWeight}, 1.0)`;
+
+  // Boost by Authority Level (Lower score = higher authority)
+  score = sql`${score} * (1.0 / (1 + COALESCE(${ragMetadata.authorityLevel}, 0) * 0.1))`;
+
+  // Boost: Topic Match
+  if (ctx.topic) {
+    score = sql`
+      ${score} * (
+        CASE 
+          WHEN ${ragMetadata.topic} = ${ctx.topic} 
+          THEN 1.1 
+          ELSE 1.0 
+        END
+      )`;
+  }
+
+  // Boost: Lexical Triggers (Keywords)
+  if (ctx.lexicalTriggers && ctx.lexicalTriggers.length > 0) {
+    const triggers = ctx.lexicalTriggers.map((t) => `'${t}'`).join(",");
+    score = sql`
+      ${score} * (
+        CASE 
+          WHEN ${ragMetadata.lexicalTriggers} && ARRAY[${sql.raw(triggers)}]::text[] 
+          THEN 1.15 
+          ELSE 1.0 
+        END
+      )`;
+  }
+
+  return score;
 }

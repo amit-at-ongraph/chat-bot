@@ -75,6 +75,24 @@ export enum Jurisdiction {
   UK_NATIONAL = "UK_national",
 }
 
+export enum Scope {
+  GLOBAL = "global",
+  REGIONAL = "regional",
+  LOCAL = "local",
+}
+
+export enum LifecycleState {
+  ACTIVE = "active",
+  INACTIVE = "inactive",
+  ARCHIVED = "archived",
+  DRAFT = "draft",
+}
+
+export enum ApplicableRole {
+  GENERAL = "general",
+  ADVOCATE = "advocate",
+}
+
 export const LANGUAGES = [
   { native: "English", english: "English", value: "en" },
   { native: "हिन्दी", english: "Hindi", value: "hi" },
