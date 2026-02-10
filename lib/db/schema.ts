@@ -111,10 +111,14 @@ export const documents = pgTable(
 );
 
 // RAG related tables
-export const ragMetadata = pgTable("rag_metadata", {
-  id: uuid("id").defaultRandom().primaryKey(),
+// RAG related tables
+export const ragChunks = pgTable("rag_chunks", {
+  chunkId: text("chunk_id")
+    .primaryKey()
+    .default(sql`substring(md5(random()::text), 1, 12)`),
+  content: text("content").notNull(),
 
-  // User Defined Metadata
+  // Metadata (Moved from ragMetadata)
   scenario: scenarioEnum("scenario"),
   applicableRoles: applicableRoleEnum("applicable_roles").array(),
   topic: text("topic"),
@@ -130,22 +134,8 @@ export const ragMetadata = pgTable("rag_metadata", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
-export const ragChunks = pgTable("rag_chunks", {
-  chunkId: text("chunk_id")
-    .primaryKey()
-    .default(sql`substring(md5(random()::text), 1, 12)`),
-  metadataId: uuid("metadata_id")
-    .notNull()
-    .references(() => ragMetadata.id, { onDelete: "cascade" }),
-  content: text("content").notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-});
-
 export const ragEmbeddings = pgTable("rag_embeddings", {
   id: uuid("id").defaultRandom().primaryKey(),
-  metadataId: uuid("metadata_id")
-    .notNull()
-    .references(() => ragMetadata.id, { onDelete: "cascade" }),
   chunkId: text("chunk_id")
     .notNull()
     .references(() => ragChunks.chunkId, { onDelete: "cascade" }),

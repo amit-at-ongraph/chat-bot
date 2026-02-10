@@ -11,7 +11,6 @@ import {
   messages,
   ragChunks,
   ragEmbeddings,
-  ragMetadata,
 } from "./schema";
 
 export async function createChat(userId: string, title?: string): Promise<DBChat> {
@@ -114,7 +113,6 @@ export async function findRelevantContent(
     })
     .from(ragEmbeddings)
     .innerJoin(ragChunks, eq(ragChunks.chunkId, ragEmbeddings.chunkId))
-    .innerJoin(ragMetadata, eq(ragMetadata.id, ragEmbeddings.metadataId))
     .where(and(...filters))
     .orderBy((t) => t.score)
     .limit(10);
@@ -128,13 +126,13 @@ export async function findRelevantContent(
  * Builds the WHERE clause filters based on user context and metadata.
  */
 function buildRetrievalFilters(ctx: z.infer<typeof queryMetadataSchema>) {
-  const filters = [eq(ragMetadata.lifecycleState, LifecycleState.ACTIVE)];
+  const filters = [eq(ragChunks.lifecycleState, LifecycleState.ACTIVE)];
 
   // Jurisdiction filter (array inclusion)
   if (ctx.jurisdiction && ctx.jurisdiction.length > 0) {
     const jurisdictions = ctx.jurisdiction.map((j) => `'${j}'`).join(",");
     filters.push(
-      sql`${ragMetadata.jurisdiction} = ANY(ARRAY[${sql.raw(jurisdictions)}]::${sql.raw(ENUM_NAMES.jurisdiction)}[])`,
+      sql`${ragChunks.jurisdiction} = ANY(ARRAY[${sql.raw(jurisdictions)}]::${sql.raw(ENUM_NAMES.jurisdiction)}[])`,
     );
   }
 
@@ -142,18 +140,18 @@ function buildRetrievalFilters(ctx: z.infer<typeof queryMetadataSchema>) {
   if (ctx.applicableRoles && ctx.applicableRoles.length > 0) {
     const roles = ctx.applicableRoles.map((r) => `'${r}'`).join(",");
     filters.push(
-      sql`${ragMetadata.applicableRoles} && ARRAY[${sql.raw(roles)}]::${sql.raw(ENUM_NAMES.applicable_role)}[]`,
+      sql`${ragChunks.applicableRoles} && ARRAY[${sql.raw(roles)}]::${sql.raw(ENUM_NAMES.applicable_role)}[]`,
     );
   }
 
   // Scenario filter (single value)
   if (ctx.scenario) {
-    filters.push(eq(ragMetadata.scenario, ctx.scenario));
+    filters.push(eq(ragChunks.scenario, ctx.scenario));
   }
 
   // Authority Level filter (minimum requirement)
   if (ctx.authorityLevel !== null && ctx.authorityLevel !== undefined) {
-    filters.push(gte(ragMetadata.authorityLevel, ctx.authorityLevel));
+    filters.push(gte(ragChunks.authorityLevel, ctx.authorityLevel));
   }
 
   return filters;
@@ -165,17 +163,17 @@ function buildRetrievalScore(ctx: z.infer<typeof queryMetadataSchema>, embedding
   let score = sql<number>`(${ragEmbeddings.embedding} <=> ${embeddingJson})`;
 
   // Multiply by Retrieval Weight (User-defined importance)
-  score = sql`${score} * COALESCE(${ragMetadata.retrievalWeight}, 1.0)`;
+  score = sql`${score} * COALESCE(${ragChunks.retrievalWeight}, 1.0)`;
 
   // Boost by Authority Level (Lower score = higher authority)
-  score = sql`${score} * (1.0 / (1 + COALESCE(${ragMetadata.authorityLevel}, 0) * 0.1))`;
+  score = sql`${score} * (1.0 / (1 + COALESCE(${ragChunks.authorityLevel}, 0) * 0.1))`;
 
   // Boost: Topic Match
   if (ctx.topic) {
     score = sql`
       ${score} * (
         CASE 
-          WHEN ${ragMetadata.topic} = ${ctx.topic} 
+          WHEN ${ragChunks.topic} = ${ctx.topic} 
           THEN 1.1 
           ELSE 1.0 
         END
@@ -188,7 +186,7 @@ function buildRetrievalScore(ctx: z.infer<typeof queryMetadataSchema>, embedding
     score = sql`
       ${score} * (
         CASE 
-          WHEN ${ragMetadata.lexicalTriggers} && ARRAY[${sql.raw(triggers)}]::text[] 
+          WHEN ${ragChunks.lexicalTriggers} && ARRAY[${sql.raw(triggers)}]::text[] 
           THEN 1.15 
           ELSE 1.0 
         END
@@ -199,10 +197,10 @@ function buildRetrievalScore(ctx: z.infer<typeof queryMetadataSchema>, embedding
   score = sql`
     ${score} * (
       CASE
-        WHEN ${ragMetadata.lastReviewed} IS NULL THEN 1.0
-        WHEN ${ragMetadata.lastReviewed} >= NOW() - INTERVAL '180 days' THEN 1.10
-        WHEN ${ragMetadata.lastReviewed} >= NOW() - INTERVAL '365 days' THEN 1.00
-        WHEN ${ragMetadata.lastReviewed} >= NOW() - INTERVAL '730 days' THEN 0.90
+        WHEN ${ragChunks.lastReviewed} IS NULL THEN 1.0
+        WHEN ${ragChunks.lastReviewed} >= NOW() - INTERVAL '180 days' THEN 1.10
+        WHEN ${ragChunks.lastReviewed} >= NOW() - INTERVAL '365 days' THEN 1.00
+        WHEN ${ragChunks.lastReviewed} >= NOW() - INTERVAL '730 days' THEN 0.90
         ELSE 0.80
       END
     )`;

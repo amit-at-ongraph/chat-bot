@@ -33,30 +33,6 @@ serve(async (req: Request) => {
     const chunks = chunkText(text);
     const BATCH_SIZE = 100;
 
-    // Insert metadata once for the whole document
-    const { data: metaData, error: metaError } = await supabase
-      .from("rag_metadata")
-      .insert({
-        topic: metadata?.topic || null,
-        jurisdiction: metadata?.jurisdiction || null,
-        scenario: metadata?.scenario || null,
-        applicable_roles: metadata?.applicableRoles || [],
-        authority_level: metadata?.authorityLevel || 0,
-        lifecycle_state: metadata?.lifecycleState || "active",
-        last_reviewed: metadata?.lastReviewed || null,
-        lexical_triggers: metadata?.lexicalTriggers || [],
-        retrieval_weight: metadata?.retrievalWeight || 1.0,
-        source_ids: [fileName || path],
-      })
-      .select("id")
-      .single();
-
-    if (metaError) {
-      throw new Error(`Failed to insert metadata: ${metaError.message}`);
-    }
-
-    const metadataId = metaData.id;
-
     for (let i = 0; i < chunks.length; i += BATCH_SIZE) {
       const batch = chunks.slice(i, i + BATCH_SIZE);
 
@@ -69,12 +45,21 @@ serve(async (req: Request) => {
         const chunk = batch[j];
         const embedding = embeddings[j];
 
-        // Insert into rag_chunks
+        // Insert into rag_chunks with metadata
         const { data: chunkData, error: chunkError } = await supabase
           .from("rag_chunks")
           .insert({
             content: chunk,
-            metadata_id: metadataId,
+            topic: metadata?.topic || null,
+            jurisdiction: metadata?.jurisdiction || null,
+            scenario: metadata?.scenario || null,
+            applicable_roles: metadata?.applicableRoles || [],
+            authority_level: metadata?.authorityLevel || 0,
+            lifecycle_state: metadata?.lifecycleState || "active",
+            last_reviewed: metadata?.lastReviewed || null,
+            lexical_triggers: metadata?.lexicalTriggers || [],
+            retrieval_weight: metadata?.retrievalWeight || 1.0,
+            source_ids: [fileName || path],
           })
           .select("chunk_id")
           .single();
@@ -87,7 +72,6 @@ serve(async (req: Request) => {
         // Insert into rag_embeddings
         const { error: embedError } = await supabase.from("rag_embeddings").insert({
           chunk_id: chunkData.chunk_id,
-          metadata_id: metadataId,
           embedding: embedding,
           model: "text-embedding-3-small",
         });
