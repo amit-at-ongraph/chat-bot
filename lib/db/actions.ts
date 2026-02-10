@@ -5,13 +5,7 @@ import z from "zod";
 import { embeddingModel, queryMetadataSchema } from "../ai";
 import { LifecycleState } from "../constants";
 import { db } from "./index";
-import {
-  ENUM_NAMES,
-  chats,
-  messages,
-  ragChunks,
-  ragEmbeddings,
-} from "./schema";
+import { ENUM_NAMES, chats, messages, ragChunks, ragEmbeddings } from "./schema";
 
 export async function createChat(userId: string, title?: string): Promise<DBChat> {
   const [newChat] = await db
@@ -156,7 +150,6 @@ function buildRetrievalFilters(ctx: z.infer<typeof queryMetadataSchema>) {
 
   return filters;
 }
-
 
 function buildRetrievalScore(ctx: z.infer<typeof queryMetadataSchema>, embeddingJson: string) {
   // Base Score: Vector Similarity (Cosine Distance)

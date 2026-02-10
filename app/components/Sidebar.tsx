@@ -16,10 +16,10 @@ import {
   User,
   X,
 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { useSession } from "next-auth/react";
 import { useTranslation } from "../i18n/useTranslation";
 import HowToUse from "./HowToUse";
 import { Button } from "./ui/Button";
@@ -172,7 +172,11 @@ export default function Sidebar({
                     </Button>
 
                     {session?.user?.role === UserRole.ADMIN && (
-                      <Link href="/upload" className="w-full" onClick={() => window.innerWidth < 1024 && onClose()}>
+                      <Link
+                        href="/upload"
+                        className="w-full"
+                        onClick={() => window.innerWidth < 1024 && onClose()}
+                      >
                         <Button
                           variant="none"
                           size="none"

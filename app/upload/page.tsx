@@ -1,21 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useState, useMemo } from "react";
-import axios from "axios";
 import { Button } from "@/app/components/ui/Button";
-import { Plus, Search, Trash2, Edit2, ChevronLeft, ChevronRight } from "lucide-react";
-import Link from "next/link";
-import { Scenario, Jurisdiction, LifecycleState } from "@/lib/constants";
-import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import {
-  useReactTable,
-  getCoreRowModel,
-  flexRender,
-  ColumnDef,
-  getPaginationRowModel,
-  getFilteredRowModel,
-} from "@tanstack/react-table";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -24,6 +17,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Jurisdiction, LifecycleState, Scenario } from "@/lib/constants";
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import axios from "axios";
+import { ChevronLeft, ChevronRight, Edit2, Plus, Search, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 
 interface Chunk {
   chunkId: string;
@@ -73,7 +80,7 @@ export default function ChunksPage() {
         accessorKey: "content",
         header: "Content",
         cell: ({ row }) => (
-          <div className="max-w-md font-light text-[13px] leading-relaxed">
+          <div className="max-w-md text-[13px] leading-relaxed font-light">
             <div className="line-clamp-2">{row.getValue("content")}</div>
           </div>
         ),
@@ -84,7 +91,7 @@ export default function ChunksPage() {
         cell: ({ row }) => {
           const topic = row.getValue("topic") as string;
           return (
-            <span className="inline-flex items-center rounded-full border border-primary/10 bg-primary/5 px-2.5 py-0.5 text-[10px] font-semibold uppercase text-primary">
+            <span className="border-primary/10 bg-primary/5 text-primary inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase">
               {topic || "General"}
             </span>
           );
@@ -94,7 +101,7 @@ export default function ChunksPage() {
         accessorKey: "scenario",
         header: "Scenario",
         cell: ({ row }) => (
-          <div className="text-[13px] font-light text-text-secondary capitalize">
+          <div className="text-text-secondary text-[13px] font-light capitalize">
             {row.getValue("scenario")}
           </div>
         ),
@@ -103,7 +110,7 @@ export default function ChunksPage() {
         accessorKey: "createdAt",
         header: "Created",
         cell: ({ row }) => (
-          <div className="text-[12px] font-light text-text-muted whitespace-nowrap">
+          <div className="text-text-muted text-[12px] font-light whitespace-nowrap">
             {new Date(row.getValue("createdAt")).toLocaleDateString()}
           </div>
         ),
@@ -113,25 +120,17 @@ export default function ChunksPage() {
         header: () => <div className="text-right">Actions</div>,
         cell: () => (
           <div className="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-            <Button
-              variant="none"
-              size="none"
-              className="p-2 text-text-muted hover:text-text-main"
-            >
+            <Button variant="none" size="none" className="text-text-muted hover:text-text-main p-2">
               <Edit2 className="h-3.5 w-3.5" />
             </Button>
-            <Button
-              variant="none"
-              size="none"
-              className="p-2 text-red-400 hover:text-red-500"
-            >
+            <Button variant="none" size="none" className="p-2 text-red-400 hover:text-red-500">
               <Trash2 className="h-3.5 w-3.5" />
             </Button>
           </div>
         ),
       },
     ],
-    []
+    [],
   );
 
   const table = useReactTable({
@@ -149,8 +148,7 @@ export default function ChunksPage() {
       const topic = row.getValue("topic") as string;
       const query = filterValue.toLowerCase();
       return (
-        content.toLowerCase().includes(query) ||
-        (topic && topic.toLowerCase().includes(query))
+        content.toLowerCase().includes(query) || (topic && topic.toLowerCase().includes(query))
       );
     },
   });
@@ -159,107 +157,114 @@ export default function ChunksPage() {
     <div className="mx-auto max-w-7xl space-y-6 max-xl:px-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-medium tracking-tight mb-2">RAG Chunks</h1>
+          <h1 className="mb-2 text-xl font-medium tracking-tight">RAG Chunks</h1>
           <p className="text-text-muted text-sm font-light">
             Manage and monitor document segments used for retrieval.
           </p>
         </div>
         <Link href="/upload/new">
-          <Button
-            variant="primary"
-            className="gap-2 rounded-xl px-4 py-2 text-sm font-medium"
-          >
+          <Button variant="primary" className="gap-2 rounded-xl px-4 py-2 text-sm font-medium">
             <Plus className="h-4 w-4" />
             Add Chunk
           </Button>
         </Link>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-4 border-border-base pb-6">
+      <div className="border-border-base flex flex-wrap items-center justify-between gap-4 pb-6">
         <div className="relative w-full max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
+          <Search className="text-text-muted absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
           <Input
             placeholder="Search segments..."
             value={globalFilter ?? ""}
             onChange={(e) => setGlobalFilter(e.target.value)}
-            className="h-9 w-full pl-9 text-xs font-light"
+            className="w-full pl-9"
           />
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 rounded-lg border border-border-base bg-header-bg p-1">
-            <select
-              value={filters.scenario}
-              onChange={(e) =>
-                setFilters((f) => ({ ...f, scenario: e.target.value }))
-              }
-              className="bg-transparent px-2 text-[11px] font-medium uppercase tracking-tight focus:outline-none"
-            >
-              <option value="">Scenarios</option>
+          <Select
+            value={filters.scenario}
+            onValueChange={(value) =>
+              setFilters((f) => ({ ...f, scenario: value === "ALL" ? "" : value }))
+            }
+          >
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="Scenarios" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">All Scenarios</SelectItem>
               {Object.values(Scenario).map((s) => (
-                <option key={s} value={s}>
+                <SelectItem key={s} value={s}>
                   {s}
-                </option>
+                </SelectItem>
               ))}
-            </select>
-            <div className="h-4 w-px bg-border-base" />
-            <select
-              value={filters.jurisdiction}
-              onChange={(e) =>
-                setFilters((f) => ({ ...f, jurisdiction: e.target.value }))
-              }
-              className="bg-transparent px-2 text-[11px] font-medium uppercase tracking-tight focus:outline-none"
-            >
-              <option value="">Jurisdictions</option>
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={filters.jurisdiction}
+            onValueChange={(value) =>
+              setFilters((f) => ({ ...f, jurisdiction: value === "ALL" ? "" : value }))
+            }
+          >
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="Jurisdictions" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">All Jurisdictions</SelectItem>
               {Object.values(Jurisdiction).map((j) => (
-                <option key={j} value={j}>
+                <SelectItem key={j} value={j}>
                   {j}
-                </option>
+                </SelectItem>
               ))}
-            </select>
-            <div className="h-4 w-px bg-border-base" />
-            <select
-              value={filters.lifecycleState}
-              onChange={(e) =>
-                setFilters((f) => ({ ...f, lifecycleState: e.target.value }))
-              }
-              className="bg-transparent px-2 text-[11px] font-medium uppercase tracking-tight focus:outline-none"
-            >
-              <option value="">Status</option>
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={filters.lifecycleState}
+            onValueChange={(value) =>
+              setFilters((f) => ({ ...f, lifecycleState: value === "ALL" ? "" : value }))
+            }
+          >
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">All Status</SelectItem>
               {Object.values(LifecycleState).map((s) => (
-                <option key={s} value={s}>
+                <SelectItem key={s} value={s}>
                   {s}
-                </option>
+                </SelectItem>
               ))}
-            </select>
-          </div>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
-      <div className="rounded-lg border border-border-base bg-white shadow-sm dark:bg-[#111111]/50 overflow-hidden">
+      <div className="border-border-base overflow-hidden rounded-lg border bg-white shadow-sm dark:border-neutral-700 dark:bg-[#111111]/50">
         <Table>
-          <TableHeader className="bg-border-light/30 border-b border-border-base text-[12px] font-medium uppercase tracking-wider text-text-muted">
+          <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="hover:bg-transparent border-border-base">
+              <TableRow
+                key={headerGroup.id}
+                className="border-border-base hover:bg-transparent dark:border-neutral-700"
+              >
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="px-6 py-4 font-medium h-auto">
+                  <TableHead key={header.id} className="h-auto px-6 py-4 font-medium">
                     {header.isPlaceholder
                       ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                      : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 ))}
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody className="divide-border-base divide-y">
+          <TableBody className="divide-border-base divide-y dark:divide-neutral-700">
             {loading ? (
               Array(5)
                 .fill(0)
                 .map((_, i) => (
-                  <TableRow key={i} className="animate-pulse border-border-base">
+                  <TableRow key={i} className="border-border-base animate-pulse">
                     <TableCell className="px-6 py-4">
                       <div className="bg-border-light h-4 w-full rounded" />
                     </TableCell>
@@ -281,7 +286,7 @@ export default function ChunksPage() {
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-32 text-center text-text-muted italic"
+                  className="text-text-muted h-32 text-center italic"
                 >
                   No chunks found matching your searching criteria.
                 </TableCell>
@@ -290,14 +295,11 @@ export default function ChunksPage() {
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  className="hover:bg-border-light/20 transition-colors group border-border-base"
+                  className="hover:bg-border-light/20 group border-border-base transition-colors dark:border-neutral-700 dark:hover:bg-neutral-800"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="px-6 py-4 align-middle">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -306,8 +308,8 @@ export default function ChunksPage() {
           </TableBody>
         </Table>
 
-        <div className="flex items-center justify-between  border-border-base px-6 py-4">
-          <p className="text-[12px] font-light text-text-muted">
+        <div className="border-border-base flex items-center justify-between border-t px-6 py-4 dark:border-neutral-700">
+          <p className="text-text-muted text-[12px] font-light">
             Showing {table.getRowModel().rows.length} segments
           </p>
           <div className="flex items-center gap-2">
@@ -316,7 +318,7 @@ export default function ChunksPage() {
               size="none"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
-              className="border border-border-base p-1.5 hover:bg-border-light transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="border-border-base hover:bg-border-light border p-1.5 transition-colors disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-700"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -325,7 +327,7 @@ export default function ChunksPage() {
               size="none"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
-              className="border border-border-base p-1.5 hover:bg-border-light transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="border-border-base hover:bg-border-light border p-1.5 transition-colors disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-700"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>

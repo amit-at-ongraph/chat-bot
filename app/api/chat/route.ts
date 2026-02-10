@@ -24,13 +24,11 @@ export async function POST(req: Request) {
       .map((p) => (p.type === "text" ? p.text : ""))
       .join("") || "";
 
-    
   const contextRetrieval = await extractQueryMetadata(userQuery);
 
   console.log("contextRetrieval", contextRetrieval);
-  
-  const context = await findRelevantContent(userQuery, contextRetrieval);
 
+  const context = await findRelevantContent(userQuery, contextRetrieval);
 
   if (session?.user?.id) {
     if (!chatId) {

@@ -1,21 +1,19 @@
 "use client";
 
-import { useSession } from "next-auth/react";
-import Sidebar from "@/app/components/Sidebar";
 import Header from "@/app/components/Header";
+import Sidebar from "@/app/components/Sidebar";
 import { useChatStore } from "@/app/store/chatStore";
-import { useCallback, useEffect } from "react";
 import axios from "axios";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { UserRole } from "@/lib/constants";
+import { useSession } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect } from "react";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
-  const { data: session, status: authStatus } = useSession();
+  const { data: session } = useSession();
   const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
   const currentChatId = searchParams.get("chatId");
-  
+
   const {
     isSidebarOpen,
     setIsSidebarOpen,
@@ -66,7 +64,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     router.push("/");
     // Delay to allow navigation before triggering new chat if needed
     setTimeout(() => {
-        window.dispatchEvent(new CustomEvent("start-new-chat"));
+      window.dispatchEvent(new CustomEvent("start-new-chat"));
     }, 100);
   };
 
@@ -95,7 +93,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     router.push(`/?chatId=${id}`);
   };
 
-  const isAuthReady = authStatus !== "loading";
   const showSidebar = !!session;
 
   return (
@@ -118,7 +115,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
       <div
         className={`flex h-screen flex-1 flex-col transition-all duration-300 ${
-           showSidebar && isSidebarOpen ? (isCollapsed ? "lg:pl-16" : "lg:pl-72") : "lg:pl-0"
+          showSidebar && isSidebarOpen ? (isCollapsed ? "lg:pl-16" : "lg:pl-72") : "lg:pl-0"
         }`}
       >
         <Header
@@ -126,9 +123,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           onToggleSidebar={toggleSidebar}
           isSidebarOpen={isSidebarOpen}
         />
-        <main className="flex-1 overflow-y-auto">
-          {children}
-        </main>
+        <main className="flex-1 overflow-y-auto">{children}</main>
       </div>
     </div>
   );

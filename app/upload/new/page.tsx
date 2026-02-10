@@ -1,8 +1,15 @@
 "use client";
 
 import { Button } from "@/app/components/ui/Button";
-import { Input } from "@/app/components/ui/Input";
 import { useTranslation } from "@/app/i18n/useTranslation";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ApplicableRole, Jurisdiction, LifecycleState, Scenario } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import axios from "axios";
@@ -129,60 +136,72 @@ export default function NewChunkPage() {
               <Database className="h-4 w-4" /> Chunk Metadata
             </h2>
 
-            <div className="grid gap-4 grid-cols-2">
+            <div className="grid grid-cols-2 gap-4">
               <FormField label="Topic">
                 <Input
                   value={metadata.topic}
                   onChange={(e) => handleMetadataChange("topic", e.target.value)}
                   placeholder="e.g. Warrant Procedures"
                   disabled={isUploading}
-                  className="h-10 text-[13px] font-light"
+                  className="dark:bg-background bg-white text-[13px]"
                 />
               </FormField>
 
               <FormField label="Jurisdiction">
-                <select
+                <Select
                   value={metadata.jurisdiction}
-                  onChange={(e) => handleMetadataChange("jurisdiction", e.target.value)}
+                  onValueChange={(value) => handleMetadataChange("jurisdiction", value)}
                   disabled={isUploading}
-                  className="border-border-base bg-app-bg text-text-main focus:ring-primary/20 h-10 w-full rounded-lg border px-3 text-[13px] font-light transition-all focus:ring-2 focus:outline-none"
                 >
-                  {Object.values(Jurisdiction).map((j) => (
-                    <option key={j} value={j}>
-                      {t(`upload.${j}`)}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className="w-full text-left text-[13px]">
+                    <SelectValue placeholder="Select Jurisdiction" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.values(Jurisdiction).map((j) => (
+                      <SelectItem key={j} value={j}>
+                        {t(`upload.${j}`)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </FormField>
 
               <FormField label="Scenario">
-                <select
+                <Select
                   value={metadata.scenario}
-                  onChange={(e) => handleMetadataChange("scenario", e.target.value)}
+                  onValueChange={(value) => handleMetadataChange("scenario", value)}
                   disabled={isUploading}
-                  className="border-border-base bg-app-bg text-text-main focus:ring-primary/20 h-10 w-full rounded-lg border px-3 text-[13px] font-light transition-all focus:ring-2 focus:outline-none"
                 >
-                  {Object.values(Scenario).map((s) => (
-                    <option key={s} value={s}>
-                      {t(`upload.${s}`)}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className="w-full text-left text-[13px]">
+                    <SelectValue placeholder="Select Scenario" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.values(Scenario).map((s) => (
+                      <SelectItem key={s} value={s}>
+                        {t(`upload.${s}`)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </FormField>
 
-              <FormField label="Lifecycle State">
-                <select
+              <FormField label="Status">
+                <Select
                   value={metadata.lifecycleState}
-                  onChange={(e) => handleMetadataChange("lifecycleState", e.target.value)}
+                  onValueChange={(value) => handleMetadataChange("lifecycleState", value)}
                   disabled={isUploading}
-                  className="border-border-base bg-app-bg text-text-main focus:ring-primary/20 h-10 w-full rounded-lg border px-3 text-[13px] font-light transition-all focus:ring-2 focus:outline-none"
                 >
-                  {Object.values(LifecycleState).map((s) => (
-                    <option key={s} value={s}>
-                      {t(`upload.${s}`)}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className="w-full text-left text-[13px]">
+                    <SelectValue placeholder="Select State" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.values(LifecycleState).map((s) => (
+                      <SelectItem key={s} value={s}>
+                        {t(`upload.${s}`)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </FormField>
 
               <FormField label="Last Reviewed">
@@ -191,7 +210,7 @@ export default function NewChunkPage() {
                   value={metadata.lastReviewed}
                   onChange={(e) => handleMetadataChange("lastReviewed", e.target.value)}
                   disabled={isUploading}
-                  className="h-10 text-[13px] font-light"
+                  className="dark:bg-background bg-white text-[13px]"
                 />
               </FormField>
 
@@ -201,7 +220,7 @@ export default function NewChunkPage() {
                   onChange={(e) => handleMetadataChange("lexicalTriggers", e.target.value)}
                   placeholder="keyword1, keyword2..."
                   disabled={isUploading}
-                  className="h-10 text-[13px] font-light"
+                  className="dark:bg-background bg-white text-[13px]"
                 />
               </FormField>
 
@@ -233,7 +252,7 @@ export default function NewChunkPage() {
             <Button
               onClick={handleUpload}
               disabled={isUploading}
-              className="mt-4 h-10 w-full rounded-xl font-medium"
+              className="mt-4 w-full rounded-xl font-medium"
               variant="primary"
             >
               {isUploading ? (
@@ -297,11 +316,9 @@ export default function NewChunkPage() {
                     </div>
                     <div className="space-y-1">
                       <p className="text-sm font-medium">
-                        {selectedFile ? selectedFile.name : "Click to select or drag and drop"}
+                        {selectedFile ? selectedFile.name : "Click to select"}
                       </p>
-                      <p className="text-text-muted text-xs font-light">
-                        PDF or Plain Text (max. 10MB)
-                      </p>
+                      <p className="text-text-muted text-xs">PDF or Plain Text (max. 10MB)</p>
                     </div>
                   </label>
                   {selectedFile && (
@@ -318,15 +335,13 @@ export default function NewChunkPage() {
             ) : (
               <div className="space-y-4">
                 <textarea
-                  className="bg-app-bg border-border-base focus:ring-primary/20 h-80 w-full resize-none rounded-xl border p-4 text-[13px] leading-relaxed font-light transition-all focus:ring-2 focus:outline-none"
+                  className="bg-app-bg border-border-base focus:ring-primary/20 h-80 w-full resize-none rounded-xl border p-4 text-[13px] leading-relaxed transition-all focus:ring-2 focus:outline-none"
                   placeholder="Paste your document content here..."
                   value={pastedContent}
                   onChange={(e) => setPastedContent(e.target.value)}
                 />
                 <div className="flex items-center justify-between px-1">
-                  <p className="text-text-muted text-[11px] font-light italic">
-                    Supports UTF-8 characters
-                  </p>
+                  <p className="text-text-muted text-[11px] italic">Supports UTF-8 characters</p>
                   <p className="text-text-muted text-[11px] font-medium tracking-tight uppercase">
                     {pastedContent.length} Characters
                   </p>
