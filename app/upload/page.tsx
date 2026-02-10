@@ -156,7 +156,7 @@ export default function ChunksPage() {
   });
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6">
+    <div className="mx-auto max-w-7xl space-y-6 max-xl:px-4">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-medium tracking-tight mb-2">RAG Chunks</h1>
@@ -175,7 +175,7 @@ export default function ChunksPage() {
         </Link>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border-base pb-6">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-border-base pb-6">
         <div className="relative w-full max-w-sm">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
           <Input
@@ -236,7 +236,7 @@ export default function ChunksPage() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-border-base bg-white shadow-sm dark:bg-[#111111]/50 overflow-hidden">
+      <div className="rounded-lg border border-border-base bg-white shadow-sm dark:bg-[#111111]/50 overflow-hidden">
         <Table>
           <TableHeader className="bg-border-light/30 border-b border-border-base text-[12px] font-medium uppercase tracking-wider text-text-muted">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -306,7 +306,7 @@ export default function ChunksPage() {
           </TableBody>
         </Table>
 
-        <div className="flex items-center justify-between border-t border-border-base px-6 py-4">
+        <div className="flex items-center justify-between  border-border-base px-6 py-4">
           <p className="text-[12px] font-light text-text-muted">
             Showing {table.getRowModel().rows.length} segments
           </p>

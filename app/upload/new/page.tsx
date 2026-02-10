@@ -1,18 +1,26 @@
 "use client";
 
-import { useTranslation } from "@/app/i18n/useTranslation";
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
+import { useTranslation } from "@/app/i18n/useTranslation";
 import { ApplicableRole, Jurisdiction, LifecycleState, Scenario } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import axios from "axios";
-import { ArrowLeft, Loader2, Upload, FileText, Type } from "lucide-react";
+import { ArrowLeft, FileText, Loader2, Type, Upload } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "sonner";
 
-const FormField = ({ label, children, className }: { label: string; children: React.ReactNode; className?: string }) => (
+const FormField = ({
+  label,
+  children,
+  className,
+}: {
+  label: string;
+  children: React.ReactNode;
+  className?: string;
+}) => (
   <div className={cn("flex flex-col gap-1.5", className)}>
     <label className="text-text-main text-xs font-semibold">{label}</label>
     <div className="relative">{children}</div>
@@ -64,7 +72,7 @@ export default function NewChunkPage() {
 
     try {
       const formData = new FormData();
-      
+
       if (uploadType === "file" && selectedFile) {
         formData.append("files", selectedFile);
       } else {
@@ -99,111 +107,36 @@ export default function NewChunkPage() {
   };
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8 pb-12">
+    <div className="mx-auto space-y-8 px-4 pb-12">
       <div className="flex items-center gap-4">
         <Link href="/upload">
-          <Button variant="none" size="none" className="text-text-muted hover:text-text-main p-2 transition-colors">
+          <Button
+            variant="none"
+            size="none"
+            className="text-text-muted hover:text-text-main p-2 transition-colors"
+          >
             <ArrowLeft className="h-5 w-5" />
           </Button>
         </Link>
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Add New Chunk</h1>
-          <p className="text-text-muted text-sm font-light uppercase tracking-wider">Manual Data Entry & Document Upload</p>
-        </div>
+        <h2 className="mb-0">Add New Chunk</h2>
       </div>
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        {/* Upload Source Section */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="border-border-base bg-header-bg space-y-6 rounded-2xl border p-6 shadow-sm">
-            <div className="flex items-center justify-between border-b border-border-base pb-4">
-              <h2 className="text-sm font-semibold flex items-center gap-2">
-                <Upload className="h-4 w-4" /> Source Content
-              </h2>
-              <div className="flex bg-app-bg rounded-lg border border-border-base p-0.5">
-                <button
-                  onClick={() => setUploadType("file")}
-                  className={cn(
-                    "flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md transition-all",
-                    uploadType === "file" ? "bg-primary text-white shadow-sm" : "text-text-muted hover:text-text-main"
-                  )}
-                >
-                  <FileText className="h-3.5 w-3.5" /> File
-                </button>
-                <button
-                  onClick={() => setUploadType("paste")}
-                  className={cn(
-                    "flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md transition-all",
-                    uploadType === "paste" ? "bg-primary text-white shadow-sm" : "text-text-muted hover:text-text-main"
-                  )}
-                >
-                  <Type className="h-3.5 w-3.5" /> Paste
-                </button>
-              </div>
-            </div>
-
-            {uploadType === "file" ? (
-              <div className="space-y-4">
-                <div className="flex flex-col items-center justify-center border-2 border-dashed border-border-base bg-app-bg hover:bg-border-light/50 transition-colors rounded-2xl p-12 text-center group">
-                  <input
-                    type="file"
-                    id="chunk-file"
-                    className="hidden"
-                    onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-                    accept=".pdf,.txt"
-                  />
-                  <label htmlFor="chunk-file" className="cursor-pointer space-y-4">
-                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/5 text-primary group-hover:bg-primary/10 transition-colors">
-                      <Upload className="h-6 w-6" />
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium">{selectedFile ? selectedFile.name : "Click to select or drag and drop"}</p>
-                      <p className="text-xs text-text-muted font-light">PDF or Plain Text (max. 10MB)</p>
-                    </div>
-                  </label>
-                  {selectedFile && (
-                    <Button 
-                      variant="none" 
-                      onClick={() => setSelectedFile(null)}
-                      className="mt-4 text-[11px] font-medium text-red-500 hover:underline"
-                    >
-                      Remove File
-                    </Button>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <textarea
-                  className="w-full h-80 bg-app-bg border border-border-base rounded-xl p-4 text-[13px] font-light leading-relaxed focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
-                  placeholder="Paste your document content here..."
-                  value={pastedContent}
-                  onChange={(e) => setPastedContent(e.target.value)}
-                />
-                <div className="flex justify-between items-center px-1">
-                  <p className="text-[11px] text-text-muted font-light italic">Supports UTF-8 characters</p>
-                  <p className="text-[11px] text-text-muted font-medium uppercase tracking-tight">{pastedContent.length} Characters</p>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
         {/* Metadata Section */}
-        <div className="space-y-6">
-          <div className="border-border-base bg-header-bg sticky top-8 space-y-6 rounded-2xl border p-6 shadow-sm">
-            <h2 className="text-sm font-semibold border-b border-border-base pb-4 flex items-center gap-2">
+        <div className="space-y-6 lg:col-span-2">
+          <div className="border-border-base bg-header-bg sticky top-8 space-y-6 rounded-2xl border p-6 shadow-xs">
+            <h2 className="border-border-base flex items-center gap-2 border-b pb-4 text-sm font-semibold">
               <Database className="h-4 w-4" /> Chunk Metadata
             </h2>
-            
-            <div className="grid gap-4">
+
+            <div className="grid gap-4 grid-cols-2">
               <FormField label="Topic">
                 <Input
                   value={metadata.topic}
                   onChange={(e) => handleMetadataChange("topic", e.target.value)}
                   placeholder="e.g. Warrant Procedures"
                   disabled={isUploading}
-                  className="text-[13px] font-light"
+                  className="h-10 text-[13px] font-light"
                 />
               </FormField>
 
@@ -212,10 +145,12 @@ export default function NewChunkPage() {
                   value={metadata.jurisdiction}
                   onChange={(e) => handleMetadataChange("jurisdiction", e.target.value)}
                   disabled={isUploading}
-                  className="border-border-base bg-app-bg text-text-main h-9 w-full rounded-lg border px-3 text-[13px] font-light focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                  className="border-border-base bg-app-bg text-text-main focus:ring-primary/20 h-10 w-full rounded-lg border px-3 text-[13px] font-light transition-all focus:ring-2 focus:outline-none"
                 >
                   {Object.values(Jurisdiction).map((j) => (
-                    <option key={j} value={j}>{t(`upload.${j}`)}</option>
+                    <option key={j} value={j}>
+                      {t(`upload.${j}`)}
+                    </option>
                   ))}
                 </select>
               </FormField>
@@ -225,10 +160,12 @@ export default function NewChunkPage() {
                   value={metadata.scenario}
                   onChange={(e) => handleMetadataChange("scenario", e.target.value)}
                   disabled={isUploading}
-                  className="border-border-base bg-app-bg text-text-main h-9 w-full rounded-lg border px-3 text-[13px] font-light focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                  className="border-border-base bg-app-bg text-text-main focus:ring-primary/20 h-10 w-full rounded-lg border px-3 text-[13px] font-light transition-all focus:ring-2 focus:outline-none"
                 >
                   {Object.values(Scenario).map((s) => (
-                    <option key={s} value={s}>{t(`upload.${s}`)}</option>
+                    <option key={s} value={s}>
+                      {t(`upload.${s}`)}
+                    </option>
                   ))}
                 </select>
               </FormField>
@@ -238,10 +175,12 @@ export default function NewChunkPage() {
                   value={metadata.lifecycleState}
                   onChange={(e) => handleMetadataChange("lifecycleState", e.target.value)}
                   disabled={isUploading}
-                  className="border-border-base bg-app-bg text-text-main h-9 w-full rounded-lg border px-3 text-[13px] font-light focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                  className="border-border-base bg-app-bg text-text-main focus:ring-primary/20 h-10 w-full rounded-lg border px-3 text-[13px] font-light transition-all focus:ring-2 focus:outline-none"
                 >
                   {Object.values(LifecycleState).map((s) => (
-                    <option key={s} value={s}>{t(`upload.${s}`)}</option>
+                    <option key={s} value={s}>
+                      {t(`upload.${s}`)}
+                    </option>
                   ))}
                 </select>
               </FormField>
@@ -252,7 +191,7 @@ export default function NewChunkPage() {
                   value={metadata.lastReviewed}
                   onChange={(e) => handleMetadataChange("lastReviewed", e.target.value)}
                   disabled={isUploading}
-                  className="text-[13px] font-light h-9"
+                  className="h-10 text-[13px] font-light"
                 />
               </FormField>
 
@@ -262,7 +201,7 @@ export default function NewChunkPage() {
                   onChange={(e) => handleMetadataChange("lexicalTriggers", e.target.value)}
                   placeholder="keyword1, keyword2..."
                   disabled={isUploading}
-                  className="text-[13px] font-light"
+                  className="h-10 text-[13px] font-light"
                 />
               </FormField>
 
@@ -277,7 +216,7 @@ export default function NewChunkPage() {
                         onClick={() => handleRoleToggle(role)}
                         disabled={isUploading}
                         className={cn(
-                          "rounded-lg border px-2.5 py-1 text-[11px] font-medium transition-all duration-200",
+                          "rounded-lg border px-2.5 py-1 text-[12px] font-medium transition-all duration-200",
                           isSelected
                             ? "bg-primary border-primary text-white shadow-sm"
                             : "border-border-base bg-app-bg text-text-muted hover:border-primary/50 hover:text-text-main",
@@ -294,7 +233,7 @@ export default function NewChunkPage() {
             <Button
               onClick={handleUpload}
               disabled={isUploading}
-              className="w-full mt-4 h-10 rounded-xl font-medium"
+              className="mt-4 h-10 w-full rounded-xl font-medium"
               variant="primary"
             >
               {isUploading ? (
@@ -308,6 +247,94 @@ export default function NewChunkPage() {
             </Button>
           </div>
         </div>
+
+        {/* Upload Source Section */}
+        <div className="space-y-6">
+          <div className="border-border-base bg-header-bg space-y-6 rounded-2xl border p-6 shadow-xs">
+            <div className="border-border-base flex items-center justify-between border-b pb-4">
+              <h2 className="flex items-center gap-2 text-sm font-semibold">
+                <Upload className="h-4 w-4" /> Source Content
+              </h2>
+              <div className="bg-app-bg border-border-base flex rounded-lg border p-0.5">
+                <button
+                  onClick={() => setUploadType("file")}
+                  className={cn(
+                    "flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium transition-all",
+                    uploadType === "file"
+                      ? "bg-primary text-white shadow-sm"
+                      : "text-text-muted hover:text-text-main",
+                  )}
+                >
+                  <FileText className="h-3.5 w-3.5" /> File
+                </button>
+                <button
+                  onClick={() => setUploadType("paste")}
+                  className={cn(
+                    "flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium transition-all",
+                    uploadType === "paste"
+                      ? "bg-primary text-white shadow-sm"
+                      : "text-text-muted hover:text-text-main",
+                  )}
+                >
+                  <Type className="h-3.5 w-3.5" /> Paste
+                </button>
+              </div>
+            </div>
+
+            {uploadType === "file" ? (
+              <div className="space-y-4">
+                <div className="border-border-base bg-app-bg hover:bg-border-light/50 group flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-12 text-center transition-colors">
+                  <input
+                    type="file"
+                    id="chunk-file"
+                    className="hidden"
+                    onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                    accept=".pdf,.txt"
+                  />
+                  <label htmlFor="chunk-file" className="cursor-pointer space-y-4">
+                    <div className="bg-primary/5 text-primary group-hover:bg-primary/10 mx-auto flex h-12 w-12 items-center justify-center rounded-full transition-colors">
+                      <Upload className="h-6 w-6" />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium">
+                        {selectedFile ? selectedFile.name : "Click to select or drag and drop"}
+                      </p>
+                      <p className="text-text-muted text-xs font-light">
+                        PDF or Plain Text (max. 10MB)
+                      </p>
+                    </div>
+                  </label>
+                  {selectedFile && (
+                    <Button
+                      variant="none"
+                      onClick={() => setSelectedFile(null)}
+                      className="mt-4 text-[11px] font-medium text-red-500 hover:underline"
+                    >
+                      Remove File
+                    </Button>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <textarea
+                  className="bg-app-bg border-border-base focus:ring-primary/20 h-80 w-full resize-none rounded-xl border p-4 text-[13px] leading-relaxed font-light transition-all focus:ring-2 focus:outline-none"
+                  placeholder="Paste your document content here..."
+                  value={pastedContent}
+                  onChange={(e) => setPastedContent(e.target.value)}
+                />
+                <div className="flex items-center justify-between px-1">
+                  <p className="text-text-muted text-[11px] font-light italic">
+                    Supports UTF-8 characters
+                  </p>
+                  <p className="text-text-muted text-[11px] font-medium tracking-tight uppercase">
+                    {pastedContent.length} Characters
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -316,21 +343,21 @@ export default function NewChunkPage() {
 // Helper to keep Database icon imported since it's used in h2
 function Database({ className }: { className?: string }) {
   return (
-    <svg 
-      xmlns="http://www.w3.org/2000/svg" 
-      width="24" 
-      height="24" 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round" 
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       className={className}
     >
-      <ellipse cx="12" cy="5" rx="9" ry="3"/>
-      <path d="M3 5V19A9 3 0 0 0 21 19V5"/>
-      <path d="M3 12A9 3 0 0 0 21 12"/>
+      <ellipse cx="12" cy="5" rx="9" ry="3" />
+      <path d="M3 5V19A9 3 0 0 0 21 19V5" />
+      <path d="M3 12A9 3 0 0 0 21 12" />
     </svg>
   );
 }
