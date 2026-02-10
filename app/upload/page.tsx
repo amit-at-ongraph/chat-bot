@@ -27,7 +27,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import axios from "axios";
-import { ChevronLeft, ChevronRight, Edit2, Plus, Search, Trash2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, Search, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -80,7 +80,7 @@ export default function ChunksPage() {
         accessorKey: "content",
         header: "Content",
         cell: ({ row }) => (
-          <div className="max-w-md text-[13px] leading-relaxed font-light">
+          <div className="max-w-sm text-[13px] leading-relaxed">
             <div className="line-clamp-2">{row.getValue("content")}</div>
           </div>
         ),
@@ -91,7 +91,7 @@ export default function ChunksPage() {
         cell: ({ row }) => {
           const topic = row.getValue("topic") as string;
           return (
-            <span className="border-primary/10 bg-primary/5 text-primary inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase">
+            <span className="border-primary/10 bg-primary/5 text-primary inline-flex items-center rounded-full border px-2.5 py-0.5 text-[12px] font-semibold">
               {topic || "General"}
             </span>
           );
@@ -101,30 +101,36 @@ export default function ChunksPage() {
         accessorKey: "scenario",
         header: "Scenario",
         cell: ({ row }) => (
-          <div className="text-text-secondary text-[13px] font-light capitalize">
+          <div className="text-text-secondary text-[13px] capitalize">
             {row.getValue("scenario")}
           </div>
         ),
       },
+      // {
+      //   accessorKey: "jurisdiction",
+      //   header: "Jurisdiction",
+      //   cell: ({ row }) => (
+      //     <div className="text-text-secondary text-[13px] capitalize">
+      //       {row.getValue("jurisdiction")}
+      //     </div>
+      //   ),
+      // },
       {
         accessorKey: "createdAt",
         header: "Created",
         cell: ({ row }) => (
-          <div className="text-text-muted text-[12px] font-light whitespace-nowrap">
+          <div className="text-text-secondary text-[12px] whitespace-nowrap">
             {new Date(row.getValue("createdAt")).toLocaleDateString()}
           </div>
         ),
       },
       {
         id: "actions",
-        header: () => <div className="text-right">Actions</div>,
+        header: () => <div className="text-center">Actions</div>,
         cell: () => (
-          <div className="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-            <Button variant="none" size="none" className="text-text-muted hover:text-text-main p-2">
-              <Edit2 className="h-3.5 w-3.5" />
-            </Button>
+          <div className="flex items-center justify-center gap-1 transition-opacity">
             <Button variant="none" size="none" className="p-2 text-red-400 hover:text-red-500">
-              <Trash2 className="h-3.5 w-3.5" />
+              <Trash2 className="h-4 w-4" />
             </Button>
           </div>
         ),
@@ -261,7 +267,7 @@ export default function ChunksPage() {
           </TableHeader>
           <TableBody className="divide-border-base divide-y dark:divide-neutral-700">
             {loading ? (
-              Array(5)
+              Array(2)
                 .fill(0)
                 .map((_, i) => (
                   <TableRow key={i} className="border-border-base animate-pulse">

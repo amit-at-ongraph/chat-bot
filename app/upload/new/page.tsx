@@ -252,8 +252,8 @@ export default function NewChunkPage() {
             <Button
               onClick={handleUpload}
               disabled={isUploading}
-              className="mt-4 w-full rounded-xl font-medium"
-              variant="primary"
+              className="mt-4"
+              variant="primary-action"
             >
               {isUploading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -335,7 +335,7 @@ export default function NewChunkPage() {
             ) : (
               <div className="space-y-4">
                 <textarea
-                  className="bg-app-bg border-border-base focus:ring-primary/20 h-80 w-full resize-none rounded-xl border p-4 text-[13px] leading-relaxed transition-all focus:ring-2 focus:outline-none"
+                  className="bg-app-bg border-border-base focus-visible:border-primary/50 focus-visible:ring-primary/10 h-80 w-full resize-none rounded-xl border p-4 text-[13px] leading-relaxed transition-all focus:ring-2 focus:outline-none focus-visible:ring-2 dark:focus-visible:ring-white/60"
                   placeholder="Paste your document content here..."
                   value={pastedContent}
                   onChange={(e) => setPastedContent(e.target.value)}
