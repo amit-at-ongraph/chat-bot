@@ -6,6 +6,7 @@ import { DefaultChatTransport } from "ai";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useChatStore } from "../store/chatStore";
 import { useLanguageStore } from "../store/languageStore";
 
 export function useChatLogic() {
@@ -16,7 +17,7 @@ export function useChatLogic() {
   const [hasMore, setHasMore] = useState(false);
   const [cursor, setCursor] = useState<string | null>(null);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+  const { isLoadingMessages, setIsLoadingMessages } = useChatStore();
   const chatIdRef = useRef<string | null>(null);
   const { language } = useLanguageStore();
 

@@ -15,6 +15,8 @@ interface ChatState {
   setUserChatsLoading: (loading: boolean) => void;
   toggleSidebar: () => void;
   toggleCollapsed: () => void;
+  isLoadingMessages: boolean;
+  setIsLoadingMessages: (loading: boolean) => void;
 }
 
 export const useChatStore = create<ChatState>()(
@@ -52,6 +54,11 @@ export const useChatStore = create<ChatState>()(
     toggleCollapsed: () =>
       set((state) => {
         state.isCollapsed = !state.isCollapsed;
+      }),
+    isLoadingMessages: false,
+    setIsLoadingMessages: (loading) =>
+      set((state) => {
+        state.isLoadingMessages = loading;
       }),
   })),
 );

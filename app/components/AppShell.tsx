@@ -25,6 +25,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     setUserChatsLoading,
     toggleSidebar,
     skippedAuth,
+    isLoadingMessages,
   } = useChatStore();
 
   const fetchChats = useCallback(async () => {
@@ -110,6 +111,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           onNewChat={handleNewChat}
           onDeleteChat={handleDeleteChat}
           onRenameChat={handleRenameChat}
+          selectedChatLoading={isLoadingMessages}
         />
       )}
 
