@@ -23,29 +23,11 @@ export const ENUM_NAMES = {
   applicable_role: "applicable_role",
 } as const;
 
-export const userRoleEnum = pgEnum(ENUM_NAMES.user_role, [UserRole.USER, UserRole.ADMIN]);
-export const scenarioEnum = pgEnum(ENUM_NAMES.scenario, [
-  Scenario.GLOBAL,
-  Scenario.REGIONAL,
-  Scenario.LOCAL,
-]);
-export const lifecycleStateEnum = pgEnum(ENUM_NAMES.lifecycle_state, [
-  LifecycleState.ACTIVE,
-  LifecycleState.INACTIVE,
-  LifecycleState.ARCHIVED,
-  LifecycleState.DRAFT,
-]);
-export const applicableRoleEnum = pgEnum(ENUM_NAMES.applicable_role, [
-  ApplicableRole.GENERAL,
-  ApplicableRole.ADVOCATE,
-]);
-export const jurisdictionEnum = pgEnum(ENUM_NAMES.jurisdiction, [
-  Jurisdiction.GLOBAL,
-  Jurisdiction.US_FEDERAL_BASELINE,
-  Jurisdiction.US_STATE,
-  Jurisdiction.EU_UNION,
-  Jurisdiction.UK_NATIONAL,
-]);
+export const userRoleEnum = pgEnum(ENUM_NAMES.user_role, UserRole);
+export const lifecycleStateEnum = pgEnum(ENUM_NAMES.lifecycle_state, LifecycleState);
+export const applicableRoleEnum = pgEnum(ENUM_NAMES.applicable_role, ApplicableRole);
+export const jurisdictionEnum = pgEnum(ENUM_NAMES.jurisdiction, Jurisdiction);
+export const scenarioEnum = pgEnum(ENUM_NAMES.scenario, Scenario);
 
 export const users = pgTable("user", {
   id: text("id").primaryKey(),
@@ -131,15 +113,19 @@ export const documents = pgTable(
 // RAG related tables
 export const ragMetadata = pgTable("rag_metadata", {
   id: uuid("id").defaultRandom().primaryKey(),
-  topic: text("topic"),
-  jurisdiction: jurisdictionEnum("jurisdiction"),
+
+  // User Defined Metadata
   scenario: scenarioEnum("scenario"),
   applicableRoles: applicableRoleEnum("applicable_roles").array(),
-  authorityLevel: integer("authority_level").default(0),
-  lifecycleState: lifecycleStateEnum("lifecycle_state").default(LifecycleState.ACTIVE),
+  topic: text("topic"),
+  jurisdiction: jurisdictionEnum("jurisdiction"),
   lastReviewed: date("last_reviewed"),
-  sourceIds: text("source_ids").array(),
   lexicalTriggers: text("lexical_triggers").array(),
+  lifecycleState: lifecycleStateEnum("lifecycle_state").default(LifecycleState.ACTIVE),
+
+  // System Defined Metadata
+  authorityLevel: integer("authority_level").default(0),
+  sourceIds: text("source_ids").array(),
   retrievalWeight: real("retrieval_weight").default(1.0),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });

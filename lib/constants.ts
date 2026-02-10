@@ -91,6 +91,10 @@ export enum LifecycleState {
 export enum ApplicableRole {
   GENERAL = "general",
   ADVOCATE = "advocate",
+  TARGET = "target",
+  EMPLOYER = "employer",
+  STAFF = "staff",
+  BYSTANDER = "bystander",
 }
 
 export const LANGUAGES = [

@@ -59,10 +59,8 @@ export const UploadDoc = () => {
     jurisdiction: Jurisdiction.GLOBAL as string,
     scenario: Scenario.GLOBAL as string,
     applicableRoles: [] as string[],
-    authorityLevel: 0 as string | number,
     lifecycleState: LifecycleState.ACTIVE as string,
     lastReviewed: "",
-    retrievalWeight: 1.0 as string | number,
     lexicalTriggers: "",
   });
 
@@ -120,8 +118,6 @@ export const UploadDoc = () => {
         "metadata",
         JSON.stringify({
           ...metadata,
-          authorityLevel: Number(metadata.authorityLevel) || 0,
-          retrievalWeight: Number(metadata.retrievalWeight) || 0,
           lexicalTriggers: metadata.lexicalTriggers
             ? metadata.lexicalTriggers.split(",").map((s) => s.trim())
             : [],
@@ -143,10 +139,8 @@ export const UploadDoc = () => {
         jurisdiction: Jurisdiction.GLOBAL,
         scenario: Scenario.GLOBAL,
         applicableRoles: [],
-        authorityLevel: 0,
         lifecycleState: LifecycleState.ACTIVE,
         lastReviewed: "",
-        retrievalWeight: 1.0,
         lexicalTriggers: "",
       });
       if (fileInputRef.current) {
@@ -425,24 +419,6 @@ export const UploadDoc = () => {
                   </select>
                 </FormField>
 
-                <FormField label={t("upload.authority_level")}>
-                  <Input
-                    type="number"
-                    value={metadata.authorityLevel}
-                    onChange={(e) => handleMetadataChange("authorityLevel", e.target.value)}
-                    disabled={isUploading}
-                  />
-                </FormField>
-
-                <FormField label={t("upload.retrieval_weight")}>
-                  <Input
-                    type="number"
-                    step="0.1"
-                    value={metadata.retrievalWeight}
-                    onChange={(e) => handleMetadataChange("retrievalWeight", e.target.value)}
-                    disabled={isUploading}
-                  />
-                </FormField>
 
                 <FormField label={t("upload.last_reviewed")}>
                   <Input
@@ -463,23 +439,26 @@ export const UploadDoc = () => {
                 </FormField>
 
                 <FormField label={t("upload.applicable_roles")} className="sm:col-span-2">
-                  <div className="flex flex-wrap gap-4 pt-1">
-                    {Object.values(ApplicableRole).map((role) => (
-                      <div key={role} className="flex items-center gap-2">
-                        <Checkbox
-                          id={`role-${role}`}
-                          checked={metadata.applicableRoles.includes(role)}
-                          onCheckedChange={() => handleRoleToggle(role)}
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    {Object.values(ApplicableRole).map((role) => {
+                      const isSelected = metadata.applicableRoles.includes(role);
+                      return (
+                        <button
+                          key={role}
+                          type="button"
+                          onClick={() => handleRoleToggle(role)}
                           disabled={isUploading}
-                        />
-                        <label
-                          htmlFor={`role-${role}`}
-                          className="text-text-main cursor-pointer text-sm"
+                          className={cn(
+                            "rounded-lg border px-3 py-1.5 text-xs font-medium transition-all duration-200",
+                            isSelected
+                              ? "bg-primary border-primary text-primary-foreground shadow-sm"
+                              : "border-border-base bg-app-bg text-text-muted hover:border-primary/50 hover:text-text-main",
+                          )}
                         >
                           {t(`upload.${role}`)}
-                        </label>
-                      </div>
-                    ))}
+                        </button>
+                      );
+                    })}
                   </div>
                 </FormField>
               </div>
