@@ -1,7 +1,7 @@
 import { openai } from "@ai-sdk/openai";
 import { generateObject } from "ai";
 import { z } from "zod";
-import { ApplicableRole, Jurisdiction, Scope } from "./constants";
+import { ApplicableRole, Jurisdiction, Scenario } from "./constants";
 
 export const chatModel = openai("gpt-3.5-turbo");
 export const embeddingModel = openai.embedding("text-embedding-3-small");
@@ -11,7 +11,7 @@ export const queryMetadataSchema = z.object({
 
   jurisdiction: z.array(z.enum(Jurisdiction)).nullable(),
 
-  scope: z.enum(Scope).nullable(),
+  scenario: z.enum(Scenario).nullable(),
 
   applicableRoles: z.array(z.enum(ApplicableRole)).nullable(),
 

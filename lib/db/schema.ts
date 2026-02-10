@@ -13,18 +13,22 @@ import {
   vector,
 } from "drizzle-orm/pg-core";
 import { AdapterAccount } from "next-auth/adapters";
-import { ApplicableRole, Jurisdiction, LifecycleState, Scope, UserRole } from "../constants";
+import { ApplicableRole, Jurisdiction, LifecycleState, Scenario, UserRole } from "../constants";
 
 export const ENUM_NAMES = {
   jurisdiction: "jurisdiction",
   user_role: "user_role",
-  scope: "scope",
+  scenario: "scenario",
   lifecycle_state: "lifecycle_state",
   applicable_role: "applicable_role",
 } as const;
 
 export const userRoleEnum = pgEnum(ENUM_NAMES.user_role, [UserRole.USER, UserRole.ADMIN]);
-export const scopeEnum = pgEnum(ENUM_NAMES.scope, [Scope.GLOBAL, Scope.REGIONAL, Scope.LOCAL]);
+export const scenarioEnum = pgEnum(ENUM_NAMES.scenario, [
+  Scenario.GLOBAL,
+  Scenario.REGIONAL,
+  Scenario.LOCAL,
+]);
 export const lifecycleStateEnum = pgEnum(ENUM_NAMES.lifecycle_state, [
   LifecycleState.ACTIVE,
   LifecycleState.INACTIVE,
@@ -129,7 +133,7 @@ export const ragMetadata = pgTable("rag_metadata", {
   id: uuid("id").defaultRandom().primaryKey(),
   topic: text("topic"),
   jurisdiction: jurisdictionEnum("jurisdiction"),
-  scope: scopeEnum("scope"),
+  scenario: scenarioEnum("scenario"),
   applicableRoles: applicableRoleEnum("applicable_roles").array(),
   authorityLevel: integer("authority_level").default(0),
   lifecycleState: lifecycleStateEnum("lifecycle_state").default(LifecycleState.ACTIVE),

@@ -75,7 +75,7 @@ export enum Jurisdiction {
   UK_NATIONAL = "UK_national",
 }
 
-export enum Scope {
+export enum Scenario {
   GLOBAL = "global",
   REGIONAL = "regional",
   LOCAL = "local",

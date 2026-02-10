@@ -146,6 +146,11 @@ function buildRetrievalFilters(ctx: z.infer<typeof queryMetadataSchema>) {
     );
   }
 
+  // Scenario filter (single value)
+  if (ctx.scenario) {
+    filters.push(eq(ragMetadata.scenario, ctx.scenario));
+  }
+
   // Authority Level filter (minimum requirement)
   if (ctx.authorityLevel !== null && ctx.authorityLevel !== undefined) {
     filters.push(gte(ragMetadata.authorityLevel, ctx.authorityLevel));

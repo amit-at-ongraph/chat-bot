@@ -39,7 +39,7 @@ serve(async (req: Request) => {
       .insert({
         topic: metadata?.topic || null,
         jurisdiction: metadata?.jurisdiction || null,
-        scope: metadata?.scope || null,
+        scenario: metadata?.scenario || null,
         applicable_roles: metadata?.applicableRoles || [],
         authority_level: metadata?.authorityLevel || 0,
         lifecycle_state: metadata?.lifecycleState || "active",

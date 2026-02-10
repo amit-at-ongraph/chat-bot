@@ -4,7 +4,7 @@ import { useTranslation } from "@/app/i18n/useTranslation";
 import { useFileStore } from "@/app/store/fileStore";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { ApplicableRole, Jurisdiction, LifecycleState, Scope } from "@/lib/constants";
+import { ApplicableRole, Jurisdiction, LifecycleState, Scenario } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import axios from "axios";
 import { formatDistanceToNow, isToday, isYesterday } from "date-fns";
@@ -57,7 +57,7 @@ export const UploadDoc = () => {
   const [metadata, setMetadata] = useState({
     topic: "",
     jurisdiction: Jurisdiction.GLOBAL as string,
-    scope: Scope.GLOBAL as string,
+    scenario: Scenario.GLOBAL as string,
     applicableRoles: [] as string[],
     authorityLevel: 0 as string | number,
     lifecycleState: LifecycleState.ACTIVE as string,
@@ -141,10 +141,10 @@ export const UploadDoc = () => {
       setMetadata({
         topic: "",
         jurisdiction: Jurisdiction.GLOBAL,
-        scope: "global",
+        scenario: Scenario.GLOBAL,
         applicableRoles: [],
         authorityLevel: 0,
-        lifecycleState: "active",
+        lifecycleState: LifecycleState.ACTIVE,
         lastReviewed: "",
         retrievalWeight: 1.0,
         lexicalTriggers: "",
@@ -395,14 +395,14 @@ export const UploadDoc = () => {
                   </select>
                 </FormField>
 
-                <FormField label={t("upload.scope")}>
+                <FormField label={t("upload.scenario")}>
                   <select
-                    value={metadata.scope}
-                    onChange={(e) => handleMetadataChange("scope", e.target.value)}
+                    value={metadata.scenario}
+                    onChange={(e) => handleMetadataChange("scenario", e.target.value)}
                     disabled={isUploading}
                     className="border-border-base bg-app-bg text-text-main focus:ring-primary/20 h-10 w-full rounded-xl border px-3 text-sm focus:ring-2 focus:outline-none"
                   >
-                    {Object.values(Scope).map((s) => (
+                    {Object.values(Scenario).map((s) => (
                       <option key={s} value={s}>
                         {t(`upload.${s}`)}
                       </option>
