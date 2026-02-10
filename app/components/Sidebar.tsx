@@ -4,6 +4,7 @@ import { UserRole } from "@/lib/constants";
 import { DBChat } from "@/types/chat";
 import { AnimatePresence, motion } from "framer-motion";
 import {
+  Database,
   Edit,
   Edit2,
   Info,
@@ -12,15 +13,14 @@ import {
   MoreVertical,
   Settings,
   Trash2,
-  Upload,
   User,
   X,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { useSessionContext } from "../contexts";
+import { useSession } from "next-auth/react";
 import { useTranslation } from "../i18n/useTranslation";
-import { useFileStore } from "../store/fileStore";
 import HowToUse from "./HowToUse";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
@@ -54,10 +54,9 @@ export default function Sidebar({
   isLoadingChats: _,
   selectedChatLoading,
 }: SidebarProps) {
-  const { session } = useSessionContext();
+  const { data: session } = useSession();
   const [activeView, setActiveView] = useState<"main" | "how-to">("main");
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const { setUploadDialogOpen } = useFileStore();
   const { t } = useTranslation();
   const userMenuRef = useRef<HTMLDivElement>(null);
   const [isDesktop, setIsDesktop] = useState(false);
@@ -173,23 +172,19 @@ export default function Sidebar({
                     </Button>
 
                     {session?.user?.role === UserRole.ADMIN && (
-                      <Button
-                        variant="none"
-                        size="none"
-                        onClick={() => {
-                          setUploadDialogOpen(true);
-                          if (window.innerWidth < 1024) {
-                            onClose();
-                          }
-                        }}
-                        className="w-full gap-3 text-[14px]"
-                        title={effectivelyCollapsed ? t("common.upload_files") : ""}
-                      >
-                        <Upload className="h-4 w-4 shrink-0" />
-                        {!effectivelyCollapsed && (
-                          <span className="whitespace-nowrap">{t("common.upload_files")}</span>
-                        )}
-                      </Button>
+                      <Link href="/upload" className="w-full" onClick={() => window.innerWidth < 1024 && onClose()}>
+                        <Button
+                          variant="none"
+                          size="none"
+                          className="w-full gap-3 text-[14px]"
+                          title={effectivelyCollapsed ? t("common.upload") : ""}
+                        >
+                          <Database className="h-4 w-4 shrink-0" />
+                          {!effectivelyCollapsed && (
+                            <span className="whitespace-nowrap">{t("common.upload")}</span>
+                          )}
+                        </Button>
+                      </Link>
                     )}
                   </div>
 

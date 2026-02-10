@@ -1,36 +1,18 @@
 "use client";
 
-import axios from "axios";
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import ChatFooter from "./components/ChatFooter";
 import ErrorToast from "./components/ErrorToast";
-import Header from "./components/Header";
 import MessageList from "./components/MessageList";
 import Welcome from "./components/Welcome";
 
-import { UserRole } from "../lib/constants";
-import Sidebar from "./components/Sidebar";
-import { UploadDoc } from "./components/ui/UploadDoc";
-import { SessionProvider, useSessionContext } from "./contexts";
+import { useSession } from "next-auth/react";
 import { useChatLogic } from "./hooks/useChatLogic";
-import Loading from "./loading";
 import { useChatStore } from "./store/chatStore";
 
 function HomeContent() {
-  const { session, status: authStatus } = useSessionContext();
-  const {
-    skippedAuth,
-    setSkippedAuth,
-    isSidebarOpen,
-    setIsSidebarOpen,
-    isCollapsed,
-    setIsCollapsed,
-    userChats,
-    setUserChats,
-    userChatsLoading,
-    setUserChatsLoading,
-    toggleSidebar,
-  } = useChatStore();
+  const { data: session } = useSession();
+  const { skippedAuth, setSkippedAuth } = useChatStore();
 
   const {
     messages,
@@ -43,106 +25,23 @@ function HomeContent() {
     handleSubmit,
     handleRetry,
     handleClearError,
-    loadChat,
     startNewChat,
     loadMore,
     hasMore,
     isLoadingMore,
-    isLoadingMessages,
   } = useChatLogic();
 
-  const fetchChats = useCallback(async () => {
-    if (session?.user?.id) {
-      try {
-        setUserChatsLoading(true);
-        const { data } = await axios.get("/api/chats");
-        setUserChats(data);
-      } catch (error) {
-        console.error("Failed to fetch chats:", error);
-      } finally {
-        setUserChatsLoading(false);
-      }
-    }
-  }, [session]);
-
   useEffect(() => {
-    if (window.innerWidth >= 1024) {
-      setIsSidebarOpen(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchChats();
-  }, [fetchChats]);
-
-  // Listen for new chat creation event to refetch the chat list
-  useEffect(() => {
-    const handleNewChat = async () => {
-      await fetchChats();
-    };
-    window.addEventListener("new-chat-created", handleNewChat);
-    return () => window.removeEventListener("new-chat-created", handleNewChat);
-  }, [fetchChats]);
-
-  if (authStatus === "loading") {
-    return <Loading />;
-  }
-
-  const handleDeleteChat = async (id: string) => {
-    try {
-      await axios.delete(`/api/chats/${id}`);
-      if (chatId === id) {
-        startNewChat();
-      }
-      setUserChats(userChats.filter((chat) => chat.id !== id));
-    } catch (error) {
-      console.error("Failed to delete chat:", error);
-    }
-  };
-
-  const handleRenameChat = async (id: string, newTitle: string) => {
-    try {
-      await axios.patch(`/api/chats/${id}`, { title: newTitle });
-      setUserChats(userChats.map((chat) => (chat.id === id ? { ...chat, title: newTitle } : chat)));
-    } catch (error) {
-      console.error("Failed to rename chat:", error);
-    }
-  };
+    window.addEventListener("start-new-chat", startNewChat);
+    return () => window.removeEventListener("start-new-chat", startNewChat);
+  }, [startNewChat]);
 
   return (
-    <div className="bg-app-bg text-text-main relative flex min-h-screen overflow-x-hidden font-sans shadow-xl">
-      {session && (
-        <Sidebar
-          isOpen={isSidebarOpen}
-          isCollapsed={isCollapsed}
-          onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
-          onClose={() => setIsSidebarOpen(false)}
-          chats={userChats}
-          currentChatId={chatId}
-          isLoadingChats={userChatsLoading}
-          selectedChatLoading={isLoadingMessages}
-          onSelectChat={loadChat}
-          onNewChat={startNewChat}
-          onDeleteChat={handleDeleteChat}
-          onRenameChat={handleRenameChat}
-        />
-      )}
+    <>
+      {/* Sign In Overlay */}
+      {!session && !skippedAuth && <Welcome onSkip={() => setSkippedAuth(true)} />}
 
-      <div
-        className={`flex h-screen flex-1 flex-col transition-all duration-300 ${
-          session && isSidebarOpen ? (isCollapsed ? "lg:pl-16" : "lg:pl-72") : "lg:pl-0"
-        }`}
-      >
-        {/* Sign In Overlay */}
-        {!session && !skippedAuth && <Welcome onSkip={() => setSkippedAuth(true)} />}
-
-        {/* Header */}
-        <Header
-          skippedAuth={skippedAuth}
-          onToggleSidebar={toggleSidebar}
-          isSidebarOpen={session ? isSidebarOpen : false}
-        />
-
+      <div className="flex h-full flex-col">
         {/* Chat Area */}
         <MessageList
           messages={messages}
@@ -167,15 +66,10 @@ function HomeContent() {
           <ErrorToast error={errorToast} onRetry={handleRetry} onClear={handleClearError} />
         )}
       </div>
-      {session?.user?.role === UserRole.ADMIN && <UploadDoc />}
-    </div>
+    </>
   );
 }
 
 export default function Home() {
-  return (
-    <SessionProvider>
-      <HomeContent />
-    </SessionProvider>
-  );
+  return <HomeContent />;
 }

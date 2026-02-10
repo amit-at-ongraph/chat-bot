@@ -1,8 +1,7 @@
 import { UI_CONFIG } from "@/config";
 import { Menu, Moon, Sun } from "lucide-react";
-import { signIn, signOut } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
-import { useSessionContext } from "../contexts";
 import { useTranslation } from "../i18n/useTranslation";
 import { Button } from "./ui/Button";
 import { LanguageSelector } from "./ui/LanguageSelector";
@@ -14,7 +13,7 @@ interface HeaderProps {
 }
 
 export default function Header({ skippedAuth, onToggleSidebar, isSidebarOpen }: HeaderProps) {
-  const { session } = useSessionContext();
+  const { data: session } = useSession();
   const { setTheme, resolvedTheme } = useTheme();
   const { t } = useTranslation();
 

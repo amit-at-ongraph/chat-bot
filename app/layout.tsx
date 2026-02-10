@@ -14,6 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 import { APP_CONFIG } from "@/lib/constants";
+import AppShell from "./components/AppShell";
 
 export const metadata: Metadata = {
   title: APP_CONFIG.name,
@@ -31,7 +32,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          <AppShell>{children}</AppShell>
+        </Providers>
       </body>
     </html>
   );
