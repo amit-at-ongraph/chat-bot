@@ -14,6 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 import { APP_CONFIG } from "@/lib/constants";
+import { Suspense } from "react";
 import AppShell from "./components/AppShell";
 
 export const metadata: Metadata = {
@@ -33,7 +34,9 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <Providers>
-          <AppShell>{children}</AppShell>
+          <Suspense fallback={<div>Loading...</div>}>
+            <AppShell>{children}</AppShell>
+          </Suspense>
         </Providers>
       </body>
     </html>
