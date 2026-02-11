@@ -29,7 +29,7 @@ const FormField = ({
   className?: string;
 }) => (
   <div className={cn("flex flex-col gap-1.5", className)}>
-    <label className="text-text-main text-xs font-semibold">{label}</label>
+    <label className="text-text-main text-xs font-medium">{label}</label>
     <div className="relative">{children}</div>
   </div>
 );
@@ -128,7 +128,7 @@ export default function NewChunkPage() {
         <h2 className="mb-0">Add New Chunk</h2>
       </div>
 
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+      <div className="lg:grid gap-8 flex flex-col-reverse lg:grid-cols-3">
         {/* Metadata Section */}
         <div className="space-y-6 lg:col-span-2">
           <div className="border-border-base bg-header-bg sticky top-8 space-y-6 rounded-2xl border p-6 shadow-xs">
@@ -214,7 +214,7 @@ export default function NewChunkPage() {
                 />
               </FormField>
 
-              <FormField label="Lexical Triggers (comma separated)">
+              <FormField label="Lexical Triggers">
                 <Input
                   value={metadata.lexicalTriggers}
                   onChange={(e) => handleMetadataChange("lexicalTriggers", e.target.value)}
