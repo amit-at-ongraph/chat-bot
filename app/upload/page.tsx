@@ -20,6 +20,7 @@ import {
 import { Jurisdiction, LifecycleState, Scenario } from "@/lib/constants";
 import {
   ColumnDef,
+  Row,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -69,6 +70,21 @@ export default function ChunksPage() {
       setLoading(false);
     }
   }, [filters]);
+
+  const toggleChunkStatus = (row: Row<Chunk>) => async (value: string) => {
+    try {
+      const chunkId = row.original.chunkId;
+      await axios.post("/api/chunks/toggle", { chunkId, status: value });
+      toast.success("Status updated");
+      // Update local state to reflect change
+      setChunks((prev) =>
+        prev.map((c) => (c.chunkId === chunkId ? { ...c, lifecycleState: value } : c)),
+      );
+    } catch (error) {
+      console.error("Failed to update status:", error);
+      toast.error("Failed to update status");
+    }
+  };
 
   useEffect(() => {
     fetchChunks();
@@ -121,20 +137,7 @@ export default function ChunksPage() {
         cell: ({ row }) => (
           <Select
             defaultValue={row.getValue("lifecycleState")}
-            onValueChange={async (value) => {
-              try {
-                const chunkId = row.original.chunkId;
-                await axios.post("/api/chunks/toggle", { chunkId, status: value });
-                toast.success("Status updated");
-                // Update local state to reflect change
-                setChunks((prev) =>
-                  prev.map((c) => (c.chunkId === chunkId ? { ...c, lifecycleState: value } : c)),
-                );
-              } catch (error) {
-                console.error("Failed to update status:", error);
-                toast.error("Failed to update status");
-              }
-            }}
+            onValueChange={toggleChunkStatus(row)}
           >
             <SelectTrigger className="w-fit">
               <SelectValue placeholder={row.getValue("lifecycleState")} />
@@ -173,6 +176,11 @@ export default function ChunksPage() {
     [],
   );
 
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 5,
+  });
+
   const table = useReactTable({
     data: chunks,
     columns,
@@ -181,6 +189,7 @@ export default function ChunksPage() {
     getFilteredRowModel: getFilteredRowModel(),
     state: {
       globalFilter,
+      pagination: pagination,
     },
     onGlobalFilterChange: setGlobalFilter,
     globalFilterFn: (row, columnId, filterValue) => {
@@ -191,6 +200,7 @@ export default function ChunksPage() {
         content.toLowerCase().includes(query) || (topic && topic.toLowerCase().includes(query))
       );
     },
+    onPaginationChange: setPagination,
   });
 
   return (
@@ -198,7 +208,7 @@ export default function ChunksPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="mb-2 text-xl font-medium tracking-tight">RAG Chunks</h1>
-          <p className="text-text-muted text-xs font-light sm:block hidden">
+          <p className="text-text-muted hidden text-xs font-light sm:block">
             Manage and monitor document segments used for retrieval.
           </p>
         </div>

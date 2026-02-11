@@ -128,7 +128,7 @@ export default function NewChunkPage() {
         <h2 className="mb-0">Add New Chunk</h2>
       </div>
 
-      <div className="lg:grid gap-8 flex flex-col-reverse lg:grid-cols-3">
+      <div className="flex flex-col-reverse gap-8 lg:grid lg:grid-cols-3">
         {/* Metadata Section */}
         <div className="space-y-6 lg:col-span-2">
           <div className="border-border-base bg-header-bg sticky top-8 space-y-6 rounded-2xl border p-6 shadow-xs">

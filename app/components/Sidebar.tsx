@@ -1,6 +1,7 @@
 "use client";
 
 import { UserRole } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 import { DBChat } from "@/types/chat";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -19,13 +20,12 @@ import {
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "../i18n/useTranslation";
 import HowToUse from "./HowToUse";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
-import { cn } from "@/lib/utils";
-import { usePathname } from "next/navigation";
 
 interface SidebarProps {
   isOpen: boolean;
