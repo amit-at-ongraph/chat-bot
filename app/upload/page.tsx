@@ -198,7 +198,7 @@ export default function ChunksPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="mb-2 text-xl font-medium tracking-tight">RAG Chunks</h1>
-          <p className="text-text-muted text-sm font-light">
+          <p className="text-text-muted text-xs font-light">
             Manage and monitor document segments used for retrieval.
           </p>
         </div>
@@ -213,7 +213,7 @@ export default function ChunksPage() {
         </Link>
       </div>
 
-      <div className="border-border-base flex flex-wrap items-center justify-between gap-4 pb-6">
+      <div className="border-border-base flex flex-wrap items-center justify-between gap-4 pb-4">
         <div className="relative w-full max-w-sm">
           <Search className="text-text-muted absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
           <Input
