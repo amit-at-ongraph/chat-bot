@@ -7,9 +7,10 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect } from "react";
+import Spinner from "./Spinner";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
-  const { data: session } = useSession();
+  const { data: session, status: authStatus } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentChatId = searchParams.get("chatId");
@@ -95,6 +96,15 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   };
 
   const showSidebar = !!session;
+
+   if (authStatus === "loading") {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Spinner />
+      </div>
+    );
+  }
+
 
   return (
     <div className="bg-app-bg text-text-main relative flex min-h-screen overflow-x-hidden font-sans shadow-xl">
