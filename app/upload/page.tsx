@@ -106,15 +106,49 @@ export default function ChunksPage() {
           </div>
         ),
       },
-      // {
-      //   accessorKey: "jurisdiction",
-      //   header: "Jurisdiction",
-      //   cell: ({ row }) => (
-      //     <div className="text-text-secondary text-[13px] capitalize">
-      //       {row.getValue("jurisdiction")}
-      //     </div>
-      //   ),
-      // },
+      {
+        accessorKey: "jurisdiction",
+        header: "Jurisdiction",
+        cell: ({ row }) => (
+          <div className="text-text-secondary text-[13px] capitalize">
+            {row.getValue("jurisdiction")}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "lifecycleState",
+        header: "Status",
+        cell: ({ row }) => (
+          <Select
+            defaultValue={row.getValue("lifecycleState")}
+            onValueChange={async (value) => {
+              try {
+                const chunkId = row.original.chunkId;
+                await axios.post("/api/chunks/toggle", { chunkId, status: value });
+                toast.success("Status updated");
+                // Update local state to reflect change
+                setChunks((prev) =>
+                  prev.map((c) => (c.chunkId === chunkId ? { ...c, lifecycleState: value } : c)),
+                );
+              } catch (error) {
+                console.error("Failed to update status:", error);
+                toast.error("Failed to update status");
+              }
+            }}
+          >
+            <SelectTrigger className="w-fit">
+              <SelectValue placeholder={row.getValue("lifecycleState")} />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.values(LifecycleState).map((state) => (
+                <SelectItem key={state} value={state}>
+                  {state}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ),
+      },
       {
         accessorKey: "createdAt",
         header: "Created",
@@ -169,7 +203,10 @@ export default function ChunksPage() {
           </p>
         </div>
         <Link href="/upload/new">
-          <Button variant="primary-action" className="gap-2 rounded-xl px-4 py-2 text-sm font-medium">
+          <Button
+            variant="primary-action"
+            className="gap-2 rounded-xl px-4 py-2 text-sm font-medium"
+          >
             <Plus className="h-4 w-4" />
             Add Chunk
           </Button>
@@ -271,21 +308,13 @@ export default function ChunksPage() {
                 .fill(0)
                 .map((_, i) => (
                   <TableRow key={i} className="border-border-base animate-pulse">
-                    <TableCell className="px-6 py-4">
-                      <div className="bg-border-light h-4 w-full rounded" />
-                    </TableCell>
-                    <TableCell className="px-6 py-4">
-                      <div className="bg-border-light h-4 w-24 rounded" />
-                    </TableCell>
-                    <TableCell className="px-6 py-4">
-                      <div className="bg-border-light h-4 w-20 rounded" />
-                    </TableCell>
-                    <TableCell className="px-6 py-4">
-                      <div className="bg-border-light h-4 w-16 rounded" />
-                    </TableCell>
-                    <TableCell className="px-6 py-4">
-                      <div className="bg-border-light ml-auto h-4 w-12 rounded" />
-                    </TableCell>
+                    {Array(7)
+                      .fill(0)
+                      .map((_, j) => (
+                        <TableCell key={j} className="px-6 py-4">
+                          <div className="bg-border-light h-4 w-full rounded" />
+                        </TableCell>
+                      ))}
                   </TableRow>
                 ))
             ) : table.getRowModel().rows.length === 0 ? (
