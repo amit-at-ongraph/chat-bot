@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 import { APP_CONFIG } from "@/lib/constants";
 import { Suspense } from "react";
-import AppShell from "./components/AppShell";
+import AppWrapper from "./components/AppWraper";
 
 export const metadata: Metadata = {
   title: APP_CONFIG.name,
@@ -35,7 +35,7 @@ export default function RootLayout({
       >
         <Providers>
           <Suspense fallback={<div>Loading...</div>}>
-            <AppShell>{children}</AppShell>
+            <AppWrapper>{children}</AppWrapper>
           </Suspense>
         </Providers>
       </body>
