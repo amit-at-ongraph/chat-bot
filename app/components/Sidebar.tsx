@@ -24,6 +24,8 @@ import { useTranslation } from "../i18n/useTranslation";
 import HowToUse from "./HowToUse";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
+import { cn } from "@/lib/utils";
+import { usePathname } from "next/navigation";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -60,6 +62,9 @@ export default function Sidebar({
   const { t } = useTranslation();
   const userMenuRef = useRef<HTMLDivElement>(null);
   const [isDesktop, setIsDesktop] = useState(false);
+  const pathname = usePathname();
+
+  console.log(pathname);
 
   useEffect(() => {
     const checkDesktop = () => setIsDesktop(window.innerWidth >= 1024);
@@ -174,7 +179,7 @@ export default function Sidebar({
                     {session?.user?.role === UserRole.ADMIN && (
                       <Link
                         href="/upload"
-                        className="w-full"
+                        className={cn("w-full", pathname === "/upload" ? "text-primary" : "")}
                         onClick={() => window.innerWidth < 1024 && onClose()}
                       >
                         <Button
