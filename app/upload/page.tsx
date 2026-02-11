@@ -198,7 +198,7 @@ export default function ChunksPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="mb-2 text-xl font-medium tracking-tight">RAG Chunks</h1>
-          <p className="text-text-muted text-xs font-light">
+          <p className="text-text-muted text-xs font-light sm:block hidden">
             Manage and monitor document segments used for retrieval.
           </p>
         </div>
@@ -231,7 +231,7 @@ export default function ChunksPage() {
               setFilters((f) => ({ ...f, scenario: value === "ALL" ? "" : value }))
             }
           >
-            <SelectTrigger className="w-[140px]">
+            <SelectTrigger className="w-fit">
               <SelectValue placeholder="Scenarios" />
             </SelectTrigger>
             <SelectContent>
@@ -250,7 +250,7 @@ export default function ChunksPage() {
               setFilters((f) => ({ ...f, jurisdiction: value === "ALL" ? "" : value }))
             }
           >
-            <SelectTrigger className="w-[140px]">
+            <SelectTrigger className="w-fit">
               <SelectValue placeholder="Jurisdictions" />
             </SelectTrigger>
             <SelectContent>
@@ -269,7 +269,7 @@ export default function ChunksPage() {
               setFilters((f) => ({ ...f, lifecycleState: value === "ALL" ? "" : value }))
             }
           >
-            <SelectTrigger className="w-[140px]">
+            <SelectTrigger className="w-fit">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>

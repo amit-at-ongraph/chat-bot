@@ -13,7 +13,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variants = {
       primary: "bg-text-main text-app-bg hover:bg-text-secondary font-medium justify-center",
-      "primary-action": "bg-primary text-app-bg hover:bg-primary/90 font-medium justify-center",
+      "primary-action": "bg-primary text-app-bg hover:bg-primary/90 font-medium justify-center whitespace-nowrap",
       secondary: "bg-selected text-primary hover:bg-border-base font-medium justify-center",
       ghost: "text-text-secondary hover:bg-border-base justify-center",
       action:
