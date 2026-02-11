@@ -61,7 +61,7 @@ export default function Header({ skippedAuth, onToggleSidebar, isSidebarOpen }: 
           <Button
             variant="ghost"
             onClick={() => {
-              signOut({ redirect: true });
+              signOut({ redirect: true, callbackUrl: "/" });
             }}
             className="text-text-muted px-2 py-1 text-xs font-bold transition-colors hover:text-red-400"
           >
