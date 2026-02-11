@@ -43,3 +43,26 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+
+export async function DELETE(req: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!(session?.user?.id && session.user.role === UserRole.ADMIN)) {
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(req.url);
+    const chunkId = searchParams.get("chunkId");
+
+    if (!chunkId) {
+      return NextResponse.json({ error: "Chunk ID is required" }, { status: 400 });
+    }
+
+    await db.delete(ragChunks).where(eq(ragChunks.chunkId, chunkId));
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error deleting chunk:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}

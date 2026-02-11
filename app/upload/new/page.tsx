@@ -125,7 +125,7 @@ export default function NewChunkPage() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
         </Link>
-        <h2 className="mb-0">Add New Chunk</h2>
+        <h2 className="mb-0 font-medium">Add New Chunk</h2>
       </div>
 
       <div className="flex flex-col-reverse gap-8 lg:grid lg:grid-cols-3">

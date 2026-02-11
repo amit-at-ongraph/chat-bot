@@ -92,6 +92,19 @@ export default function ChunksPage() {
     fetchChunks();
   }, [filters, fetchChunks]);
 
+  const deleteChunk = useCallback(async (chunkId: string) => {
+    if (!confirm("Are you sure you want to delete this chunk?")) return;
+
+    try {
+      await axios.delete(`/api/chunks?chunkId=${chunkId}`);
+      toast.success("Chunk deleted successfully");
+      setChunks((prev) => prev.filter((c) => c.chunkId !== chunkId));
+    } catch (error) {
+      console.error("Failed to delete chunk:", error);
+      toast.error("Failed to delete chunk");
+    }
+  }, []);
+
   const columns = useMemo<ColumnDef<Chunk>[]>(
     () => [
       {
@@ -138,7 +151,7 @@ export default function ChunksPage() {
         header: "Role",
         cell: ({ row }) => (
           <div className="text-text-secondary text-[13px] capitalize">
-            {row.getValue("applicableRoles")}
+            {(row.getValue("applicableRoles") as Array<string>)?.join(", ")}
           </div>
         ),
       },
@@ -175,16 +188,21 @@ export default function ChunksPage() {
       {
         id: "actions",
         header: () => <div className="text-center">Actions</div>,
-        cell: () => (
+        cell: ({ row }) => (
           <div className="flex items-center justify-center gap-1 transition-opacity">
-            <Button variant="none" size="none" className="p-2 text-red-400 hover:text-red-500">
+            <Button
+              variant="none"
+              size="none"
+              className="p-2 text-red-400 hover:text-red-500"
+              onClick={() => deleteChunk(row.original.chunkId)}
+            >
               <Trash2 className="h-4 w-4" />
             </Button>
           </div>
         ),
       },
     ],
-    [],
+    [deleteChunk],
   );
 
   const [pagination, setPagination] = useState({
