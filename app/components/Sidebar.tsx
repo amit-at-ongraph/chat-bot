@@ -64,8 +64,6 @@ export default function Sidebar({
   const [isDesktop, setIsDesktop] = useState(false);
   const pathname = usePathname();
 
-  console.log(pathname);
-
   useEffect(() => {
     const checkDesktop = () => setIsDesktop(window.innerWidth >= 1024);
     checkDesktop();

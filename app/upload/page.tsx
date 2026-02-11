@@ -294,7 +294,7 @@ export default function ChunksPage() {
         </div>
       </div>
 
-      <div className="border-border-base overflow-hidden rounded-lg border bg-white shadow-sm dark:border-neutral-700 dark:bg-[#111111]/50">
+      <div className="border-border-base overflow-hidden rounded-lg border bg-white dark:border-neutral-700 dark:bg-[#111111]/50">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
