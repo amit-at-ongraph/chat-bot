@@ -12,8 +12,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       "inline-flex items-center transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none cursor-pointer";
 
     const variants = {
-      primary: "bg-text-main text-app-bg hover:bg-text-secondary font-bold justify-center",
-      "primary-action": "bg-primary text-app-bg hover:bg-primary/90 font-bold justify-center",
+      primary: "bg-text-main text-app-bg hover:bg-text-secondary font-medium justify-center",
+      "primary-action": "bg-primary text-app-bg hover:bg-primary/90 font-medium justify-center",
       secondary: "bg-selected text-primary hover:bg-border-base font-medium justify-center",
       ghost: "text-text-secondary hover:bg-border-base justify-center",
       action:

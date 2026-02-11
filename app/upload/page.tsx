@@ -160,7 +160,7 @@ export default function ChunksPage() {
   });
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6 sm:px-4">
+    <div className="mx-auto max-w-7xl space-y-6 max-2xl:px-4">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="mb-2 text-xl font-medium tracking-tight">RAG Chunks</h1>
@@ -169,7 +169,7 @@ export default function ChunksPage() {
           </p>
         </div>
         <Link href="/upload/new">
-          <Button variant="primary" className="gap-2 rounded-xl px-4 py-2 text-sm font-medium">
+          <Button variant="primary-action" className="gap-2 rounded-xl px-4 py-2 text-sm font-medium">
             <Plus className="h-4 w-4" />
             Add Chunk
           </Button>
