@@ -125,7 +125,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           onToggleSidebar={toggleSidebar}
           isSidebarOpen={isSidebarOpen}
         />
-        <main className="flex-1 overflow-y-auto">{children}</main>
+        <main className="flex-1 overflow-y-auto max-lg:max-w-screen">{children}</main>
       </div>
     </div>
   );

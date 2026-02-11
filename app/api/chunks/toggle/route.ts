@@ -24,7 +24,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid status" }, { status: 400 });
     }
 
-
     // Update chunk status
     await db
       .update(ragChunks)
