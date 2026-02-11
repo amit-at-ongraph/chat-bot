@@ -218,7 +218,7 @@ export default function ChunksPage() {
   });
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6 max-sm:px-4">
+    <div className="mx-auto max-w-7xl space-y-6 sm:px-4">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="mb-2 text-xl font-medium tracking-tight">{t("upload.documents")}</h1>
