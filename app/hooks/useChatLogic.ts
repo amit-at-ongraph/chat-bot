@@ -10,7 +10,7 @@ import { useChatStore } from "../store/chatStore";
 import { useLanguageStore } from "../store/languageStore";
 
 export function useChatLogic() {
-  // const searchParams = useSearchParams();
+  const searchParams = useSearchParams();
   const [errorToast, setErrorToast] = useState<string | null>(null);
   const [input, setInput] = useState("");
   const [chatId, setChatId] = useState<string | null>(null);
@@ -171,7 +171,7 @@ export function useChatLogic() {
   };
 
   useEffect(() => {
-    const urlChatId = "";
+    const urlChatId = searchParams.get("chatId");
     if (urlChatId) {
       if (urlChatId !== chatIdRef.current) {
         loadChat(urlChatId);
@@ -181,7 +181,7 @@ export function useChatLogic() {
         startNewChat();
       }
     }
-  }, [loadChat, startNewChat]);
+  }, [searchParams, loadChat, startNewChat]);
 
   return {
     messages,
