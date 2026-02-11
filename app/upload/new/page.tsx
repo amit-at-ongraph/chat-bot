@@ -1,15 +1,9 @@
 "use client";
-
 import { Button } from "@/app/components/ui/Button";
 import { useTranslation } from "@/app/i18n/useTranslation";
+import { EnumSelect } from "@/components/ui/enum-select";
+import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { ApplicableRole, Jurisdiction, LifecycleState, Scenario } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import axios from "axios";
@@ -18,21 +12,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "sonner";
-
-const FormField = ({
-  label,
-  children,
-  className,
-}: {
-  label: string;
-  children: React.ReactNode;
-  className?: string;
-}) => (
-  <div className={cn("flex flex-col gap-1.5", className)}>
-    <label className="text-text-main text-xs font-medium">{label}</label>
-    <div className="relative">{children}</div>
-  </div>
-);
 
 export default function NewChunkPage() {
   const { t } = useTranslation();
@@ -148,60 +127,39 @@ export default function NewChunkPage() {
               </FormField>
 
               <FormField label="Jurisdiction">
-                <Select
+                <EnumSelect
                   value={metadata.jurisdiction}
                   onValueChange={(value) => handleMetadataChange("jurisdiction", value)}
+                  options={Object.values(Jurisdiction)}
+                  placeholder="Select Jurisdiction"
                   disabled={isUploading}
-                >
-                  <SelectTrigger className="w-full text-left text-[13px]">
-                    <SelectValue placeholder="Select Jurisdiction" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.values(Jurisdiction).map((j) => (
-                      <SelectItem key={j} value={j}>
-                        {t(`upload.${j}`)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  triggerClassName="w-full text-left text-[13px]"
+                  renderOption={(option) => t(`upload.${option}`)}
+                />
               </FormField>
 
               <FormField label="Scenario">
-                <Select
+                <EnumSelect
                   value={metadata.scenario}
                   onValueChange={(value) => handleMetadataChange("scenario", value)}
+                  options={Object.values(Scenario)}
+                  placeholder="Select Scenario"
                   disabled={isUploading}
-                >
-                  <SelectTrigger className="w-full text-left text-[13px]">
-                    <SelectValue placeholder="Select Scenario" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.values(Scenario).map((s) => (
-                      <SelectItem key={s} value={s}>
-                        {t(`upload.${s}`)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  triggerClassName="w-full text-left text-[13px]"
+                  renderOption={(option) => t(`upload.${option}`)}
+                />
               </FormField>
 
               <FormField label="Status">
-                <Select
+                <EnumSelect
                   value={metadata.lifecycleState}
                   onValueChange={(value) => handleMetadataChange("lifecycleState", value)}
+                  options={Object.values(LifecycleState)}
+                  placeholder="Select State"
                   disabled={isUploading}
-                >
-                  <SelectTrigger className="w-full text-left text-[13px]">
-                    <SelectValue placeholder="Select State" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.values(LifecycleState).map((s) => (
-                      <SelectItem key={s} value={s}>
-                        {t(`upload.${s}`)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  triggerClassName="w-full text-left text-[13px]"
+                  renderOption={(option) => t(`upload.${option}`)}
+                />
               </FormField>
 
               <FormField label="Last Reviewed">

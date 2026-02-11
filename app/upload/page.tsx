@@ -1,14 +1,9 @@
 "use client";
 
 import { Button } from "@/app/components/ui/Button";
+import { EnumSelect } from "@/components/ui/enum-select";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import {
   Table,
   TableBody,
@@ -159,21 +154,12 @@ export default function ChunksPage() {
         accessorKey: "lifecycleState",
         header: "Status",
         cell: ({ row }) => (
-          <Select
-            defaultValue={row.getValue("lifecycleState")}
+          <EnumSelect
+            value={row.getValue("lifecycleState")}
             onValueChange={toggleChunkStatus(row)}
-          >
-            <SelectTrigger className="w-fit">
-              <SelectValue placeholder={row.getValue("lifecycleState")} />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.values(LifecycleState).map((state) => (
-                <SelectItem key={state} value={state}>
-                  {state}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            options={Object.values(LifecycleState)}
+            triggerClassName="w-fit"
+          />
         ),
       },
       {
@@ -264,81 +250,49 @@ export default function ChunksPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <Select
+          <EnumSelect
             value={filters.scenario}
             onValueChange={(value) =>
               setFilters((f) => ({ ...f, scenario: value === "ALL" ? "" : value }))
             }
-          >
-            <SelectTrigger className="w-fit">
-              <SelectValue placeholder="Scenarios" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">All Scenarios</SelectItem>
-              {Object.values(Scenario).map((s) => (
-                <SelectItem key={s} value={s}>
-                  {s}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            options={Object.values(Scenario)}
+            placeholder="Scenarios"
+            triggerClassName="w-fit"
+            allOptionLabel="All Scenarios"
+          />
 
-          <Select
+          <EnumSelect
             value={filters.jurisdiction}
             onValueChange={(value) =>
               setFilters((f) => ({ ...f, jurisdiction: value === "ALL" ? "" : value }))
             }
-          >
-            <SelectTrigger className="w-fit">
-              <SelectValue placeholder="Jurisdictions" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">All Jurisdictions</SelectItem>
-              {Object.values(Jurisdiction).map((j) => (
-                <SelectItem key={j} value={j}>
-                  {j}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            options={Object.values(Jurisdiction)}
+            placeholder="Jurisdictions"
+            triggerClassName="w-fit"
+            allOptionLabel="All Jurisdictions"
+          />
 
-          <Select
+          <EnumSelect
             value={filters.lifecycleState}
             onValueChange={(value) =>
               setFilters((f) => ({ ...f, lifecycleState: value === "ALL" ? "" : value }))
             }
-          >
-            <SelectTrigger className="w-fit">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">All Status</SelectItem>
-              {Object.values(LifecycleState).map((s) => (
-                <SelectItem key={s} value={s}>
-                  {s}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            options={Object.values(LifecycleState)}
+            placeholder="Status"
+            triggerClassName="w-fit"
+            allOptionLabel="All Status"
+          />
 
-          <Select
+          <EnumSelect
             value={filters.applicableRoles}
             onValueChange={(value) =>
               setFilters((f) => ({ ...f, applicableRoles: value === "ALL" ? "" : value }))
             }
-          >
-            <SelectTrigger className="w-fit">
-              <SelectValue placeholder="Roles" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">All Roles</SelectItem>
-              {Object.values(ApplicableRole).map((s) => (
-                <SelectItem key={s} value={s}>
-                  {s}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            options={Object.values(ApplicableRole)}
+            placeholder="Roles"
+            triggerClassName="w-fit"
+            allOptionLabel="All Roles"
+          />
         </div>
       </div>
 
