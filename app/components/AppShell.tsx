@@ -97,14 +97,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
   const showSidebar = !!session;
 
-   if (authStatus === "loading") {
+  if (authStatus === "loading") {
     return (
       <div className="flex h-screen items-center justify-center">
         <Spinner />
       </div>
     );
   }
-
 
   return (
     <div className="bg-app-bg text-text-main relative flex min-h-screen overflow-x-hidden font-sans shadow-xl">

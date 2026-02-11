@@ -97,6 +97,8 @@ export enum ApplicableRole {
   BYSTANDER = "bystander",
 }
 
+export type Role = `${ApplicableRole}`;
+
 export const LANGUAGES = [
   { native: "English", english: "English", value: "en" },
   { native: "हिन्दी", english: "Hindi", value: "hi" },

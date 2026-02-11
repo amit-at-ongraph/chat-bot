@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Jurisdiction, LifecycleState, Scenario } from "@/lib/constants";
+import { ApplicableRole, Jurisdiction, LifecycleState, Scenario } from "@/lib/constants";
 import {
   ColumnDef,
   Row,
@@ -51,6 +51,7 @@ export default function ChunksPage() {
     scenario: "",
     jurisdiction: "",
     lifecycleState: "",
+    applicableRoles: "",
   });
 
   const fetchChunks = useCallback(async () => {
@@ -60,6 +61,7 @@ export default function ChunksPage() {
       if (filters.scenario) params.append("scenario", filters.scenario);
       if (filters.jurisdiction) params.append("jurisdiction", filters.jurisdiction);
       if (filters.lifecycleState) params.append("lifecycleState", filters.lifecycleState);
+      if (filters.applicableRoles) params.append("applicableRoles", filters.applicableRoles);
 
       const { data } = await axios.get(`/api/chunks?${params.toString()}`);
       setChunks(data.chunks || []);
@@ -128,6 +130,15 @@ export default function ChunksPage() {
         cell: ({ row }) => (
           <div className="text-text-secondary text-[13px] capitalize">
             {row.getValue("jurisdiction")}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "applicableRoles",
+        header: "Role",
+        cell: ({ row }) => (
+          <div className="text-text-secondary text-[13px] capitalize">
+            {row.getValue("applicableRoles")}
           </div>
         ),
       },
@@ -285,6 +296,25 @@ export default function ChunksPage() {
             <SelectContent>
               <SelectItem value="ALL">All Status</SelectItem>
               {Object.values(LifecycleState).map((s) => (
+                <SelectItem key={s} value={s}>
+                  {s}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={filters.applicableRoles}
+            onValueChange={(value) =>
+              setFilters((f) => ({ ...f, applicableRoles: value === "ALL" ? "" : value }))
+            }
+          >
+            <SelectTrigger className="w-fit">
+              <SelectValue placeholder="Roles" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">All Roles</SelectItem>
+              {Object.values(ApplicableRole).map((s) => (
                 <SelectItem key={s} value={s}>
                   {s}
                 </SelectItem>

@@ -1,8 +1,8 @@
 import { authOptions } from "@/lib/auth";
 import { UserRole } from "@/lib/constants";
 import { db } from "@/lib/db";
-import { ragChunks } from "@/lib/db/schema";
-import { and, desc, eq } from "drizzle-orm";
+import { ENUM_NAMES, ragChunks } from "@/lib/db/schema";
+import { and, desc, eq, sql } from "drizzle-orm";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -17,11 +17,16 @@ export async function GET(req: Request) {
     const scenario = searchParams.get("scenario");
     const jurisdiction = searchParams.get("jurisdiction");
     const lifecycleState = searchParams.get("lifecycleState");
+    const applicableRoles = searchParams.get("applicableRoles");
 
     const filters = [];
     if (scenario) filters.push(eq(ragChunks.scenario, scenario as any));
     if (jurisdiction) filters.push(eq(ragChunks.jurisdiction, jurisdiction as any));
     if (lifecycleState) filters.push(eq(ragChunks.lifecycleState, lifecycleState as any));
+    if (applicableRoles)
+      filters.push(
+        sql`${ragChunks.applicableRoles} @> ARRAY[${applicableRoles}]::${sql.raw(ENUM_NAMES.applicable_role)}[]`,
+      );
 
     const chunks = await db
       .select()
