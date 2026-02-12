@@ -18,13 +18,28 @@ export function loadPrompt(): any {
   }
 }
 
-export function getSystemMessage(context: string, mode?: Mode, _language: string = "en"): string {
+import { LANGUAGES } from "./constants";
+
+export function getSystemMessage(context: string, mode?: Mode, language: string = "en"): string {
   const config = loadPrompt();
 
   // Convert the complex YAML object into a readable text format for the system prompt
   const mainPrompt = typeof config === "string" ? config : JSON.stringify(config, null, 2);
 
-  // const languageInstruction = `IMPORTANT: Always respond in the following language: ${language}. If the user asks in a different language, still respond in ${language} unless explicitly told otherwise.`;
+  const languageConfig = LANGUAGES.find((l) => l.value === language) || LANGUAGES[0];
+  const nativeName = languageConfig.native;
 
-  return `Follow these instructions and behavioral guidelines strictly:\n\n${mode === "CRISIS" ? crisisModeText : mode === "OPERATIONS" ? operationsModeText : infoModeText}\n\n${mainPrompt}\n\nRetrieved Context to use for the user's question:\n${context}`;
+  const languageInstruction = `[LANGUAGE GUIDELINE: Primary Language is ${nativeName}]
+1. DEFAULT LANGUAGE: You MUST respond in ${nativeName} by default.
+2. USER OVERRIDE: If the user explicitly requests you to respond in a different language (e.g., "Answer in English", "Speak in Spanish"), you MUST honor that request and switch to the requested language.
+3. LINGUISTIC PURITY: When responding in ${nativeName} (or any other requested language), maintain absolute purity:
+   - Use ONLY the traditional script of the target language.
+   - Do NOT use transliteration.
+   - Do NOT mix English words into non-English responses (Avoid code-switching/Hinglish/Spanglish).
+   - Use formal and grammatically correct vocabulary.
+4. TEMPLATES: All behavioral templates below are in English. You must translate their requirements into the language you are currently using for the response.`;
+
+  return `${languageInstruction}\n\nFollow these instructions and behavioral guidelines strictly (REMEMBER: Respond in ${nativeName} unless asked otherwise):\n\n${
+    mode === "CRISIS" ? crisisModeText : mode === "OPERATIONS" ? operationsModeText : infoModeText
+  }\n\n${mainPrompt}\n\nRetrieved Context to use for the user's question (TRANSLATE TO THE RESPONSE LANGUAGE):\n${context}`;
 }

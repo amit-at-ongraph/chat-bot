@@ -156,7 +156,7 @@ function buildRetrievalScore(ctx: z.infer<typeof queryMetadataSchema>, embedding
   let score = sql<number>`(${ragEmbeddings.embedding} <=> ${embeddingJson})`;
 
   // Multiply by Retrieval Weight (User-defined importance)
-  score = sql`${score} * COALESCE(${ragChunks.retrievalWeight}, 1.0)`;
+  score = sql`${score} / COALESCE(${ragChunks.retrievalWeight}, 1.0)`;
 
   // Boost by Authority Level (Lower score = higher authority)
   score = sql`${score} * (1.0 / (1 + COALESCE(${ragChunks.authorityLevel}, 0) * 0.1))`;
@@ -167,7 +167,7 @@ function buildRetrievalScore(ctx: z.infer<typeof queryMetadataSchema>, embedding
       ${score} * (
         CASE 
           WHEN ${ragChunks.topic} = ${ctx.topic} 
-          THEN 1.1 
+          THEN 0.90 
           ELSE 1.0 
         END
       )`;
@@ -180,7 +180,7 @@ function buildRetrievalScore(ctx: z.infer<typeof queryMetadataSchema>, embedding
       ${score} * (
         CASE 
           WHEN ${ragChunks.lexicalTriggers} && ARRAY[${sql.raw(triggers)}]::text[] 
-          THEN 1.15 
+          THEN 0.85
           ELSE 1.0 
         END
       )`;
@@ -191,10 +191,10 @@ function buildRetrievalScore(ctx: z.infer<typeof queryMetadataSchema>, embedding
     ${score} * (
       CASE
         WHEN ${ragChunks.lastReviewed} IS NULL THEN 1.0
-        WHEN ${ragChunks.lastReviewed} >= NOW() - INTERVAL '180 days' THEN 1.10
-        WHEN ${ragChunks.lastReviewed} >= NOW() - INTERVAL '365 days' THEN 1.00
-        WHEN ${ragChunks.lastReviewed} >= NOW() - INTERVAL '730 days' THEN 0.90
-        ELSE 0.80
+        WHEN ${ragChunks.lastReviewed} >= NOW() - INTERVAL '180 days' THEN 0.80
+        WHEN ${ragChunks.lastReviewed} >= NOW() - INTERVAL '365 days' THEN 0.90
+        WHEN ${ragChunks.lastReviewed} >= NOW() - INTERVAL '730 days' THEN 1.00
+        ELSE 1.20
       END
     )`;
 

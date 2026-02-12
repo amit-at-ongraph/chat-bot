@@ -20,11 +20,16 @@ export function useChatLogic() {
   const { isLoadingMessages, setIsLoadingMessages } = useChatStore();
   const chatIdRef = useRef<string | null>(null);
   const { language } = useLanguageStore();
+  const languageRef = useRef(language);
 
-  // Keep ref in sync with state
+  // Keep refs in sync with state
   useEffect(() => {
     chatIdRef.current = chatId;
   }, [chatId]);
+
+  useEffect(() => {
+    languageRef.current = language;
+  }, [language]);
 
   const { messages, setMessages, status, stop, sendMessage, regenerate, clearError } = useChat({
     transport: new DefaultChatTransport({
@@ -34,7 +39,7 @@ export function useChatLogic() {
         if (chatIdRef.current) {
           headers.set("x-chat-id", chatIdRef.current);
         }
-        headers.set("x-language", language);
+        headers.set("x-language", languageRef.current);
         const response = await fetch(url, { ...init, headers });
         const id = response.headers.get("x-chat-id");
         if (id) {
@@ -96,7 +101,7 @@ export function useChatLogic() {
       }
       setIsLoadingMessages(false);
     },
-    [setMessages],
+    [setMessages, setIsLoadingMessages],
   );
 
   const loadMore = async () => {
@@ -143,7 +148,7 @@ export function useChatLogic() {
     setIsLoadingMessages(false);
     // Dispatch event to signal a new chat has been created
     window.dispatchEvent(new Event("new-chat-created"));
-  }, [setMessages]);
+  }, [setMessages, setIsLoadingMessages]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

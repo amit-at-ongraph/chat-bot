@@ -9,11 +9,11 @@ export const embeddingModel = openai.embedding("text-embedding-3-small");
 export const queryMetadataSchema = z.object({
   topic: z.string().nullable(),
 
-  jurisdiction: z.array(z.enum(Jurisdiction)).nullable(),
+  jurisdiction: z.array(z.enum(Jurisdiction)),
 
-  scenario: z.enum(Scenario).nullable(),
+  scenario: z.enum(Scenario),
 
-  applicableRoles: z.array(z.enum(ApplicableRole)).nullable(),
+  applicableRoles: z.array(z.enum(ApplicableRole)),
 
   lexicalTriggers: z.array(z.string()),
 
