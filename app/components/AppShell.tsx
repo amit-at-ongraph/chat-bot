@@ -6,7 +6,7 @@ import { useChatStore } from "@/app/store/chatStore";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Spinner from "./Spinner";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
@@ -14,6 +14,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentChatId = searchParams.get("chatId");
+  const [isDesktop, setIsDesktop] = useState(false);
 
   const {
     isSidebarOpen,
@@ -44,9 +45,19 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   }, [session, setUserChats, setUserChatsLoading]);
 
   useEffect(() => {
-    if (window.innerWidth >= 1024) {
-      setIsSidebarOpen(true);
-    }
+    const handleResize = () => {
+      const isLargeScreen = window.innerWidth >= 1024;
+      setIsDesktop(isLargeScreen);
+      if (isLargeScreen) {
+        setIsSidebarOpen(true);
+      }
+    };
+
+    // Initial check
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, [setIsSidebarOpen]);
 
   useEffect(() => {
@@ -111,6 +122,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         <Sidebar
           isOpen={isSidebarOpen}
           isCollapsed={isCollapsed}
+          isDesktop={isDesktop}
           onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
           onClose={() => setIsSidebarOpen(false)}
           chats={userChats}

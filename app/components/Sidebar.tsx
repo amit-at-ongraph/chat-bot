@@ -30,6 +30,7 @@ import { Input } from "./ui/Input";
 interface SidebarProps {
   isOpen: boolean;
   isCollapsed: boolean;
+  isDesktop: boolean;
   onToggleCollapse: () => void;
   onClose: () => void;
   chats: DBChat[];
@@ -45,6 +46,7 @@ interface SidebarProps {
 export default function Sidebar({
   isOpen,
   isCollapsed,
+  isDesktop,
   onToggleCollapse,
   onClose,
   chats,
@@ -61,15 +63,7 @@ export default function Sidebar({
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const { t } = useTranslation();
   const userMenuRef = useRef<HTMLDivElement>(null);
-  const [isDesktop, setIsDesktop] = useState(false);
   const pathname = usePathname();
-
-  useEffect(() => {
-    const checkDesktop = () => setIsDesktop(window.innerWidth >= 1024);
-    checkDesktop();
-    window.addEventListener("resize", checkDesktop);
-    return () => window.removeEventListener("resize", checkDesktop);
-  }, []);
 
   const effectivelyCollapsed = isCollapsed && isDesktop;
 
