@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ApplicableRole, Jurisdiction, LifecycleState, Scenario } from "@/lib/constants";
+import { LifecycleState } from "@/lib/constants";
 import {
   ColumnDef,
   Row,
@@ -26,13 +26,17 @@ import { ChevronLeft, ChevronRight, Plus, Search, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Chunk, chunkService } from "./data";
+import { useTranslation } from "../i18n/useTranslation";
+import { createOptionsFromEnum } from "../utils/string.utils";
+import { filterConfigs } from "./filter-config";
+import { Chunk, chunkService } from "./service";
 
 export default function ChunksPage() {
+  const { t } = useTranslation();
   const [chunks, setChunks] = useState<Chunk[]>([]);
   const [loading, setLoading] = useState(true);
   const [globalFilter, setGlobalFilter] = useState("");
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<Record<string, string>>({
     scenario: "",
     jurisdiction: "",
     lifecycleState: "",
@@ -46,49 +50,55 @@ export default function ChunksPage() {
       setChunks(data);
     } catch (error) {
       console.error("Failed to fetch chunks:", error);
-      toast.error("Failed to load chunks");
+      toast.error(t("upload.load_failed"));
     } finally {
       setLoading(false);
     }
-  }, [filters]);
+  }, [filters, t]);
 
-  const toggleChunkStatus = (row: Row<Chunk>) => async (value: string) => {
-    try {
-      const chunkId = row.original.chunkId;
-      await chunkService.toggleStatus(chunkId, value);
-      toast.success("Status updated");
-      // Update local state to reflect change
-      setChunks((prev) =>
-        prev.map((c) => (c.chunkId === chunkId ? { ...c, lifecycleState: value } : c)),
-      );
-    } catch (error) {
-      console.error("Failed to update status:", error);
-      toast.error("Failed to update status");
-    }
-  };
+  const toggleChunkStatus = useCallback(
+    (row: Row<Chunk>) => async (value: string) => {
+      try {
+        const chunkId = row.original.chunkId;
+        await chunkService.toggleStatus(chunkId, value);
+        toast.success(t("upload.status_updated"));
+        // Update local state to reflect change
+        setChunks((prev) =>
+          prev.map((c) => (c.chunkId === chunkId ? { ...c, lifecycleState: value } : c)),
+        );
+      } catch (error) {
+        console.error("Failed to update status:", error);
+        toast.error(t("upload.update_failed"));
+      }
+    },
+    [t],
+  );
 
   useEffect(() => {
     fetchChunks();
   }, [filters, fetchChunks]);
 
-  const deleteChunk = useCallback(async (chunkId: string) => {
-    if (!confirm("Are you sure you want to delete this chunk?")) return;
+  const deleteChunk = useCallback(
+    async (chunkId: string) => {
+      if (!confirm(t("upload.delete_chunk_confirm"))) return;
 
-    try {
-      await chunkService.delete(chunkId);
-      toast.success("Chunk deleted successfully");
-      setChunks((prev) => prev.filter((c) => c.chunkId !== chunkId));
-    } catch (error) {
-      console.error("Failed to delete chunk:", error);
-      toast.error("Failed to delete chunk");
-    }
-  }, []);
+      try {
+        await chunkService.delete(chunkId);
+        toast.success(t("upload.chunk_deleted"));
+        setChunks((prev) => prev.filter((c) => c.chunkId !== chunkId));
+      } catch (error) {
+        console.error("Failed to delete chunk:", error);
+        toast.error(t("upload.chunk_delete_failed"));
+      }
+    },
+    [t],
+  );
 
   const columns = useMemo<ColumnDef<Chunk>[]>(
     () => [
       {
         accessorKey: "content",
-        header: "Content",
+        header: t("upload.content"),
         cell: ({ row }) => (
           <div className="max-w-sm text-[13px] leading-relaxed">
             <div className="line-clamp-2 w-full">{row.getValue("content")}</div>
@@ -97,7 +107,7 @@ export default function ChunksPage() {
       },
       {
         accessorKey: "topic",
-        header: "Topic",
+        header: t("upload.topic"),
         cell: ({ row }) => {
           const topic = row.getValue("topic") as string;
           return (
@@ -109,46 +119,51 @@ export default function ChunksPage() {
       },
       {
         accessorKey: "scenario",
-        header: "Scenario",
-        cell: ({ row }) => (
-          <div className="text-text-secondary text-[13px] capitalize">
-            {row.getValue("scenario")}
-          </div>
-        ),
+        header: t("upload.scenario"),
+        cell: ({ row }) => {
+          const value = row.getValue("scenario") as string;
+          return <div className="text-text-secondary text-[13px]">{t(`upload.${value}`)}</div>;
+        },
       },
       {
         accessorKey: "jurisdiction",
-        header: "Jurisdiction",
-        cell: ({ row }) => (
-          <div className="text-text-secondary text-[13px] capitalize">
-            {row.getValue("jurisdiction")}
-          </div>
-        ),
+        header: t("upload.jurisdiction"),
+        cell: ({ row }) => {
+          const value = row.getValue("jurisdiction") as string;
+          return (
+            <div className="text-text-secondary text-[13px] whitespace-nowrap">
+              {t(`upload.${value}`)}
+            </div>
+          );
+        },
       },
       {
         accessorKey: "applicableRoles",
-        header: "Role",
-        cell: ({ row }) => (
-          <div className="text-text-secondary text-[13px] capitalize">
-            {(row.getValue("applicableRoles") as Array<string>)?.join(", ")}
-          </div>
-        ),
+        header: t("upload.applicable_roles"),
+        cell: ({ row }) => {
+          const roles = row.getValue("applicableRoles") as Array<string>;
+          return (
+            <div className="text-text-secondary text-[13px] whitespace-nowrap">
+              {roles?.map((role) => t(`upload.${role}`)).join(", ")}
+            </div>
+          );
+        },
       },
       {
         accessorKey: "lifecycleState",
-        header: "Status",
+        header: t("upload.status"),
         cell: ({ row }) => (
           <EnumSelect
             value={row.getValue("lifecycleState")}
             onValueChange={toggleChunkStatus(row)}
-            options={Object.values(LifecycleState)}
+            options={createOptionsFromEnum(LifecycleState)}
             triggerClassName="w-fit"
           />
         ),
       },
       {
         accessorKey: "createdAt",
-        header: "Created",
+        header: t("upload.created"),
         cell: ({ row }) => (
           <div className="text-text-secondary text-[12px] whitespace-nowrap">
             {new Date(row.getValue("createdAt")).toLocaleDateString()}
@@ -157,7 +172,7 @@ export default function ChunksPage() {
       },
       {
         id: "actions",
-        header: () => <div className="text-center">Actions</div>,
+        header: () => <div className="text-center">{t("upload.actions")}</div>,
         cell: ({ row }) => (
           <div className="flex items-center justify-center gap-1 transition-opacity">
             <Button
@@ -172,7 +187,7 @@ export default function ChunksPage() {
         ),
       },
     ],
-    [deleteChunk],
+    [deleteChunk, t, toggleChunkStatus],
   );
 
   const [pagination, setPagination] = useState({
@@ -206,9 +221,9 @@ export default function ChunksPage() {
     <div className="mx-auto max-w-7xl space-y-6 max-2xl:px-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="mb-2 text-xl font-medium tracking-tight">RAG Chunks</h1>
+          <h1 className="mb-2 text-xl font-medium tracking-tight">{t("upload.documents")}</h1>
           <p className="text-text-muted hidden text-xs font-light sm:block">
-            Manage and monitor document segments used for retrieval.
+            {t("upload.documents_description")}
           </p>
         </div>
         <Link href="/upload/new">
@@ -217,7 +232,7 @@ export default function ChunksPage() {
             className="gap-2 rounded-xl px-4 py-2 text-sm font-medium"
           >
             <Plus className="h-4 w-4" />
-            Add Chunk
+            {t("upload.add_new_document")}
           </Button>
         </Link>
       </div>
@@ -226,7 +241,7 @@ export default function ChunksPage() {
         <div className="relative w-full max-w-sm">
           <Search className="text-text-muted absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
           <Input
-            placeholder="Search segments..."
+            placeholder={t("upload.search_placeholder")}
             value={globalFilter ?? ""}
             onChange={(e) => setGlobalFilter(e.target.value)}
             className="w-full pl-9"
@@ -234,49 +249,20 @@ export default function ChunksPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <EnumSelect
-            value={filters.scenario}
-            onValueChange={(value) =>
-              setFilters((f) => ({ ...f, scenario: value === "ALL" ? "" : value }))
-            }
-            options={Object.values(Scenario)}
-            placeholder="Scenarios"
-            triggerClassName="w-fit"
-            allOptionLabel="All Scenarios"
-          />
-
-          <EnumSelect
-            value={filters.jurisdiction}
-            onValueChange={(value) =>
-              setFilters((f) => ({ ...f, jurisdiction: value === "ALL" ? "" : value }))
-            }
-            options={Object.values(Jurisdiction)}
-            placeholder="Jurisdictions"
-            triggerClassName="w-fit"
-            allOptionLabel="All Jurisdictions"
-          />
-
-          <EnumSelect
-            value={filters.lifecycleState}
-            onValueChange={(value) =>
-              setFilters((f) => ({ ...f, lifecycleState: value === "ALL" ? "" : value }))
-            }
-            options={Object.values(LifecycleState)}
-            placeholder="Status"
-            triggerClassName="w-fit"
-            allOptionLabel="All Status"
-          />
-
-          <EnumSelect
-            value={filters.applicableRoles}
-            onValueChange={(value) =>
-              setFilters((f) => ({ ...f, applicableRoles: value === "ALL" ? "" : value }))
-            }
-            options={Object.values(ApplicableRole)}
-            placeholder="Roles"
-            triggerClassName="w-fit"
-            allOptionLabel="All Roles"
-          />
+          {filterConfigs.map(({ key, options, label, placeholder }) => (
+            <EnumSelect
+              key={key}
+              value={filters[key]}
+              onValueChange={(value) => {
+                const newValue = value === "ALL" ? "" : value;
+                setFilters((f) => (f[key] === newValue ? f : { ...f, [key]: newValue }));
+              }}
+              options={options}
+              placeholder={t(placeholder)}
+              triggerClassName="w-fit"
+              allOptionLabel={t(label)}
+            />
+          ))}
         </div>
       </div>
 
@@ -319,7 +305,7 @@ export default function ChunksPage() {
                   colSpan={columns.length}
                   className="text-text-muted h-32 text-center italic"
                 >
-                  No chunks found matching your searching criteria.
+                  {t("upload.no_chunks_found")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -341,7 +327,7 @@ export default function ChunksPage() {
 
         <div className="border-border-base flex items-center justify-between border-t px-6 py-4 dark:border-neutral-700">
           <p className="text-text-muted text-[12px] font-light">
-            Showing {table.getRowModel().rows.length} segments
+            {t("upload.showing_segments", { count: table.getRowModel().rows.length })}
           </p>
           <div className="flex items-center gap-2">
             <Button

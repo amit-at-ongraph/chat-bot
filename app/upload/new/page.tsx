@@ -1,16 +1,17 @@
 "use client";
 import { Button } from "@/app/components/ui/Button";
 import { useTranslation } from "@/app/i18n/useTranslation";
+import { createOptionsFromEnum } from "@/app/utils/string.utils";
 import { EnumSelect } from "@/components/ui/enum-select";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { ApplicableRole, Jurisdiction, LifecycleState, Scenario } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import axios from "axios";
-import { ArrowLeft, FileText, Loader2, Type, Upload } from "lucide-react";
+import { ArrowLeft, Database, FileText, Loader2, Type, Upload } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 export default function NewChunkPage() {
@@ -45,16 +46,16 @@ export default function NewChunkPage() {
 
   const handleUpload = async () => {
     if (uploadType === "file" && !selectedFile) {
-      toast.error("Please select a file");
+      toast.error(t("upload.please_select_file"));
       return;
     }
     if (uploadType === "paste" && !pastedContent.trim()) {
-      toast.error("Please paste some content");
+      toast.error(t("upload.please_paste_content"));
       return;
     }
 
     setIsUploading(true);
-    const uploadToast = toast.loading("Processing upload...");
+    const uploadToast = toast.loading(t("upload.processing_upload"));
 
     try {
       const formData = new FormData();
@@ -82,11 +83,11 @@ export default function NewChunkPage() {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      toast.success("Upload successful!", { id: uploadToast });
+      toast.success(t("upload.upload_success"), { id: uploadToast });
       router.push("/upload");
     } catch (error) {
       console.error("Upload failed:", error);
-      toast.error("Upload failed", { id: uploadToast });
+      toast.error(t("upload.upload_failed"), { id: uploadToast });
     } finally {
       setIsUploading(false);
     }
@@ -104,7 +105,7 @@ export default function NewChunkPage() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
         </Link>
-        <h2 className="mb-0 font-medium">Add New Chunk</h2>
+        <h2 className="mb-0 font-medium">{t("upload.add_new_document")}</h2>
       </div>
 
       <div className="flex flex-col-reverse gap-8 lg:grid lg:grid-cols-3">
@@ -112,57 +113,54 @@ export default function NewChunkPage() {
         <div className="space-y-6 lg:col-span-2">
           <div className="border-border-base bg-header-bg sticky top-8 space-y-6 rounded-2xl border p-6 shadow-xs">
             <h2 className="border-border-base flex items-center gap-2 border-b pb-4 text-sm font-semibold">
-              <Database className="h-4 w-4" /> Chunk Metadata
+              <Database className="h-4 w-4" /> {t("upload.metadata")}
             </h2>
 
             <div className="grid grid-cols-2 gap-4">
-              <FormField label="Topic">
+              <FormField label={t("upload.topic")}>
                 <Input
                   value={metadata.topic}
                   onChange={(e) => handleMetadataChange("topic", e.target.value)}
-                  placeholder="e.g. Warrant Procedures"
+                  placeholder={t("upload.topic_placeholder")}
                   disabled={isUploading}
                   className="dark:bg-background bg-white text-[13px]"
                 />
               </FormField>
 
-              <FormField label="Jurisdiction">
+              <FormField label={t("upload.jurisdiction")}>
                 <EnumSelect
                   value={metadata.jurisdiction}
                   onValueChange={(value) => handleMetadataChange("jurisdiction", value)}
-                  options={Object.values(Jurisdiction)}
-                  placeholder="Select Jurisdiction"
+                  options={createOptionsFromEnum(Jurisdiction)}
+                  placeholder={t("upload.jurisdiction")}
                   disabled={isUploading}
                   triggerClassName="w-full text-left text-[13px]"
-                  renderOption={(option) => t(`upload.${option}`)}
                 />
               </FormField>
 
-              <FormField label="Scenario">
+              <FormField label={t("upload.scenario")}>
                 <EnumSelect
                   value={metadata.scenario}
                   onValueChange={(value) => handleMetadataChange("scenario", value)}
-                  options={Object.values(Scenario)}
-                  placeholder="Select Scenario"
+                  options={createOptionsFromEnum(Scenario)}
+                  placeholder={t("upload.scenario")}
                   disabled={isUploading}
                   triggerClassName="w-full text-left text-[13px]"
-                  renderOption={(option) => t(`upload.${option}`)}
                 />
               </FormField>
 
-              <FormField label="Status">
+              <FormField label={t("upload.status")}>
                 <EnumSelect
                   value={metadata.lifecycleState}
                   onValueChange={(value) => handleMetadataChange("lifecycleState", value)}
-                  options={Object.values(LifecycleState)}
-                  placeholder="Select State"
+                  options={createOptionsFromEnum(LifecycleState)}
+                  placeholder={t("upload.status")}
                   disabled={isUploading}
                   triggerClassName="w-full text-left text-[13px]"
-                  renderOption={(option) => t(`upload.${option}`)}
                 />
               </FormField>
 
-              <FormField label="Last Reviewed">
+              <FormField label={t("upload.last_reviewed")}>
                 <Input
                   type="date"
                   value={metadata.lastReviewed}
@@ -172,17 +170,17 @@ export default function NewChunkPage() {
                 />
               </FormField>
 
-              <FormField label="Lexical Triggers">
+              <FormField label={t("upload.lexical_triggers")}>
                 <Input
                   value={metadata.lexicalTriggers}
                   onChange={(e) => handleMetadataChange("lexicalTriggers", e.target.value)}
-                  placeholder="keyword1; keyword2..."
+                  placeholder={t("upload.lexical_triggers_placeholder")}
                   disabled={isUploading}
                   className="dark:bg-background bg-white text-[13px]"
                 />
               </FormField>
 
-              <FormField label="Applicable Roles">
+              <FormField label={t("upload.applicable_roles")}>
                 <div className="flex flex-wrap gap-2 pt-1">
                   {Object.values(ApplicableRole).map((role) => {
                     const isSelected = metadata.applicableRoles.includes(role);
@@ -218,7 +216,7 @@ export default function NewChunkPage() {
               ) : (
                 <>
                   <Upload className="mr-2 h-4 w-4" />
-                  Upload & Process
+                  {t("upload.upload_process")}
                 </>
               )}
             </Button>
@@ -230,7 +228,7 @@ export default function NewChunkPage() {
           <div className="border-border-base bg-header-bg space-y-6 rounded-2xl border p-6 shadow-xs">
             <div className="border-border-base flex items-center justify-between border-b pb-4">
               <h2 className="flex items-center gap-2 text-sm font-semibold">
-                <Upload className="h-4 w-4" /> Source Content
+                <Upload className="h-4 w-4" /> {t("upload.source_content")}
               </h2>
               <div className="bg-app-bg border-border-base flex rounded-lg border p-0.5">
                 <button
@@ -242,7 +240,7 @@ export default function NewChunkPage() {
                       : "text-text-muted hover:text-text-main",
                   )}
                 >
-                  <FileText className="h-3.5 w-3.5" /> File
+                  <FileText className="h-3.5 w-3.5" /> {t("upload.file")}
                 </button>
                 <button
                   onClick={() => setUploadType("paste")}
@@ -253,7 +251,7 @@ export default function NewChunkPage() {
                       : "text-text-muted hover:text-text-main",
                   )}
                 >
-                  <Type className="h-3.5 w-3.5" /> Paste
+                  <Type className="h-3.5 w-3.5" /> {t("upload.paste")}
                 </button>
               </div>
             </div>
@@ -274,9 +272,9 @@ export default function NewChunkPage() {
                     </div>
                     <div className="space-y-1">
                       <p className="text-sm font-medium">
-                        {selectedFile ? selectedFile.name : "Click to select"}
+                        {selectedFile ? selectedFile.name : t("upload.click_to_select")}
                       </p>
-                      <p className="text-text-muted text-xs">PDF or Plain Text (max. 10MB)</p>
+                      <p className="text-text-muted text-xs">{t("upload.pdf_txt_hint")}</p>
                     </div>
                   </label>
                   {selectedFile && (
@@ -285,7 +283,7 @@ export default function NewChunkPage() {
                       onClick={() => setSelectedFile(null)}
                       className="mt-4 text-[11px] font-medium text-red-500 hover:underline"
                     >
-                      Remove File
+                      {t("upload.remove_file")}
                     </Button>
                   )}
                 </div>
@@ -294,14 +292,14 @@ export default function NewChunkPage() {
               <div className="space-y-4">
                 <textarea
                   className="bg-app-bg border-border-base focus-visible:border-primary/50 focus-visible:ring-primary/10 h-80 w-full resize-none rounded-xl border p-4 text-[13px] leading-relaxed transition-all focus:ring-2 focus:outline-none focus-visible:ring-2 dark:focus-visible:ring-white/60"
-                  placeholder="Paste your document content here..."
+                  placeholder={t("upload.paste_content_placeholder")}
                   value={pastedContent}
                   onChange={(e) => setPastedContent(e.target.value)}
                 />
                 <div className="flex items-center justify-between px-1">
-                  <p className="text-text-muted text-[11px] italic">Supports UTF-8 characters</p>
+                  <p className="text-text-muted text-[11px] italic">{t("upload.utf8_hint")}</p>
                   <p className="text-text-muted text-[11px] font-medium tracking-tight uppercase">
-                    {pastedContent.length} Characters
+                    {pastedContent.length} {t("upload.characters")}
                   </p>
                 </div>
               </div>
@@ -310,27 +308,5 @@ export default function NewChunkPage() {
         </div>
       </div>
     </div>
-  );
-}
-
-// Helper to keep Database icon imported since it's used in h2
-function Database({ className }: { className?: string }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <ellipse cx="12" cy="5" rx="9" ry="3" />
-      <path d="M3 5V19A9 3 0 0 0 21 19V5" />
-      <path d="M3 12A9 3 0 0 0 21 12" />
-    </svg>
   );
 }
