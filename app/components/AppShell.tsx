@@ -86,7 +86,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       await axios.delete(`/api/chats/${id}`);
       setUserChats(userChats.filter((chat) => chat.id !== id));
       if (currentChatId === id) {
-        router.push("/");
+        handleNewChat();
       }
     } catch (error) {
       console.error("Failed to delete chat:", error);
