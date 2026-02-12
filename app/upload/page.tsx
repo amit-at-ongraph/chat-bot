@@ -22,21 +22,11 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import axios from "axios";
 import { ChevronLeft, ChevronRight, Plus, Search, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-
-interface Chunk {
-  chunkId: string;
-  content: string;
-  topic?: string;
-  scenario?: string;
-  jurisdiction?: string;
-  lifecycleState?: string;
-  createdAt: string;
-}
+import { Chunk, chunkService } from "./data";
 
 export default function ChunksPage() {
   const [chunks, setChunks] = useState<Chunk[]>([]);
@@ -52,14 +42,8 @@ export default function ChunksPage() {
   const fetchChunks = useCallback(async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams();
-      if (filters.scenario) params.append("scenario", filters.scenario);
-      if (filters.jurisdiction) params.append("jurisdiction", filters.jurisdiction);
-      if (filters.lifecycleState) params.append("lifecycleState", filters.lifecycleState);
-      if (filters.applicableRoles) params.append("applicableRoles", filters.applicableRoles);
-
-      const { data } = await axios.get(`/api/chunks?${params.toString()}`);
-      setChunks(data.chunks || []);
+      const data = await chunkService.fetchAll(filters);
+      setChunks(data);
     } catch (error) {
       console.error("Failed to fetch chunks:", error);
       toast.error("Failed to load chunks");
@@ -71,7 +55,7 @@ export default function ChunksPage() {
   const toggleChunkStatus = (row: Row<Chunk>) => async (value: string) => {
     try {
       const chunkId = row.original.chunkId;
-      await axios.post("/api/chunks/toggle", { chunkId, status: value });
+      await chunkService.toggleStatus(chunkId, value);
       toast.success("Status updated");
       // Update local state to reflect change
       setChunks((prev) =>
@@ -91,7 +75,7 @@ export default function ChunksPage() {
     if (!confirm("Are you sure you want to delete this chunk?")) return;
 
     try {
-      await axios.delete(`/api/chunks?chunkId=${chunkId}`);
+      await chunkService.delete(chunkId);
       toast.success("Chunk deleted successfully");
       setChunks((prev) => prev.filter((c) => c.chunkId !== chunkId));
     } catch (error) {
