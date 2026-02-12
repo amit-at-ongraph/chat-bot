@@ -4,8 +4,13 @@ import { useCallback } from "react";
 import { useLanguageStore } from "../store/languageStore";
 import en from "./locales/en.json";
 import hi from "./locales/hi.json";
+import es from "./locales/es.json";
+import fr from "./locales/fr.json";
+import zh from "./locales/zh.json";
+import ar from "./locales/ar.json";
+import pt from "./locales/pt.json";
 
-const translations = { en, hi };
+const translations = { en, hi, es, fr, zh, ar, pt };
 
 export type TranslationKeys = keyof typeof en;
 
