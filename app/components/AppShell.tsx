@@ -116,6 +116,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     );
   }
 
+  const mainContentOffsetClasses =
+    showSidebar && isSidebarOpen
+      ? isCollapsed
+        ? "lg:ml-16 lg:w-[calc(100%-4rem)]"
+        : "lg:ml-72 lg:w-[calc(100%-18rem)]"
+      : "lg:ml-0 lg:w-full";
+
   return (
     <div className="bg-app-bg text-text-main relative flex min-h-screen overflow-x-hidden font-sans shadow-xl">
       {showSidebar && (
@@ -136,17 +143,21 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         />
       )}
 
-      <div
-        className={`flex h-screen flex-1 flex-col transition-all duration-300 ${
-          showSidebar && isSidebarOpen ? (isCollapsed ? "lg:pl-16" : "lg:pl-72") : "lg:pl-0"
-        }`}
-      >
+      <div className="flex h-screen flex-1 flex-col overflow-hidden transition-all duration-300">
         <Header
           skippedAuth={skippedAuth}
           onToggleSidebar={toggleSidebar}
           isSidebarOpen={isSidebarOpen}
+          mainContentOffsetClasses={mainContentOffsetClasses}
         />
-        <main className="flex-1 overflow-y-auto max-lg:max-w-screen">{children}</main>
+
+        <main
+          className={`flex-1 overflow-x-hidden overflow-y-auto transition-all duration-300 ${
+            mainContentOffsetClasses
+          } `}
+        >
+          {children}
+        </main>
       </div>
     </div>
   );

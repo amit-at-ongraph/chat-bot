@@ -35,11 +35,17 @@ export function EnumSelect({
       </SelectTrigger>
       <SelectContent>
         {allOptionLabel && <SelectItem value="ALL">{allOptionLabel}</SelectItem>}
-        {options.map((option) => (
+        {options.map((option) => {
+
+          const translateKey = `upload.${option.value}`
+          const value= t(translateKey)
+          
+          return (
           <SelectItem key={option.value} value={option.value}>
-            {t(`upload.${option.value}`)}
+            {value === translateKey ? option.label : value}
           </SelectItem>
-        ))}
+        )
+        })}
       </SelectContent>
     </Select>
   );
