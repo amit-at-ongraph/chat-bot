@@ -68,18 +68,27 @@ export enum UserRole {
 }
 
 export enum Jurisdiction {
-  GLOBAL = "global",
   US_FEDERAL_BASELINE = "US_federal_baseline",
-  US_STATE = "US_state",
-  EU_UNION = "EU_union",
-  UK_NATIONAL = "UK_national",
+  // US_STATE = "US_state",
+  // EU_UNION = "EU_union",
+  // UK_NATIONAL = "UK_national",
+  US_CA = "US_CA",
+  US_NY = "US_NY",
+  overlay_meta = "overlay_meta",
+  GLOBAL = "global",
 }
 
 export enum Scenario {
   GLOBAL = "global",
-  REGIONAL = "regional",
-  LOCAL = "local",
+  // REGIONAL = "regional",
+  // LOCAL = "local",
   HOME = "home",
+  CAR = "car",
+  COURTHOUSE = "courthouse",
+  PROTESTS = "protests",
+  SCHOOL = "school",
+  STREET = "street",
+  WORKPLACE = "workplace",
 }
 
 export enum LifecycleState {
