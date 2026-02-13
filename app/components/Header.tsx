@@ -25,7 +25,7 @@ export default function Header({ skippedAuth, onToggleSidebar, isSidebarOpen }: 
             variant="ghost"
             size="icon"
             onClick={onToggleSidebar}
-            className={`transition-opacity lg:hidden ${isSidebarOpen ? "pointer-events-none opacity-0" : ""}`}
+            className={`w-fit transition-opacity lg:hidden ${isSidebarOpen ? "pointer-events-none opacity-0" : ""}`}
             aria-label={t("common.toggle_sidebar")}
           >
             <Menu className="h-6 w-6" />
