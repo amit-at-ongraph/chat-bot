@@ -55,7 +55,7 @@ export default function Sidebar({
   onNewChat,
   onDeleteChat,
   onRenameChat,
-  isLoadingChats: _,
+  isLoadingChats,
   selectedChatLoading,
 }: SidebarProps) {
   const { data: session } = useSession();
@@ -196,29 +196,42 @@ export default function Sidebar({
                         {t("common.recent_chats")}
                       </div>
                     )}
-                    {!isCollapsed &&
-                      chats.map((chat) => (
-                        <SidebarItem
-                          key={chat.id}
-                          icon={MessageSquare}
-                          label={chat.title || t("common.untitled_chat")}
-                          active={currentChatId === chat.id}
-                          loading={selectedChatLoading && currentChatId === chat.id}
-                          isCollapsed={effectivelyCollapsed}
-                          onClick={() => {
-                            onSelectChat(chat.id);
-                            if (window.innerWidth < 1024) {
-                              onClose();
-                            }
-                          }}
-                          onRename={(newTitle) => onRenameChat(chat.id, newTitle)}
-                          onDelete={() => onDeleteChat(chat.id)}
-                        />
-                      ))}
-                    {chats.length === 0 && !effectivelyCollapsed && (
-                      <div className="text-text-muted px-4 py-4 text-sm italic">
-                        {t("common.no_recent_chats")}
+                    {isLoadingChats ? (
+                      <div className="space-y-2 px-2">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                          <div
+                            key={i}
+                            className="bg-foreground/5 dark:bg-white/5 h-9 w-full animate-pulse rounded-[10px] border border-foreground/5 dark:border-white/5"
+                          />
+                        ))}
                       </div>
+                    ) : (
+                      <>
+                        {!isCollapsed &&
+                          chats.map((chat) => (
+                            <SidebarItem
+                              key={chat.id}
+                              icon={MessageSquare}
+                              label={chat.title || t("common.untitled_chat")}
+                              active={currentChatId === chat.id}
+                              loading={selectedChatLoading && currentChatId === chat.id}
+                              isCollapsed={effectivelyCollapsed}
+                              onClick={() => {
+                                onSelectChat(chat.id);
+                                if (window.innerWidth < 1024) {
+                                  onClose();
+                                }
+                              }}
+                              onRename={(newTitle) => onRenameChat(chat.id, newTitle)}
+                              onDelete={() => onDeleteChat(chat.id)}
+                            />
+                          ))}
+                        {chats.length === 0 && !effectivelyCollapsed && (
+                          <div className="text-text-muted px-4 py-4 text-sm italic">
+                            {t("common.no_recent_chats")}
+                          </div>
+                        )}
+                      </>
                     )}
                   </nav>
 

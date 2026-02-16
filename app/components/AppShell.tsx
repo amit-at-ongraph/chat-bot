@@ -30,19 +30,24 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     isLoadingMessages,
   } = useChatStore();
 
-  const fetchChats = useCallback(async () => {
-    if (session?.user?.id) {
-      try {
-        setUserChatsLoading(true);
-        const { data } = await axios.get("/api/chats");
-        setUserChats(data);
-      } catch (error) {
-        console.error("Failed to fetch chats:", error);
-      } finally {
-        setUserChatsLoading(false);
+  const fetchChats = useCallback(
+    async (options?: { silent?: boolean }) => {
+      if (session?.user?.id) {
+        try {
+          if (!options?.silent) {
+            setUserChatsLoading(true);
+          }
+          const { data } = await axios.get("/api/chats");
+          setUserChats(data);
+        } catch (error) {
+          console.error("Failed to fetch chats:", error);
+        } finally {
+          setUserChatsLoading(false);
+        }
       }
-    }
-  }, [session, setUserChats, setUserChatsLoading]);
+    },
+    [session, setUserChats, setUserChatsLoading],
+  );
 
   useEffect(() => {
     const handleResize = () => {
@@ -67,7 +72,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   // Listen for new chat creation event to refetch the chat list
   useEffect(() => {
     const handleNewChatCreated = async () => {
-      await fetchChats();
+      await fetchChats({ silent: true });
     };
     window.addEventListener("new-chat-created", handleNewChatCreated);
     return () => window.removeEventListener("new-chat-created", handleNewChatCreated);
@@ -85,9 +90,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     try {
       await axios.delete(`/api/chats/${id}`);
       setUserChats(userChats.filter((chat) => chat.id !== id));
-      if (currentChatId === id) {
-        handleNewChat();
-      }
+      handleNewChat();
     } catch (error) {
       console.error("Failed to delete chat:", error);
     }
