@@ -34,7 +34,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     async (options?: { silent?: boolean }) => {
       if (session?.user?.id) {
         try {
-          if (!options?.silent) {
+          // Check current chats without making it a dependency to avoid loops
+          const currentChats = useChatStore.getState().userChats;
+          if (!options?.silent && currentChats.length === 0) {
             setUserChatsLoading(true);
           }
           const { data } = await axios.get("/api/chats");
