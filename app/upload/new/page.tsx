@@ -11,7 +11,7 @@ import axios from "axios";
 import { ArrowLeft, Database, FileText, Loader2, Type, Upload } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 
 export default function NewChunkPage() {
@@ -30,6 +30,15 @@ export default function NewChunkPage() {
     lastReviewed: new Date().toISOString().split("T")[0],
     lexicalTriggers: "",
   });
+
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const lineNumbersRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = () => {
+    if (textareaRef.current && lineNumbersRef.current) {
+      lineNumbersRef.current.scrollTop = textareaRef.current.scrollTop;
+    }
+  };
 
   const handleMetadataChange = (key: string, value: any) => {
     setMetadata((prev) => ({ ...prev, [key]: value }));
@@ -290,12 +299,27 @@ export default function NewChunkPage() {
               </div>
             ) : (
               <div className="space-y-4">
-                <textarea
-                  className="bg-app-bg border-border-base focus-visible:border-primary/50 focus-visible:ring-primary/10 h-80 w-full resize-none rounded-xl border p-4 text-[13px] leading-relaxed transition-all focus:ring-2 focus:outline-none focus-visible:ring-2 dark:focus-visible:ring-white/60"
-                  placeholder={t("upload.paste_content_placeholder")}
-                  value={pastedContent}
-                  onChange={(e) => setPastedContent(e.target.value)}
-                />
+                <div className="group border-border-base focus-within:ring-primary/10 focus-within:border-primary/50 relative flex h-80 w-full overflow-hidden rounded-xl border transition-all focus-within:ring-2">
+                  <div
+                    ref={lineNumbersRef}
+                    className="text-text-muted border-border-base select-none border-r bg-muted/20 py-4 px-1 text-right font-mono text-[12px] leading-6 overflow-hidden"
+                  >
+                    {Array.from({ length: Math.max(1, pastedContent.split("\n").length) }, (_, i) => (
+                      <div key={i} className="h-6">
+                        {i + 1}
+                      </div>
+                    ))}
+                  </div>
+                  <textarea
+                    ref={textareaRef}
+                    onScroll={handleScroll}
+                    wrap="off"
+                    className="bg-app-bg h-full w-full resize-none overflow-x-auto p-4 px-1 font-mono text-[13px] leading-6 whitespace-pre focus:outline-none"
+                    placeholder={t("upload.paste_content_placeholder")}
+                    value={pastedContent}
+                    onChange={(e) => setPastedContent(e.target.value)}
+                  />
+                </div>
                 <div className="flex items-center justify-between px-1">
                   <p className="text-text-muted text-[11px] italic">{t("upload.utf8_hint")}</p>
                   <p className="text-text-muted text-[11px] font-medium tracking-tight uppercase">
