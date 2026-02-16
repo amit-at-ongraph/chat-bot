@@ -218,7 +218,7 @@ export default function ChunksPage() {
   });
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6 max-2xl:px-4">
+    <div className="mx-auto space-y-6 px-4">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="mb-2 text-xl font-medium tracking-tight">{t("upload.documents")}</h1>
@@ -237,7 +237,7 @@ export default function ChunksPage() {
         </Link>
       </div>
 
-      <div className="border-border-base flex flex-wrap items-center justify-between gap-4 pb-4">
+      <div className="border-border-base flex flex-wrap items-center justify-between gap-4">
         <div className="relative w-full max-w-sm">
           <Search className="text-text-muted absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
           <Input

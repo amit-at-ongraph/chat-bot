@@ -79,6 +79,7 @@ export enum Scenario {
   GLOBAL = "global",
   REGIONAL = "regional",
   LOCAL = "local",
+  HOME = "home",
 }
 
 export enum LifecycleState {

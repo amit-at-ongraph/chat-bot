@@ -10,22 +10,23 @@ interface HeaderProps {
   skippedAuth: boolean;
   onToggleSidebar: () => void;
   isSidebarOpen?: boolean;
+  mainContentOffsetClasses: string;
 }
 
-export default function Header({ skippedAuth, onToggleSidebar, isSidebarOpen }: HeaderProps) {
+export default function Header({ skippedAuth, onToggleSidebar, isSidebarOpen, mainContentOffsetClasses }: HeaderProps) {
   const { data: session } = useSession();
   const { setTheme, resolvedTheme } = useTheme();
   const { t } = useTranslation();
 
   return (
-    <header className="sticky top-0 z-10 flex items-center justify-between bg-transparent px-4 py-3">
+    <header className={`sticky top-0 z-10 flex items-center justify-between bg-transparent px-4 py-3 ${mainContentOffsetClasses}`}>
       <div className="flex items-center gap-3">
         {session && (
           <Button
             variant="ghost"
             size="icon"
             onClick={onToggleSidebar}
-            className={`transition-opacity lg:hidden ${isSidebarOpen ? "pointer-events-none opacity-0" : ""}`}
+            className={`w-fit transition-opacity lg:hidden ${isSidebarOpen ? "pointer-events-none opacity-0" : ""}`}
             aria-label={t("common.toggle_sidebar")}
           >
             <Menu className="h-6 w-6" />

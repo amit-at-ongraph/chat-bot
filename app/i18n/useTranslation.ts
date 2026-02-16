@@ -9,6 +9,7 @@ import fr from "./locales/fr.json";
 import zh from "./locales/zh.json";
 import ar from "./locales/ar.json";
 import pt from "./locales/pt.json";
+import { toTitleCaseFromSnakeCase } from "../utils/string.utils";
 
 const translations = { en, hi, es, fr, zh, ar, pt };
 
@@ -37,7 +38,7 @@ export function useTranslation() {
               break;
             }
           }
-          value = found ? fallback : key;
+          value = found ? fallback : toTitleCaseFromSnakeCase(keys[1]) ?? key;
           break;
         }
       }
