@@ -201,7 +201,7 @@ export default function Sidebar({
                         {[1, 2, 3, 4, 5].map((i) => (
                           <div
                             key={i}
-                            className="bg-foreground/5 dark:bg-white/5 h-9 w-full animate-pulse rounded-[10px] border border-foreground/5 dark:border-white/5"
+                            className="bg-selected dark:bg-white/5 h-9 w-full animate-pulse rounded-[10px] border border-foreground/5 dark:border-white/5"
                           />
                         ))}
                       </div>
