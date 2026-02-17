@@ -188,17 +188,17 @@
     "topic_placeholder": "例如：搜查令程序"
   },
   "chat_actions": {
-    "ice_door_label": "ICE 在我门口",
-    "ice_door_prompt": "ICE 在我家门口。\nICE 现在正在敲我家前门。请给我清晰、一步一步的紧急处理方法。包括要说什么、怎么查看搜 查令，以及我的权利。保持实用、简短。",
-    "ice_work_label": "ICE 在我工作单位",
-    "ice_work_prompt": "ICE 到了我的工作单位。我的权利是什么？我该如何安全地应对？",
-    "find_legal_label": "寻找法律援助",
-    "find_legal_prompt": "我需要移民方面的法律援助。你能帮我联系可靠的律师和支持团体吗？包括免费或低成本的选择。",
-    "friend_taken_label": "朋友被 ICE 带走",
-    "friend_taken_prompt": "一个朋友被 ICE 带走了。我该怎么办？我如何找到他们、支持他们并迅速采取行动？",
-    "protest_prep_label": "抗议准备指南",
-    "protest_prep_prompt": "我计划参加一场抗议。我的权利有哪些？有什么建议可以让我保持安全、做好准备并获得法律保护吗？",
-    "ice_warrants_label": "关于 ICE 搜查令",
-    "ice_warrants_prompt": "解释一下 ICE 搜查令与司法搜查令的区别。ICE 在什么情况下可以合法进入或拘留某人？"
+    "ice_door_label": "ICE 在我家门口。",
+    "ice_door_prompt": "ICE 在我家门口。\nICE 现在正在敲我家前门。请给我清晰、一步一步的紧急处理方法。包括要说什么、怎么查看搜查令，以及我的权利。保持实用、简短。",
+    "ice_work_label": "ICE 在我工作的地方。",
+    "ice_work_prompt": "ICE 现在就在我工作地点，我应该立刻做的前三件事是什么？",
+    "find_legal_label": "寻找法律帮助。",
+    "find_legal_prompt": "这是一个与 ICE 有关的情况。请给我一份适用于全美的简单移民法律援助名单，然后问我所在的州。",
+    "friend_taken_label": "有人被 ICE 带走了。",
+    "friend_taken_prompt": "刚刚有人被 ICE 带走了。请给我接下来 24 小时内清晰、一步一步要做的事，尽量实用。然后告诉我你需要我提供哪些信息。",
+    "protest_prep_label": "抗议准备指南。",
+    "protest_prep_prompt": "为和平的移民抗议做准备。只给我一个编号清单。包括：去之前要做什么、要带什么、不要带什么、如何应对 ICE 或警察、如果被拘留该说什么。不要理论，只要合法步骤。然后问我在哪个州，以便说明当地的不同之处。",
+    "ice_warrants_label": "关于 ICE 的搜查令。",
+    "ice_warrants_prompt": "ICE 搜查令核查指南。请给我：视觉检查清单、可以说的话术、如果是行政令该怎么做、如果是司法令该怎么做、以及我在第四和第五修正案下的权利。保持简短、实用。"
   }
 }

@@ -188,17 +188,17 @@
     "topic_placeholder": "ex: Procédures de mandat"
   },
   "chat_actions": {
-    "ice_door_label": "L'ICE à ma porte",
+    "ice_door_label": "ICE est à ma porte.",
     "ice_door_prompt": "ICE est à ma porte.\nICE frappe à ma porte d’entrée en ce moment. Donne-moi des instructions claires, étape par étape, sur ce que je dois faire tout de suite. Inclue exactement quoi dire, comment vérifier un mandat, et mes droits. Reste pratique et bref.",
-    "ice_work_label": "L'ICE à mon travail",
-    "ice_work_prompt": "L'ICE est arrivée à mon travail. Quels sont mes droits ?",
-    "find_legal_label": "Aide juridique",
-    "find_legal_prompt": "J'ai besoin d'aide juridique pour l'immigration. Peux-tu m'aider ?",
-    "friend_taken_label": "Ami arrêté par l'ICE",
-    "friend_taken_prompt": "Un ami a été arrêté par l'ICE. Que faire ?",
-    "protest_prep_label": "Guide manifestation",
-    "protest_prep_prompt": "Je vais manifester. Quels sont mes droits ?",
-    "ice_warrants_label": "Mandats de l'ICE",
-    "ice_warrants_prompt": "Quelle est la différence entre un mandat de l'ICE et un mandat judiciaire ?"
+    "ice_work_label": "ICE est à mon travail.",
+    "ice_work_prompt": "ICE est sur mon lieu de travail en ce moment, quelles sont les trois premières choses que je dois faire immédiatement ?",
+    "find_legal_label": "Trouve une aide juridique.",
+    "find_legal_prompt": "C’est une situation liée à ICE. Donne-moi une liste simple valable dans tout les États-Unis pour trouver une aide juridique en immigration, puis demande-moi mon État.",
+    "friend_taken_label": "Quelqu’un a été emmené par ICE.",
+    "friend_taken_prompt": "Quelqu’un vient d’être emmené par ICE. Donne-moi des actions claires, étape par étape, à faire dans les prochaines 24 heures. Reste pratique. Puis dis-moi quelles informations tu as besoin de moi.",
+    "protest_prep_label": "Guide de préparation à une manifestation.",
+    "protest_prep_prompt": "Préparation pour une manifestation pacifique sur l’immigration. Donne-moi seulement une liste numérotée. Inclue : quoi faire avant d’y aller, quoi apporter, quoi ne pas apporter, comment répondre à ICE ou à la police, et quoi dire si je suis détenu. Pas de théorie—seulement des étapes légales. Puis demande-moi dans quel État je me trouve pour noter les différences locales.",
+    "ice_warrants_label": "À propos des mandats ICE.",
+    "ice_warrants_prompt": "Guide de vérification d’un mandat ICE. Donne-moi : liste de vérification visuelle, script de ce qu’il faut dire, quoi faire si c’est administratif, quoi faire si c’est judiciaire, et mes droits selon les Quatrième et Cinquième Amendements. Garde ça bref et pratique."
   }
 }

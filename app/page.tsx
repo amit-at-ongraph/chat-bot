@@ -23,6 +23,7 @@ function HomeContent() {
     errorToast,
     chatId,
     handleSubmit,
+    handleChatAction,
     handleRetry,
     handleClearError,
     startNewChat,
@@ -41,7 +42,7 @@ function HomeContent() {
       {/* Sign In Overlay */}
       {!session && !skippedAuth && <Welcome onSkip={() => setSkippedAuth(true)} />}
 
-      <div className="flex h-full flex-col">
+      <div className="flex h-full min-h-0 flex-col overflow-hidden">
         {/* Chat Area */}
         <MessageList
           messages={messages}
@@ -57,6 +58,7 @@ function HomeContent() {
           input={input}
           setInput={setInput}
           handleSubmit={handleSubmit}
+          handleChatAction={handleChatAction}
           status={status}
           stop={stop}
           hasMessages={messages.length > 0}

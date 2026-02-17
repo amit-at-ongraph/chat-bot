@@ -21,7 +21,7 @@ export default function Header({ skippedAuth, onToggleSidebar, isSidebarOpen, ma
   return (
     <header className={`sticky top-0 z-10 flex items-center justify-between bg-transparent px-4 py-3 ${mainContentOffsetClasses}`}>
       <div className="flex items-center gap-3">
-        {session && (
+        {(session || skippedAuth) && (
           <Button
             variant="ghost"
             size="icon"

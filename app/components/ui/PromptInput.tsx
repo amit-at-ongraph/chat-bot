@@ -47,7 +47,10 @@ export const PromptInput = ({
   }, [value, updateHeight]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    // Detect touch device (phone/tablet) vs pointer device (desktop/laptop).
+    // On touch devices, Enter inserts a newline; user must tap the send button.
+    const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
+    if (e.key === "Enter" && !e.shiftKey && !isTouchDevice) {
       e.preventDefault();
       onSubmit(e as unknown as React.FormEvent);
       try {

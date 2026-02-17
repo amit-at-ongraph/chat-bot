@@ -183,6 +183,15 @@ export function useChatLogic() {
     }
   }, [searchParams, loadChat, startNewChat]);
 
+  const handleChatAction = (prompt: string) => {
+    if (prompt.trim()) {
+      sendMessage({
+        text: prompt,
+      });
+      setInput("");
+    }
+  };
+
   return {
     messages,
     status,
@@ -192,6 +201,7 @@ export function useChatLogic() {
     errorToast,
     chatId,
     handleSubmit,
+    handleChatAction,
     handleRetry,
     handleClearError,
     loadChat,

@@ -188,17 +188,17 @@
     "topic_placeholder": "Ví dụ: Quy trình lệnh bắt giữ"
   },
   "chat_actions": {
-    "ice_door_label": "ICE tại cửa nhà tôi",
+    "ice_door_label": "ICE đang ở trước cửa nhà tôi.",
     "ice_door_prompt": "ICE đang ở trước cửa nhà tôi.\nICE đang gõ cửa chính nhà tôi ngay bây giờ. Hãy cho tôi hướng dẫn rõ ràng, từng bước một, cần làm ngay lập tức. Bao gồm chính xác phải nói gì, cách kiểm tra lệnh, và các quyền của tôi. Giữ ngắn gọn và thực tế.",
-    "ice_work_label": "ICE tại nơi làm việc",
-    "ice_work_prompt": "ICE đã đến nơi làm việc của tôi. Quyền của tôi là gì? Tôi nên phản ứng như thế nào cho an toàn?",
-    "find_legal_label": "Tìm trợ giúp pháp lý",
-    "find_legal_prompt": "Tôi cần tìm trợ giúp pháp lý cho các vấn đề di trú. Bạn có thể kết nối tôi với các luật sư và nhóm hỗ trợ đáng tin cậy, bao gồm cả các lựa chọn miễn phí và chi phí thấp không?",
-    "friend_taken_label": "Bạn bị ICE đưa đi",
-    "friend_taken_prompt": "Một người bạn đã bị ICE đưa đi. Tôi nên làm gì? Làm thế nào tôi có thể tìm thấy họ, hỗ trợ họ và hành động nhanh chóng?",
-    "protest_prep_label": "Hướng dẫn chuẩn bị biểu tình",
-    "protest_prep_prompt": "Tôi đang kế hoạch tham gia một cuộc biểu tình. Quyền của tôi là gì? Có lời khuyên nào để giữ an toàn, chuẩn bị sẵn sàng và được pháp luật bảo vệ không?",
-    "ice_warrants_label": "Về lệnh của ICE",
-    "ice_warrants_prompt": "Giải thích sự khác biệt giữa lệnh của ICE và lệnh của tòa án. Khi nào ICE có thể vào nhà hoặc giam giữ ai đó một cách hợp pháp?"
+    "ice_work_label": "ICE đang ở chỗ làm của tôi.",
+    "ice_work_prompt": "ICE đang ở nơi làm việc của tôi ngay bây giờ, ba việc đầu tiên tôi nên làm ngay là gì?",
+    "find_legal_label": "Tìm trợ giúp pháp lý.",
+    "find_legal_prompt": "Đây là tình huống liên quan đến ICE. Hãy cho tôi một danh sách đơn giản áp dụng trên toàn nước Mỹ để tìm trợ giúp pháp lý về di trú, rồi hỏi tôi tôi đang ở tiểu bang nào.",
+    "friend_taken_label": "Có người bị ICE đưa đi.",
+    "friend_taken_prompt": "Vừa có người bị ICE đưa đi. Hãy cho tôi các bước rõ ràng, từng bước một, cần làm trong 24 giờ tới. Giữ cho thực tế, dễ làm. Sau đó cho tôi biết bạn cần thông tin gì từ tôi.",
+    "protest_prep_label": "Hướng dẫn chuẩn bị biểu tình.",
+    "protest_prep_prompt": "Chuẩn bị cho một cuộc biểu tình di trú ôn hòa. Chỉ đưa cho tôi danh sách đánh số. Bao gồm: cần làm gì trước khi đi, mang theo gì, không mang gì, cách trả lời ICE hoặc cảnh sát, và nói gì nếu bị tạm giữ. Không lý thuyết—chỉ các bước hợp pháp. Sau đó hỏi tôi đang ở tiểu bang nào để lưu ý các khác biệt địa phương.",
+    "ice_warrants_label": "Về lệnh của ICE.",
+    "ice_warrants_prompt": "Hướng dẫn kiểm tra lệnh ICE. Hãy cho tôi: danh sách kiểm tra bằng hình ảnh, lời thoại cần nói, phải làm gì nếu là lệnh hành chính, phải làm gì nếu là lệnh tư pháp, và các quyền của tôi theo Tu chính án thứ Tư và thứ Năm. Giữ ngắn gọn và thực tế."
   }
 }

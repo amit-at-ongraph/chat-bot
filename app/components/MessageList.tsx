@@ -109,7 +109,7 @@ export default function MessageList({
     <main
       ref={mainRef}
       style={{ overflowAnchor: "auto" }}
-      className="bg-app-bg flex-1 space-y-6 overflow-y-auto p-4"
+      className="bg-app-bg flex-1 min-h-0 space-y-6 overflow-y-auto overflow-x-hidden p-4"
       onScroll={handleScroll}
     >
       <div className="mx-auto max-w-3xl">
@@ -131,15 +131,20 @@ export default function MessageList({
               data-role={message.role}
               className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}
             >
-              <div className={`mb-4 flex flex-col gap-3 ${isUser ? "max-w-[80%]" : "w-full"}`}>
+              <div className={`mb-4 flex flex-col gap-3 overflow-hidden ${isUser ? "max-w-[80%]" : "w-full"}`}>
                 <div
                   className={`${isUser ? "border-border-light bg-border-light rounded-3xl border px-4 py-3" : ""} relative`}
+                  // className={`${
+                  //   isUser
+                  //     ? "border-border-light bg-border-light rounded-2xl border px-4 py-3 shadow-sm"
+                  //     : "bg-app-bg rounded-2xl px-4 py-3 shadow-sm ring-1 ring-black/4 dark:ring-white/6"
+                  // } relative`}
                 >
                   {message.parts?.map((part: MessagePart, pIndex: number) =>
                     part.type === "text" ? (
                       <div
                         key={pIndex}
-                        className="text-text-secondary prose prose-slate max-w-none text-[16px] leading-relaxed"
+                        className="text-text-secondary prose prose-slate max-w-none text-[16px] leading-relaxed wrap-anywhere"
                       >
                         <MemoizedMarkdown
                           text={part.text}

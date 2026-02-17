@@ -11,6 +11,7 @@ interface ChatFooterProps {
   input: string;
   setInput: (value: string) => void;
   handleSubmit: (e: React.FormEvent) => void;
+  handleChatAction: (prompt: string) => void;
   status: string;
   stop: () => void;
   hasMessages: boolean;
@@ -20,6 +21,7 @@ export default function ChatFooter({
   input,
   setInput,
   handleSubmit,
+  handleChatAction,
   status,
   stop,
   hasMessages,
@@ -31,7 +33,7 @@ export default function ChatFooter({
     <>
       {/* Action Buttons Area - Only show when no messages */}
       {!hasMessages && (
-        <div className="bg-selected px-4 py-6">
+        <div className="bg-selected shrink-0 px-4 py-6">
           <div className="mx-auto grid max-w-xl grid-cols-1 gap-3 max-sm:grid-cols-2 sm:grid-cols-3">
             {CHAT_ACTIONS.map((action, idx: number) => (
               <ChatActionButton
@@ -39,7 +41,7 @@ export default function ChatFooter({
                 icon={action.icon}
                 label={t(`chat_actions.${action.id}_label`) || action.label}
                 color={action.color}
-                onClick={() => setInput(t(`chat_actions.${action.id}_prompt`) || action.prompt)}
+                onClick={() => handleChatAction(t(`chat_actions.${action.id}_prompt`) || action.prompt)}
               />
             ))}
           </div>
@@ -47,7 +49,7 @@ export default function ChatFooter({
       )}
 
       {/* Input Area */}
-      <footer className="border-border-base bg-app-bg sticky bottom-0 p-4">
+      <footer className="border-border-base bg-app-bg shrink-0 p-4">
         <form
           onSubmit={(e) => {
             handleSubmit(e);

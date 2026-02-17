@@ -188,17 +188,17 @@
     "topic_placeholder": "hal. Mga Pamamaraan sa Warrant"
   },
   "chat_actions": {
-    "ice_door_label": "ICE sa aking pinto",
+    "ice_door_label": "Nasa pinto ko ang ICE.",
     "ice_door_prompt": "Nasa pinto ko ang ICE.\nKumakatok ang ICE sa harapang pinto ko ngayon mismo. Bigyan mo ako ng malinaw, step-by-step na gagawin agad. Isama kung ano mismo ang sasabihin, paano i-check ang warrant, at ang mga karapatan ko. Panatilihing praktikal at maikli.",
-    "ice_work_label": "ICE sa aking trabaho",
-    "ice_work_prompt": "Dumating ang ICE sa aking trabaho. Ano ang aking mga karapatan? Paano ako dapat tumugon nang ligtas?",
-    "find_legal_label": "Maghanap ng legal na tulong",
-    "find_legal_prompt": "Kailangan kong maghanap ng legal na tulong para sa mga isyu sa imigrasyon. Maaari mo ba akong ikonekta sa mga pinagkakatiwalaang abogado at mga grupo ng suporta, kabilang ang mga libre at murang opsyon?",
-    "friend_taken_label": "Kaibigan na kinuha ng ICE",
-    "friend_taken_prompt": "Kinuha ng ICE ang isang kaibigan. Ano ang dapat kong gawin? Paano ko sila mahahanap, masusuportahan, at makakaaksyon nang mabilis?",
-    "protest_prep_label": "Gabay sa paghahanda sa protesta",
-    "protest_prep_prompt": "Plano kong dumalo sa isang protesta. Ano ang aking mga karapatan? Anumang mga tip upang manatiling ligtas, handa, at protektado ng batas?",
-    "ice_warrants_label": "Tungkol sa mga warrant ng ICE",
-    "ice_warrants_prompt": "Ipaliwanag ang pagkakaiba sa pagitan ng mga warrant ng ICE at mga judicial warrant. Kailan maaaring legal na pumasok o mag-detain ang ICE ng isang tao?"
+    "ice_work_label": "Nasa trabaho ko ang ICE.",
+    "ice_work_prompt": "Nasa lugar ng trabaho ko sila ngayon, ano ang unang tatlong bagay na dapat kong gawin agad?",
+    "find_legal_label": "Maghanap ng legal na tulong.",
+    "find_legal_prompt": "May kinalaman ito sa ICE. Bigyan mo ako ng simpleng listahan sa buong U.S. para makahanap ng immigration legal help, tapos tanungin mo kung anong state ko.",
+    "friend_taken_label": "May dinala ang ICE.",
+    "friend_taken_prompt": "May kinuha ang ICE ngayon lang. Bigyan mo ako ng malinaw, step-by-step na gagawin sa susunod na 24 oras. Dapat praktikal. Tapos sabihin mo kung anong impormasyon ang kailangan mo sa akin.",
+    "protest_prep_label": "Gabay sa paghahanda para sa protesta.",
+    "protest_prep_prompt": "Paghahanda para sa mapayapang immigration protest. Bigyan mo lang ako ng numbered checklist. Isama: ano ang gagawin bago pumunta, ano ang dadalhin, ano ang hindi dadalhin, paano sasagot sa ICE o pulis, at ano ang sasabihin kung madetain. Walang teorya—legal na hakbang lang. Pagkatapos, tanungin mo kung anong state ako para maipaliwanag ang mga lokal na pagkakaiba.",
+    "ice_warrants_label": "Tungkol sa ICE warrant.",
+    "ice_warrants_prompt": "Gabay sa pag-check ng ICE warrant. Ibigay mo: visual checklist, script ng sasabihin, ano ang gagawin kung administrative, ano ang gagawin kung judicial, at ang mga karapatan ko sa ilalim ng Fourth at Fifth Amendment. Panatilihing maikli at praktikal."
   }
 }

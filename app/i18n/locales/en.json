@@ -188,17 +188,17 @@
     "topic_placeholder": "e.g. Warrant Procedures"
   },
   "chat_actions": {
-    "ice_door_label": "ICE at my door",
+    "ice_door_label": "ICE is at my door",
     "ice_door_prompt": "ICE is knocking at my front door right now. Give me clear, step-by-step instructions on what to do immediately. Include exactly what to say, how to check a warrant, and my rights. Keep it practical and brief.",
-    "ice_work_label": "ICE at my work",
-    "ice_work_prompt": "ICE has arrived at my workplace. What are my rights? How should I respond safely?",
+    "ice_work_label": "ICE is at my work",
+    "ice_work_prompt": "ICE is at my workplace right now, what are the first three things I should do immediately?",
     "find_legal_label": "Find legal help",
-    "find_legal_prompt": "I need to find legal help for immigration issues. Can you connect me with trusted lawyers and support groups, including free and low-cost options?",
-    "friend_taken_label": "Friend taken by ICE",
-    "friend_taken_prompt": "A friend has been taken by ICE. What should I do? How can I find them, support them, and act quickly?",
+    "find_legal_prompt": "ICE-related situation. Give me a simple U.S.-wide list for finding immigration legal help, then ask my state.",
+    "friend_taken_label": "Someone taken by ICE",
+    "friend_taken_prompt": "Someone was just taken by ICE. Give me clear, step-by-step actions to take in the next 24 hours. Keep it practical. Then tell me what information you need from me.",
     "protest_prep_label": "Protest prep guide",
-    "protest_prep_prompt": "I'm planning to attend a protest. What are my rights? Any tips to stay safe, prepared, and legally protected?",
+    "protest_prep_prompt": "Peaceful immigration protest preparation. Give me a numbered checklist only. Include: what to do before going, what to bring, what not to bring, how to respond to ICE or police, and what to say if detained. No theory—just lawful steps. Then ask what state I’m in so you can note any local differences.",
     "ice_warrants_label": "About ICE warrants",
-    "ice_warrants_prompt": "Explain the difference between ICE warrants and judicial warrants. When can ICE legally enter or detain someone?"
+    "ice_warrants_prompt": "ICE warrant check guide. Give me: Visual checklist, script of what to say, what to do if it’s administrative, what to do if it’s judicial, my Fourth and Fifth Amendment rights. Keep it brief and practical."
   }
 }

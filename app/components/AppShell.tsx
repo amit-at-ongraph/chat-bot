@@ -111,11 +111,11 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     router.push(`/?chatId=${id}`);
   };
 
-  const showSidebar = !!session;
+  const showSidebar = !!session || skippedAuth;
 
   if (authStatus === "loading") {
     return (
-      <div className="flex h-screen items-center justify-center">
+      <div className="flex h-dvh items-center justify-center">
         <Spinner />
       </div>
     );
@@ -129,7 +129,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       : "lg:ml-0 lg:w-full";
 
   return (
-    <div className="bg-app-bg text-text-main relative flex min-h-screen overflow-x-hidden font-sans shadow-xl">
+    <div className="bg-app-bg text-text-main relative flex h-dvh overflow-hidden font-sans shadow-xl">
       {showSidebar && (
         <Sidebar
           isOpen={isSidebarOpen}
@@ -148,7 +148,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         />
       )}
 
-      <div className="flex h-screen flex-1 flex-col overflow-hidden transition-all duration-300">
+      <div className="flex h-dvh flex-1 flex-col overflow-hidden transition-all duration-300">
         <Header
           skippedAuth={skippedAuth}
           onToggleSidebar={toggleSidebar}
@@ -157,7 +157,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         />
 
         <main
-          className={`flex-1 overflow-x-hidden overflow-y-auto transition-all duration-300 ${
+          className={`flex-1 min-h-0 overflow-hidden transition-all duration-300 ${
             mainContentOffsetClasses
           } `}
         >

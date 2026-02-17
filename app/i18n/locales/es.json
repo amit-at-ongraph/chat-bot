@@ -188,17 +188,17 @@
     "topic_placeholder": "ej. Procedimientos de Orden Judicial"
   },
   "chat_actions": {
-    "ice_door_label": "ICE en mi puerta",
+    "ice_door_label": "ICE está en mi puerta.",
     "ice_door_prompt": "ICE está en mi puerta.\nICE está tocando a la puerta principal ahora mismo. Dame instrucciones claras, paso a paso, sobre qué hacer de inmediato. Incluye exactamente qué decir, cómo verificar una orden y mis derechos. Manténlo práctico y breve.",
-    "ice_work_label": "ICE en mi trabajo",
-    "ice_work_prompt": "ICE ha llegado a mi lugar de trabajo. ¿Cuáles son mis derechos? ¿Cómo debo responder de forma segura?",
-    "find_legal_label": "Buscar ayuda legal",
-    "find_legal_prompt": "Necesito ayuda legal para temas de inmigración. ¿Puedes conectarme con abogados y grupos de apoyo confiables, incluyendo opciones gratuitas?",
-    "friend_taken_label": "Amigo detenido por ICE",
-    "friend_taken_prompt": "Un amigo ha sido llevado por ICE. ¿Qué debo hacer? ¿Cómo puedo encontrarlo, apoyarlo y actuar rápido?",
-    "protest_prep_label": "Guía para protestas",
-    "protest_prep_prompt": "Planeo asistir a una protesta. ¿Cuáles son mis derechos? ¿Algún consejo para estar seguro, preparado y protegido legalmente?",
-    "ice_warrants_label": "Sobre órdenes de ICE",
-    "ice_warrants_prompt": "Explica la diferencia entre órdenes de ICE y órdenes judiciales. ¿Cuándo puede ICE entrar o detener a alguien legalmente?"
+    "ice_work_label": "ICE está en mi trabajo.",
+    "ice_work_prompt": "ICE está en mi lugar de trabajo ahora mismo, ¿cuáles son las primeras tres cosas que debo hacer de inmediato?",
+    "find_legal_label": "Busca ayuda legal.",
+    "find_legal_prompt": "Es una situación relacionada con ICE. Dame una lista simple válida en todo Estados Unidos para encontrar ayuda legal de inmigración, luego pregúntame mi estado.",
+    "friend_taken_label": "Alguien fue detenido por ICE.",
+    "friend_taken_prompt": "A alguien se lo acaba de llevar ICE. Dame acciones claras, paso a paso, para las próximas 24 horas. Que sea práctico. Luego dime qué información necesitas de mí.",
+    "protest_prep_label": "Guía para prepararse para una protesta.",
+    "protest_prep_prompt": "Preparación para una protesta pacífica por inmigración. Dame solo una lista numerada. Incluye: qué hacer antes de ir, qué llevar, qué no llevar, cómo responder a ICE o a la policía y qué decir si me detienen. Sin teoría, solo pasos legales. Luego pregúntame en qué estado estoy para señalar diferencias locales.",
+    "ice_warrants_label": "Sobre órdenes de ICE.",
+    "ice_warrants_prompt": "Guía para verificar una orden de ICE. Dame: lista visual de verificación, guion de qué decir, qué hacer si es administrativa, qué hacer si es judicial, y mis derechos bajo la Cuarta y Quinta Enmienda. Mantenlo breve y práctico."
   }
 }
