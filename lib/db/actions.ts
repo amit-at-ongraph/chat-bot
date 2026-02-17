@@ -97,7 +97,15 @@ export async function findRelevantContent(
 
   // 2. Build Pipeline Components
   const filters = buildRetrievalFilters(ctx);
+  // Separate lifecycle filter (should always apply) from metadata filters
+  const lifecycleFilter = filters[0];
+  const metadataFilters = filters.slice(1);
+
   const scoreSql = buildRetrievalScore(ctx, embeddingJson);
+
+  // Convert the boosted distance score to a similarity scale (1 - distance)
+  // Since boosted distance is what we order by, this represents the final match quality.
+  const boostedSimilarity = sql<number>`1.0 - ${scoreSql}`;
 
   // 3. Execute Query
   const relevantChunks = await db
@@ -107,7 +115,15 @@ export async function findRelevantContent(
     })
     .from(ragEmbeddings)
     .innerJoin(ragChunks, eq(ragChunks.chunkId, ragEmbeddings.chunkId))
-    .where(and(...filters))
+    .where(
+      and(
+        lifecycleFilter,
+        or(
+          gte(boostedSimilarity, 0.5), // High quality boosted match -> Ignore strict filters
+          metadataFilters.length > 0 ? and(...metadataFilters) : sql`TRUE` // Lower quality -> Apply filters
+        )
+      )
+    )
     .orderBy((t) => t.score)
     .limit(10);
 
