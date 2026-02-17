@@ -145,7 +145,7 @@
     "last_reviewed": "Dernière révision",
     "retrieval_weight": "Poids de récupération",
     "lexical_triggers": "Déclencheurs lexicaux",
-    "lexical_triggers_placeholder": "déclencheur1, déclencheur2, ...",
+    "lexical_triggers_placeholder": "déclencheur1; déclencheur2; ...",
     "next": "Suivant",
     "finish": "Terminer",
     "add_new_document": "Ajouter un document",

@@ -145,7 +145,7 @@
     "last_reviewed": "Última Revisão",
     "retrieval_weight": "Peso de Recuperação",
     "lexical_triggers": "Gatilhos Lexicais",
-    "lexical_triggers_placeholder": "gatilho1, gatilho2, ...",
+    "lexical_triggers_placeholder": "gatilho1; gatilho2; ...",
     "next": "Próximo",
     "finish": "Finalizar",
     "add_new_document": "Adicionar documento",

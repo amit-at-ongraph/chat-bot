@@ -145,7 +145,7 @@
     "last_reviewed": "Última revisión",
     "retrieval_weight": "Peso de recuperación",
     "lexical_triggers": "Activadores léxicos",
-    "lexical_triggers_placeholder": "activador1, activador2, ...",
+    "lexical_triggers_placeholder": "activador1; activador2; ...",
     "next": "Siguiente",
     "finish": "Finalizar",
     "add_new_document": "Añadir documento",

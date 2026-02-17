@@ -145,7 +145,7 @@
     "last_reviewed": "Last Reviewed",
     "retrieval_weight": "Retrieval Weight",
     "lexical_triggers": "Lexical Triggers",
-    "lexical_triggers_placeholder": "trigger1, trigger2, ...",
+    "lexical_triggers_placeholder": "trigger1; trigger2; ...",
     "next": "Next",
     "finish": "Finish",
     "add_new_document": "Add Document",

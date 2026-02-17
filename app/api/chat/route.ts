@@ -9,68 +9,90 @@ import { getServerSession } from "next-auth";
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
-  const session = await getServerSession(authOptions);
-  const body = await req.json();
-  const { messages }: { messages: UIMessage[] } = body;
-  const headerChatId = req.headers.get("x-chat-id");
-  const language = req.headers.get("x-language") || "en";
-  let chatId = headerChatId || body.chatId;
+  try {
+    const session = await getServerSession(authOptions);
+    const body = await req.json();
+    const { messages }: { messages: UIMessage[] } = body;
+    const headerChatId = req.headers.get("x-chat-id");
+    const language = req.headers.get("x-language") || "en";
+    let chatId = headerChatId || body.chatId;
 
-  // Extract the text content from the last user message
-  const lastUserMessage = messages[messages.length - 1];
-  const userQuery =
-    lastUserMessage.parts
-      ?.filter((p) => p.type === "text")
-      .map((p) => (p.type === "text" ? p.text : ""))
-      .join("") || "";
+    // Extract the text content from the last user message
+    const lastUserMessage = messages[messages.length - 1];
+    const userQuery =
+      lastUserMessage.parts
+        ?.filter((p) => p.type === "text")
+        .map((p) => (p.type === "text" ? p.text : ""))
+        .join("") || "";
 
-  const contextRetrieval = await extractQueryMetadata(userQuery);
+    // console.time("extractQueryMetadata");
+    const contextRetrieval = await extractQueryMetadata(userQuery);
 
-  console.log("contextRetrieval", contextRetrieval);
+    // console.timeEnd("extractQueryMetadata");
 
-  const context = await findRelevantContent(userQuery, contextRetrieval);
+    // console.log("contextRetrieval", contextRetrieval);
 
-  if (session?.user?.id) {
-    if (!chatId) {
-      const chat = await createChat(session.user.id, userQuery.slice(0, 50));
-      chatId = chat.id;
+    // console.time("findRelevantContent");
+    const context = await findRelevantContent(userQuery, contextRetrieval);
+    // console.timeEnd("findRelevantContent");
+
+
+    // console.time("createChat");
+    if (session?.user?.id) {
+      if (!chatId) {
+        const chat = await createChat(session.user.id, userQuery.slice(0, 50));
+        chatId = chat.id;
+      }
+
+      if (lastUserMessage.role === "user") {
+        await saveMessage(chatId, lastUserMessage.role, userQuery);
+      }
     }
+    // console.timeEnd("createChat");
 
-    if (lastUserMessage.role === "user") {
-      await saveMessage(chatId, lastUserMessage.role, userQuery);
-    }
+    // console.time("detectModeWithLLM");
+    const mode = await detectModeWithLLM(userQuery);
+    // console.timeEnd("detectModeWithLLM");
+
+    // console.time("getSystemMessage");
+    const systemPrompt = getSystemMessage(context, mode, language);
+    // console.timeEnd("getSystemMessage");
+
+    // console.time("streamText");
+    const result = streamText({
+      model: chatModel,
+      system: systemPrompt,
+      messages: await convertToModelMessages(messages),
+      onFinish: async ({ text }) => {
+        if (session?.user?.id && chatId) {
+          await saveMessage(chatId, "assistant", text);
+        }
+      },
+    });
+
+    console.timeEnd("streamText");
+
+    return result.toUIMessageStreamResponse({
+      headers: chatId ? { "x-chat-id": chatId } : {},
+      onError: (error: unknown) => {
+        console.log("error", error);
+
+        if (error && typeof error === "object" && "error" in error) {
+          const errorDetails = error.error as { message?: string };
+          if (errorDetails.message) return errorDetails.message;
+        }
+
+        if (error == null) return "unknown error";
+        if (typeof error === "string") return error;
+        if (error instanceof Error) return error.message;
+
+        return JSON.stringify(error);
+      },
+    });
+  } catch (error) {
+    console.log("error", error);
+    return Response.json({ error: error.message }, { status: 500 });
   }
-
-  const mode = await detectModeWithLLM(userQuery);
-
-  const systemPrompt = getSystemMessage(context, mode, language);
-
-  const result = streamText({
-    model: chatModel,
-    system: systemPrompt,
-    messages: await convertToModelMessages(messages),
-    onFinish: async ({ text }) => {
-      if (session?.user?.id && chatId) {
-        await saveMessage(chatId, "assistant", text);
-      }
-    },
-  });
-
-  return result.toUIMessageStreamResponse({
-    headers: chatId ? { "x-chat-id": chatId } : {},
-    onError: (error: unknown) => {
-      if (error && typeof error === "object" && "error" in error) {
-        const errorDetails = error.error as { message?: string };
-        if (errorDetails.message) return errorDetails.message;
-      }
-
-      if (error == null) return "unknown error";
-      if (typeof error === "string") return error;
-      if (error instanceof Error) return error.message;
-
-      return JSON.stringify(error);
-    },
-  });
 }
 
 export type Mode = "CRISIS" | "OPERATIONS" | "INFORMATION";

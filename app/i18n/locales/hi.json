@@ -145,7 +145,7 @@
     "last_reviewed": "अंतिम समीक्षा की गई",
     "retrieval_weight": "पुनर्प्राप्ति भार",
     "lexical_triggers": "लेक्सिकल ट्रिगर्स",
-    "lexical_triggers_placeholder": "trigger1, trigger2, ...",
+    "lexical_triggers_placeholder": "trigger1; trigger2; ...",
     "next": "अगला",
     "finish": "पूरा करें",
     "add_new_document": "दस्तावेज़ जोड़ें",

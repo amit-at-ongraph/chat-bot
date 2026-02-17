@@ -27,7 +27,8 @@ export const queryMetadataSchema = z.object({
 export async function extractQueryMetadata(
   query: string,
 ): Promise<z.infer<typeof queryMetadataSchema>> {
-  const chatModel = openai("gpt-4.1-mini");
+  try {
+    const chatModel = openai("gpt-4.1-mini");
 
   const { object } = await generateObject({
     model: chatModel,
@@ -42,4 +43,7 @@ Lexical triggers must be exact substrings from the user query.
   });
 
   return object;
+  } catch (error) {
+    return Promise.reject(error);
+  }
 }

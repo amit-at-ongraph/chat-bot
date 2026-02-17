@@ -145,7 +145,7 @@
     "last_reviewed": "最后复核",
     "retrieval_weight": "检索权重",
     "lexical_triggers": "词法触发词",
-    "lexical_triggers_placeholder": "触发词1, 触发词2, ...",
+    "lexical_triggers_placeholder": "触发词1; 触发词2; ...",
     "next": "下一步",
     "finish": "完成",
     "add_new_document": "添加文档",

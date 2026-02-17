@@ -75,7 +75,7 @@ export default function NewChunkPage() {
         JSON.stringify({
           ...metadata,
           lexicalTriggers: metadata.lexicalTriggers
-            ? metadata.lexicalTriggers.split(";").map((s) => s.trim())
+            ? metadata.lexicalTriggers.split(/[;,]/).map((s) => s.trim())
             : [],
         }),
       );
