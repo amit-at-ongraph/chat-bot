@@ -30,19 +30,19 @@ export async function extractQueryMetadata(
   try {
     const chatModel = openai("gpt-4.1-mini");
 
-  const { object } = await generateObject({
-    model: chatModel,
-    schema: queryMetadataSchema,
-    system: `
+    const { object } = await generateObject({
+      model: chatModel,
+      schema: queryMetadataSchema,
+      system: `
 You are a query metadata extractor for a RAG system.
 Do NOT answer the question.
 Return ONLY structured metadata.
 Lexical triggers must be exact substrings from the user query.
 `,
-    prompt: `User query: "${query}"`,
-  });
+      prompt: `User query: "${query}"`,
+    });
 
-  return object;
+    return object;
   } catch (error) {
     return Promise.reject(error);
   }
