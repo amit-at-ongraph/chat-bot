@@ -13,7 +13,8 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   try {
     await deleteChat(id);
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    console.log("Failed to delete chat", error);
     return NextResponse.json({ error: "Failed to delete chat" }, { status: 500 });
   }
 }
