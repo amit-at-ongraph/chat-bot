@@ -9,9 +9,13 @@ import fr from "./locales/fr.json";
 import zh from "./locales/zh.json";
 import ar from "./locales/ar.json";
 import pt from "./locales/pt.json";
+import fil from "./locales/fil.json";
+import vi from "./locales/vi.json";
+import tel from "./locales/tel.json";
+import ta from "./locales/ta.json";
 import { toTitleCaseFromSnakeCase } from "../utils/string.utils";
 
-const translations = { en, hi, es, fr, zh, ar, pt };
+const translations = { en, hi, es, fr, zh, ar, pt, fil, vi, tel, ta };
 
 export type TranslationKeys = keyof typeof en;
 

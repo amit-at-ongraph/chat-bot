@@ -189,7 +189,7 @@
   },
   "chat_actions": {
     "ice_door_label": "L'ICE à ma porte",
-    "ice_door_prompt": "L'ICE frappe à ma porte, que dois-je faire ?",
+    "ice_door_prompt": "ICE est à ma porte.\nICE frappe à ma porte d’entrée en ce moment. Donne-moi des instructions claires, étape par étape, sur ce que je dois faire tout de suite. Inclue exactement quoi dire, comment vérifier un mandat, et mes droits. Reste pratique et bref.",
     "ice_work_label": "L'ICE à mon travail",
     "ice_work_prompt": "L'ICE est arrivée à mon travail. Quels sont mes droits ?",
     "find_legal_label": "Aide juridique",

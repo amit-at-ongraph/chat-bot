@@ -189,7 +189,7 @@
   },
   "chat_actions": {
     "ice_door_label": "ICE en mi puerta",
-    "ice_door_prompt": "ICE está llamando a mi puerta, ¿qué hago?",
+    "ice_door_prompt": "ICE está en mi puerta.\nICE está tocando a la puerta principal ahora mismo. Dame instrucciones claras, paso a paso, sobre qué hacer de inmediato. Incluye exactamente qué decir, cómo verificar una orden y mis derechos. Manténlo práctico y breve.",
     "ice_work_label": "ICE en mi trabajo",
     "ice_work_prompt": "ICE ha llegado a mi lugar de trabajo. ¿Cuáles son mis derechos? ¿Cómo debo responder de forma segura?",
     "find_legal_label": "Buscar ayuda legal",

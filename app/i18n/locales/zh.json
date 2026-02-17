@@ -189,7 +189,7 @@
   },
   "chat_actions": {
     "ice_door_label": "ICE 在我门口",
-    "ice_door_prompt": "ICE 正在敲我的门，我该怎么办？",
+    "ice_door_prompt": "ICE 在我家门口。\nICE 现在正在敲我家前门。请给我清晰、一步一步的紧急处理方法。包括要说什么、怎么查看搜 查令，以及我的权利。保持实用、简短。",
     "ice_work_label": "ICE 在我工作单位",
     "ice_work_prompt": "ICE 到了我的工作单位。我的权利是什么？我该如何安全地应对？",
     "find_legal_label": "寻找法律援助",

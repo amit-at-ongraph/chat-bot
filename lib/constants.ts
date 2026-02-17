@@ -116,5 +116,9 @@ export const LANGUAGES = [
   { native: "Français", english: "French", value: "fr" },
   { native: "中文", english: "Chinese", value: "zh" },
   { native: "العربية", english: "Arabic", value: "ar" },
-  { native: "Português", english: "Portuguese", value: "pt" },
+  // { native: "Português", english: "Portuguese", value: "pt" },
+  { native: "Filipino", english: "Filipino", value: "fil" },
+  { native: "Tiếng Việt", english: "Vietnamese", value: "vi" },
+  { native: "తెలుగు", english: "Telugu", value: "tel" },
+  { native: "தமிழ்", english: "Tamil", value: "ta" },
 ] as const;

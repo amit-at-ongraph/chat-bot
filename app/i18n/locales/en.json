@@ -189,7 +189,7 @@
   },
   "chat_actions": {
     "ice_door_label": "ICE at my door",
-    "ice_door_prompt": "Ice is knocking at my door, what do I do?",
+    "ice_door_prompt": "ICE is knocking at my front door right now. Give me clear, step-by-step instructions on what to do immediately. Include exactly what to say, how to check a warrant, and my rights. Keep it practical and brief.",
     "ice_work_label": "ICE at my work",
     "ice_work_prompt": "ICE has arrived at my workplace. What are my rights? How should I respond safely?",
     "find_legal_label": "Find legal help",
