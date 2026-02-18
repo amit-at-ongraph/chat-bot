@@ -54,7 +54,7 @@
     "full_name": "Họ và tên",
     "creating_account": "Đang tạo tài khoản...",
     "register": "Đăng ký",
-    "already_have_account": "Đã có tài khoản?",
+    "already_have_account": "Vui lòng {n} để truy cập PAXIS",
     "check_email": "Kiểm tra email của bạn",
     "verification_sent": "Chúng tôi đã gửi liên kết xác minh đến {email}.",
     "verify_note": "Vui lòng xác minh email của bạn để hoàn tất việc thiết lập tài khoản.",

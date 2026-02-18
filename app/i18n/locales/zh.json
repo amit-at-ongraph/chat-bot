@@ -54,7 +54,7 @@
     "full_name": "全名",
     "creating_account": "正在创建账户...",
     "register": "注册",
-    "already_have_account": "已有账户？",
+    "already_have_account": "请 {n} 以访问 PAXIS",
     "check_email": "检查您的电子邮件",
     "verification_sent": "我们已将验证链接发送至 {email}。",
     "verify_note": "请验证您的电子邮件以完成账户设置。",

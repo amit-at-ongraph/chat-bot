@@ -46,7 +46,7 @@ export default function RegisterPage() {
   if (success) {
     return (
       <div className="bg-app-bg flex min-h-screen flex-col items-center justify-center p-6 text-center">
-        <div className="border-border-light bg-app-bg w-full max-w-md space-y-8 rounded-3xl border p-10 shadow-2xl">
+        <div className="border-border-light bg-app-bg w-full max-w-md space-y-6 rounded-3xl border p-10 shadow-2xl">
           <h2 className="text-text-main text-3xl font-bold">{t("auth.check_email")}</h2>
           <p className="text-text-muted mt-2">
             {t("auth.verification_sent", { email })} {t("auth.verify_note")}
@@ -62,10 +62,10 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="bg-app-bg flex min-h-screen flex-col items-center justify-center p-6">
-      <div className="border-border-light bg-app-bg w-full max-w-md space-y-8 rounded-3xl border p-10 shadow-2xl">
+    <div className="bg-app-bg flex min-h-full flex-col items-center justify-center p-4 px-6">
+      <div className="border-border-light bg-app-bg w-full max-w-md space-y-6 rounded-3xl border sm:p-10 p-6 shadow-2xl">
         <div className="text-center">
-          <h2 className="text-text-main mt-6 text-3xl font-bold">{t("auth.create_account")}</h2>
+          <h2 className="text-text-main sm:mt-6 mt-4 text-3xl font-bold">{t("auth.create_account")}</h2>
           <p className="text-text-muted mt-2">{t("auth.join_us")}</p>
         </div>
 
@@ -117,10 +117,18 @@ export default function RegisterPage() {
         </form>
 
         <p className="text-text-muted text-center text-sm">
-          {t("auth.already_have_account")}{" "}
-          <Link href="/login" className="text-primary font-semibold hover:underline">
-            {t("auth.sign_in")}
-          </Link>
+          {t("auth.already_have_account")
+            .split("{n}")
+            .map((part: string, index: number, array: string[]) => (
+              <span key={index}>
+                {part}
+                {index < array.length - 1 && (
+                  <Link href="/login" className="text-primary font-semibold hover:underline">
+                    {t("auth.sign_in")}
+                  </Link>
+                )}
+              </span>
+            ))}
         </p>
       </div>
     </div>

@@ -165,7 +165,7 @@ function ResetPasswordForm() {
 export default function ResetPasswordPage() {
   const { t } = useTranslation();
   return (
-    <div className="bg-app-bg flex min-h-screen flex-col items-center justify-center p-6">
+    <div className="bg-app-bg flex min-h-full flex-col items-center justify-center p-4 px-6">
       <Suspense fallback={<div>{t("common.loading")}</div>}>
         <ResetPasswordForm />
       </Suspense>

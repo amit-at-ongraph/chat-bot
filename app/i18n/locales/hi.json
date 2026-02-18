@@ -54,7 +54,7 @@
     "full_name": "पूरा नाम",
     "creating_account": "खाता बनाया जा रहा है...",
     "register": "रजिस्टर करें",
-    "already_have_account": "पहले से एक खाता है?",
+    "already_have_account": "PAXIS एक्सेस करने के लिए कृपया {n} करें",
     "check_email": "अपना ईमेल जाँचें",
     "verification_sent": "हमने {email} पर एक सत्यापन लिंक भेजा है।",
     "verify_note": "अपना खाता सेटअप पूरा करने के लिए कृपया अपना ईमेल सत्यापित करें।",

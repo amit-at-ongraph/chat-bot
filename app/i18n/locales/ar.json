@@ -54,7 +54,7 @@
     "full_name": "الاسم الكامل",
     "creating_account": "جاري إنشاء الحساب...",
     "register": "تسجيل",
-    "already_have_account": "لديك حساب بالفعل؟",
+    "already_have_account": "يرجى {n} للوصول إلى PAXIS",
     "check_email": "تحقق من بريدك الإلكتروني",
     "verification_sent": "لقد أرسلنا رابط تحقق إلى {email}.",
     "verify_note": "يرجى التحقق من بريدك الإلكتروني لإنهاء إعداد حسابك.",

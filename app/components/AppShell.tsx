@@ -157,7 +157,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         />
 
         <main
-          className={`flex-1 min-h-0 overflow-hidden transition-all duration-300 ${
+          className={`flex-1 min-h-0 overflow-y-auto transition-all duration-300 ${
             mainContentOffsetClasses
           } `}
         >

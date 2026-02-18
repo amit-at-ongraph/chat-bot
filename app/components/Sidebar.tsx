@@ -251,7 +251,7 @@ export default function Sidebar({
                         >
                           <Button
                             variant="ghost"
-                            className="text-text-main hover:bg-border-light w-full justify-start gap-3 rounded-full px-2 py-2 font-medium"
+                            className="text-text-main hover:bg-border-light w-full justify-start gap-3 px-2 py-2 font-medium rounded-xl"
                             onClick={() => {
                               setIsUserMenuOpen(false);
                             }}
@@ -261,7 +261,7 @@ export default function Sidebar({
                           </Button>
                           <Button
                             variant="ghost"
-                            className="text-text-main hover:bg-border-light w-full justify-start gap-3 rounded-full px-2 py-2 font-medium hover:text-red-500"
+                            className="text-text-main hover:bg-border-light w-full justify-start gap-3 px-2 py-2 font-medium hover:text-red-500 rounded-xl"
                             onClick={() => {
                               signOut({ redirect: true, callbackUrl: "/" });
                             }}

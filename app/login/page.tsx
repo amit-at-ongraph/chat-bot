@@ -52,10 +52,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="bg-app-bg flex min-h-screen flex-col items-center justify-center p-6">
-      <div className="border-border-light bg-app-bg w-full max-w-md space-y-8 rounded-3xl border p-10 shadow-2xl">
+    <div className="bg-app-bg flex min-h-full flex-col items-center justify-center p-4 px-6">
+      <div className="border-border-light bg-app-bg w-full max-w-md space-y-6 rounded-3xl border sm:p-10 p-6 shadow-2xl">
         <div className="text-center">
-          <h2 className="text-text-main mt-6 text-3xl font-bold">{t("auth.welcome_back")}</h2>
+          <h2 className="text-text-main sm:mt-6 mt-4 text-3xl font-bold">{t("auth.welcome_back")}</h2>
           <p className="text-text-muted mt-2">{t("auth.sign_in_title")}</p>
         </div>
 
@@ -104,7 +104,7 @@ export default function LoginPage() {
           </div>
         </form>
 
-        <div className="relative mt-6">
+        <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <div className="border-border-light w-full border-t"></div>
           </div>

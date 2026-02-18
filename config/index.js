@@ -1,7 +1,8 @@
-export const APP_NAME = "Immigration Action Guide";
+export const HEADER_TITLE_NAME = "Immigration Action Guide";
+export const APP_NAME = "PAXIS"
 
 export const UI_CONFIG = {
-  HEADER_TITLE: APP_NAME,
+  HEADER_TITLE: HEADER_TITLE_NAME,
   CHAT_BTN_TITLE: "New Chat",
   UPLOAD_BTN_TITLE: "Upload Files",
 };

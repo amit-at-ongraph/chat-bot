@@ -54,7 +54,7 @@
     "full_name": "Buong Pangalan",
     "creating_account": "Gumagawa ng account...",
     "register": "Magrehistro",
-    "already_have_account": "May account na?",
+    "already_have_account": "Mangyaring {n} para ma-access ang PAXIS",
     "check_email": "Suriin ang iyong email",
     "verification_sent": "Nagpadala kami ng verification link sa {email}.",
     "verify_note": "Mangyaring i-verify ang iyong email para matapos ang pag-set up ng iyong account.",

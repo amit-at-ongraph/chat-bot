@@ -54,7 +54,7 @@
     "full_name": "Nome Completo",
     "creating_account": "Criando conta...",
     "register": "Registrar",
-    "already_have_account": "Já tem uma conta?",
+    "already_have_account": "Por favor, {n} para acessar o PAXIS",
     "check_email": "Verifique seu e-mail",
     "verification_sent": "Enviamos um link de verificação para {email}.",
     "verify_note": "Por favor, verifique seu e-mail para finalizar a configuração da conta.",
