@@ -39,6 +39,12 @@ export function useServerPaginatedData<TItem, TResult>(
   const extractTotalRef = useRef(options.extractTotal);
   const onErrorRef = useRef(options.onError);
 
+  // Re intialize again to avoid stale fn and data
+  fetchFnRef.current = options.fetchFn;
+  extractItemsRef.current = options.extractItems;
+  extractTotalRef.current = options.extractTotal;
+  onErrorRef.current = options.onError;
+
   const [items, setItems] = useState<TItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalItems, setTotalItems] = useState(0);
