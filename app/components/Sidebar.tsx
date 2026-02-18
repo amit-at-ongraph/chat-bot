@@ -4,17 +4,7 @@ import { UserRole } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { DBChat } from "@/types/chat";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  Database,
-  Edit,
-  Info,
-  LogOut,
-  Menu,
-  MessageSquare,
-  Settings,
-  User,
-  X,
-} from "lucide-react";
+import { Database, Edit, Info, LogOut, Menu, MessageSquare, Settings, User, X } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -22,8 +12,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "../i18n/useTranslation";
 import HowToUse from "./HowToUse";
-import { Button } from "./ui/Button";
 import SidebarItem from "./SidebarItem";
+import { Button } from "./ui/Button";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -313,4 +303,3 @@ export default function Sidebar({
     </>
   );
 }
-

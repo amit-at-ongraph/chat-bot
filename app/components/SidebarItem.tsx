@@ -1,8 +1,8 @@
 import { Edit2, MoreVertical, Trash2 } from "lucide-react";
-import { Button } from "./ui/Button";
-import { Input } from "./ui/Input";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "../i18n/useTranslation";
+import { Button } from "./ui/Button";
+import { Input } from "./ui/Input";
 
 export default function SidebarItem({
   icon: _Icon,

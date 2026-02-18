@@ -32,14 +32,11 @@ export async function GET(req: Request) {
       filters.push(
         sql`${ragChunks.applicableRoles} @> ARRAY[${applicableRoles}]::${sql.raw(ENUM_NAMES.applicable_role)}[]`,
       );
-    
+
     // Add search query filter
     if (query) {
       filters.push(
-        or(
-          ilike(ragChunks.content, `%${query}%`),
-          ilike(ragChunks.topic, `%${query}%`)
-        )
+        or(ilike(ragChunks.content, `%${query}%`), ilike(ragChunks.topic, `%${query}%`)),
       );
     }
 
