@@ -9,6 +9,7 @@ import {
   Edit,
   Edit2,
   Info,
+  LogOut,
   Menu,
   MessageSquare,
   MoreVertical,
@@ -17,7 +18,7 @@ import {
   User,
   X,
 } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -257,6 +258,16 @@ export default function Sidebar({
                           >
                             <Settings className="h-5 w-5" />
                             {t("common.settings")}
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            className="text-text-main hover:bg-border-light w-full justify-start gap-3 rounded-full px-2 py-2 font-medium hover:text-red-500"
+                            onClick={() => {
+                              signOut({ redirect: true, callbackUrl: "/" });
+                            }}
+                          >
+                            <LogOut className="h-5 w-5" />
+                            {t("common.sign_out")}
                           </Button>
                         </motion.div>
                       )}

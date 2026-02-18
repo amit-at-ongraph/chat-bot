@@ -111,14 +111,14 @@ export type Role = `${ApplicableRole}`;
 
 export const LANGUAGES = [
   { native: "English", english: "English", value: "en" },
-  { native: "हिन्दी", english: "Hindi", value: "hi" },
   { native: "Español", english: "Spanish", value: "es" },
-  { native: "Français", english: "French", value: "fr" },
   { native: "中文", english: "Chinese", value: "zh" },
-  { native: "العربية", english: "Arabic", value: "ar" },
-  // { native: "Português", english: "Portuguese", value: "pt" },
+  { native: "हिन्दी", english: "Hindi", value: "hi" },
   { native: "Filipino", english: "Filipino", value: "fil" },
+  { native: "Français", english: "French", value: "fr" },
   { native: "Tiếng Việt", english: "Vietnamese", value: "vi" },
   { native: "తెలుగు", english: "Telugu", value: "tel" },
   { native: "தமிழ்", english: "Tamil", value: "ta" },
+  { native: "العربية", english: "Arabic", value: "ar" },
+  // { native: "Português", english: "Portuguese", value: "pt" },
 ] as const;

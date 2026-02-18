@@ -1,7 +1,8 @@
 import { UI_CONFIG } from "@/config";
 import { Menu, Moon, Sun } from "lucide-react";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
+import Image from "next/image";
 import { useTranslation } from "../i18n/useTranslation";
 import { Button } from "./ui/Button";
 import { LanguageSelector } from "./ui/LanguageSelector";
@@ -33,7 +34,14 @@ export default function Header({ skippedAuth, onToggleSidebar, isSidebarOpen, ma
           </Button>
         )}
         <div className="flex items-center gap-2">
-          <h1 className="text-text-main m-0 hidden text-xl font-bold tracking-tight sm:block sm:truncate md:max-w-md">
+          <Image
+            src="/PAXIS.jpg"
+            alt="Logo"
+            width={32}
+            height={32}
+            className="h-8 w-8 object-contain"
+          />
+          <h1 className="text-text-main m-0 block text-xl font-bold tracking-tight truncate max-w-[150px] sm:max-w-md">
             {UI_CONFIG.HEADER_TITLE}
           </h1>
         </div>
@@ -58,17 +66,7 @@ export default function Header({ skippedAuth, onToggleSidebar, isSidebarOpen, ma
             )}
           </Button>
         </div>
-        {session ? (
-          <Button
-            variant="ghost"
-            onClick={() => {
-              signOut({ redirect: true, callbackUrl: "/" });
-            }}
-            className="text-text-muted px-2 py-1 text-xs font-bold transition-colors hover:text-red-400"
-          >
-            {t("common.sign_out")}
-          </Button>
-        ) : skippedAuth ? (
+        {!session && skippedAuth ? (
           <Button onClick={() => signIn()} className="px-3 py-1.5 text-xs font-bold">
             {t("common.sign_in")}
           </Button>
