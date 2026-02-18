@@ -24,9 +24,16 @@ export interface PaginatedResult<T> {
 }
 
 export const chunkService = {
-  fetchAll: async (filters: Record<string, string>, page = 1, limit = 20, query: string = "") => {
+  fetchAll: async (
+    filters: Record<string, string>,
+    page = 1,
+    limit = 20,
+    query: string = "",
+    sortOrder: "asc" | "desc" = "desc",
+  ) => {
     const params = new URLSearchParams();
     if (query) params.append("query", query);
+    if (sortOrder) params.append("sortOrder", sortOrder);
     Object.entries(filters).forEach(([key, value]) => {
       if (value) params.append(key, value);
     });

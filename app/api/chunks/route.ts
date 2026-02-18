@@ -2,7 +2,7 @@ import { authOptions } from "@/lib/auth";
 import { UserRole } from "@/lib/constants";
 import { db } from "@/lib/db";
 import { ENUM_NAMES, ragChunks } from "@/lib/db/schema";
-import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, ilike, or, sql } from "drizzle-orm";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -51,11 +51,13 @@ export async function GET(req: Request) {
       .from(ragChunks)
       .where(whereClause);
 
+    const sortOrder = searchParams.get("sortOrder") || "desc";
+
     const chunks = await db
       .select()
       .from(ragChunks)
       .where(whereClause)
-      .orderBy(desc(ragChunks.createdAt))
+      .orderBy(sortOrder === "asc" ? asc(ragChunks.createdAt) : desc(ragChunks.createdAt))
       .limit(limit)
       .offset(offset);
 

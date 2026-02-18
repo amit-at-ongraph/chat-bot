@@ -23,7 +23,7 @@ import {
   getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronLeft, ChevronRight, Plus, Search, Trash2 } from "lucide-react";
+import { ArrowUpDown, ChevronLeft, ChevronRight, Plus, Search, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -43,6 +43,8 @@ export default function ChunksPage() {
   const [loading, setLoading] = useState(true);
   const [globalFilter, setGlobalFilter] = useState("");
   const debouncedSearch = useDebounce(globalFilter, 600);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: PAGINATION_CONFIG.rowsPerPage,
@@ -69,7 +71,8 @@ export default function ChunksPage() {
         filters,
         serverPageIndex + 1,
         PAGINATION_CONFIG.apiLimit,
-        debouncedSearch
+        debouncedSearch,
+        sortOrder
       );
       setChunks(response.chunks);
       setTotalItems(response.pagination.total);
@@ -79,7 +82,7 @@ export default function ChunksPage() {
     } finally {
       setLoading(false);
     }
-  }, [filters, serverPageIndex, t, PAGINATION_CONFIG.apiLimit, debouncedSearch]);
+  }, [filters, serverPageIndex, t, PAGINATION_CONFIG.apiLimit, debouncedSearch, sortOrder]);
 
   // Sliced data for the current client-side page
   const currentTableData = useMemo(() => {
@@ -107,10 +110,14 @@ export default function ChunksPage() {
     [t],
   );
 
+  const toggleSort = () => {
+    setSortOrder((prev) => (prev === "desc" ? "asc" : "desc"));
+  };
+
   useEffect(() => {
     // Reset to first page when filters or search changes
     setPagination((prev) => ({ ...prev, pageIndex: 0 }));
-  }, [filters, debouncedSearch]);
+  }, [filters, debouncedSearch, sortOrder]);
 
   useEffect(() => {
     fetchChunks();
@@ -201,7 +208,12 @@ export default function ChunksPage() {
       },
       {
         accessorKey: "createdAt",
-        header: t("upload.created"),
+        header: () => (
+          <div onClick={toggleSort} className="flex items-center gap-1 cursor-pointer">
+            {t("upload.created")}
+            <ArrowUpDown className="h-3 w-3" />
+          </div>
+        ),
         cell: ({ row }) => (
           <div className="text-text-secondary text-[12px] whitespace-nowrap">
             {new Date(row.getValue("createdAt")).toLocaleDateString()}
