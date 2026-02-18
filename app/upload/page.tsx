@@ -19,7 +19,6 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import { ChevronLeft, ChevronRight, Plus, Search, Trash2 } from "lucide-react";
@@ -32,10 +31,21 @@ import { filterConfigs } from "./filter-config";
 import { Chunk, chunkService } from "./service";
 
 export default function ChunksPage() {
+  const PAGINATION_CONFIG = {
+    apiLimit: 10, // Data return from API
+    rowsPerPage: 5 // Data per page in UI
+  };
+
   const { t } = useTranslation();
   const [chunks, setChunks] = useState<Chunk[]>([]);
   const [loading, setLoading] = useState(true);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: PAGINATION_CONFIG.rowsPerPage,
+  });
+  const [totalItems, setTotalItems] = useState(0);
+
   const [filters, setFilters] = useState<Record<string, string>>({
     scenario: "",
     jurisdiction: "",
@@ -43,18 +53,37 @@ export default function ChunksPage() {
     applicableRoles: "",
   });
 
+  // Calculate how many UI pages fit into one API fetch block
+  const pagesPerBlock = PAGINATION_CONFIG.apiLimit / PAGINATION_CONFIG.rowsPerPage;
+
+  // Calculate which server-side page we need
+  const serverPageIndex = Math.floor(pagination.pageIndex / pagesPerBlock);
+
   const fetchChunks = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await chunkService.fetchAll(filters);
-      setChunks(data);
+      const response = await chunkService.fetchAll(
+        filters,
+        serverPageIndex + 1,
+        PAGINATION_CONFIG.apiLimit,
+      );
+      setChunks(response.chunks);
+      setTotalItems(response.pagination.total);
     } catch (error) {
       console.error("Failed to fetch chunks:", error);
       toast.error(t("upload.load_failed"));
     } finally {
       setLoading(false);
     }
-  }, [filters, t]);
+  }, [filters, serverPageIndex, t, PAGINATION_CONFIG.apiLimit]);
+
+  // Sliced data for the current client-side page
+  const currentTableData = useMemo(() => {
+    const localPageIndex = pagination.pageIndex % pagesPerBlock;
+    const start = localPageIndex * PAGINATION_CONFIG.rowsPerPage;
+    const end = start + PAGINATION_CONFIG.rowsPerPage;
+    return chunks.slice(start, end);
+  }, [chunks, pagination.pageIndex, pagesPerBlock, PAGINATION_CONFIG.rowsPerPage]);
 
   const toggleChunkStatus = useCallback(
     (row: Row<Chunk>) => async (value: string) => {
@@ -75,8 +104,13 @@ export default function ChunksPage() {
   );
 
   useEffect(() => {
+    // Reset to first page when filters change
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+  }, [filters]);
+
+  useEffect(() => {
     fetchChunks();
-  }, [filters, fetchChunks]);
+  }, [fetchChunks]);
 
   const deleteChunk = useCallback(
     async (chunkId: string) => {
@@ -85,13 +119,13 @@ export default function ChunksPage() {
       try {
         await chunkService.delete(chunkId);
         toast.success(t("upload.chunk_deleted"));
-        setChunks((prev) => prev.filter((c) => c.chunkId !== chunkId));
+        fetchChunks();
       } catch (error) {
         console.error("Failed to delete chunk:", error);
         toast.error(t("upload.chunk_delete_failed"));
       }
     },
-    [t],
+    [t, fetchChunks],
   );
 
   const columns = useMemo<ColumnDef<Chunk>[]>(
@@ -190,17 +224,13 @@ export default function ChunksPage() {
     [deleteChunk, t, toggleChunkStatus],
   );
 
-  const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 5,
-  });
-
   const table = useReactTable({
-    data: chunks,
+    data: currentTableData,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    manualPagination: true,
+    pageCount: Math.ceil(totalItems / PAGINATION_CONFIG.rowsPerPage),
     state: {
       globalFilter,
       pagination: pagination,
@@ -327,7 +357,7 @@ export default function ChunksPage() {
 
         <div className="border-border-base flex items-center justify-between border-t px-6 py-4 dark:border-neutral-700">
           <p className="text-text-muted text-[12px] font-light">
-            {t("upload.showing_segments", { count: table.getRowModel().rows.length })}
+            {t("upload.showing_segments", { count: totalItems })}
           </p>
           <div className="flex items-center gap-2">
             <Button

@@ -18,6 +18,9 @@ export async function GET(req: Request) {
     const jurisdiction = searchParams.get("jurisdiction");
     const lifecycleState = searchParams.get("lifecycleState");
     const applicableRoles = searchParams.get("applicableRoles");
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "20");
+    const offset = (page - 1) * limit;
 
     const filters = [];
     if (scenario) filters.push(eq(ragChunks.scenario, scenario as any));
@@ -28,15 +31,31 @@ export async function GET(req: Request) {
         sql`${ragChunks.applicableRoles} @> ARRAY[${applicableRoles}]::${sql.raw(ENUM_NAMES.applicable_role)}[]`,
       );
 
+    const whereClause = filters.length > 0 ? and(...filters) : undefined;
+
+    // Get total count for pagination
+    const [{ count }] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(ragChunks)
+      .where(whereClause);
+
     const chunks = await db
       .select()
       .from(ragChunks)
-      .where(filters.length > 0 ? and(...filters) : undefined)
-      .orderBy(desc(ragChunks.createdAt));
+      .where(whereClause)
+      .orderBy(desc(ragChunks.createdAt))
+      .limit(limit)
+      .offset(offset);
 
     return NextResponse.json({
       success: true,
       chunks,
+      pagination: {
+        total: Number(count),
+        page,
+        limit,
+        totalPages: Math.ceil(Number(count) / limit),
+      },
     });
   } catch (error) {
     console.error("Error fetching chunks:", error);

@@ -53,9 +53,11 @@ export default function LoginPage() {
 
   return (
     <div className="bg-app-bg flex min-h-full flex-col items-center justify-center p-4 px-6">
-      <div className="border-border-light bg-app-bg w-full max-w-md space-y-6 rounded-3xl border sm:p-10 p-6 shadow-2xl">
+      <div className="border-border-light bg-app-bg w-full max-w-md space-y-6 rounded-3xl border p-6 shadow-2xl sm:p-10">
         <div className="text-center">
-          <h2 className="text-text-main sm:mt-6 mt-4 text-3xl font-bold">{t("auth.welcome_back")}</h2>
+          <h2 className="text-text-main mt-4 text-3xl font-bold sm:mt-6">
+            {t("auth.welcome_back")}
+          </h2>
           <p className="text-text-muted mt-2">{t("auth.sign_in_title")}</p>
         </div>
 

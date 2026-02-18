@@ -26,7 +26,7 @@ export default function Welcome({ onSkip }: WelcomeProps) {
         <Button
           variant="ghost"
           onClick={onSkip}
-          className="bg-border-light text-text-secondary hover:bg-border-base w-full py-3 font-semibold mb-0"
+          className="bg-border-light text-text-secondary hover:bg-border-base mb-0 w-full py-3 font-semibold"
         >
           {t("auth.sign_in_anonymous")}
         </Button>

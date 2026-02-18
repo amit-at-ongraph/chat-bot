@@ -1,5 +1,5 @@
 export const HEADER_TITLE_NAME = "PAXIS Guide";
-export const APP_NAME = "PAXIS"
+export const APP_NAME = "PAXIS";
 
 export const UI_CONFIG = {
   HEADER_TITLE: HEADER_TITLE_NAME,

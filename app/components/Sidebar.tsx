@@ -202,7 +202,7 @@ export default function Sidebar({
                         {[1, 2, 3, 4, 5].map((i) => (
                           <div
                             key={i}
-                            className="bg-selected dark:bg-white/5 h-9 w-full animate-pulse rounded-[10px] border border-foreground/5 dark:border-white/5"
+                            className="bg-selected border-foreground/5 h-9 w-full animate-pulse rounded-[10px] border dark:border-white/5 dark:bg-white/5"
                           />
                         ))}
                       </div>
@@ -251,7 +251,7 @@ export default function Sidebar({
                         >
                           <Button
                             variant="ghost"
-                            className="text-text-main hover:bg-border-light w-full justify-start gap-3 px-2 py-2 font-medium rounded-xl"
+                            className="text-text-main hover:bg-border-light w-full justify-start gap-3 rounded-xl px-2 py-2 font-medium"
                             onClick={() => {
                               setIsUserMenuOpen(false);
                             }}
@@ -261,7 +261,7 @@ export default function Sidebar({
                           </Button>
                           <Button
                             variant="ghost"
-                            className="text-text-main hover:bg-border-light w-full justify-start gap-3 px-2 py-2 font-medium hover:text-red-500 rounded-xl"
+                            className="text-text-main hover:bg-border-light w-full justify-start gap-3 rounded-xl px-2 py-2 font-medium hover:text-red-500"
                             onClick={() => {
                               signOut({ redirect: true, callbackUrl: "/" });
                             }}
