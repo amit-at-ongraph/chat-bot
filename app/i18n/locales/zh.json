@@ -30,7 +30,8 @@
     "error": "错误",
     "ask_question": "提问...",
     "copy_response": "复制回复",
-    "back": "返回"
+    "back": "返回",
+    "or": "或"
   },
   "auth": {
     "welcome": "欢迎",
@@ -54,6 +55,8 @@
     "full_name": "全名",
     "creating_account": "正在创建账户...",
     "register": "注册",
+    "sign_up": "注册",
+    "sign_in_anonymous": "以匿名身份登录",
     "already_have_account": "请 {n} 以访问 PAXIS",
     "check_email": "检查您的电子邮件",
     "verification_sent": "我们已将验证链接发送至 {email}。",

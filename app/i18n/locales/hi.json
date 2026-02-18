@@ -30,7 +30,8 @@
     "error": "त्रुटि",
     "ask_question": "कोई प्रश्न पूछें...",
     "copy_response": "जवाब कॉपी करें",
-    "back": "पीछे"
+    "back": "पीछे",
+    "or": "या"
   },
   "auth": {
     "welcome": "स्वागत है",
@@ -54,6 +55,8 @@
     "full_name": "पूरा नाम",
     "creating_account": "खाता बनाया जा रहा है...",
     "register": "रजिस्टर करें",
+    "sign_up": "साइन अप करें",
+    "sign_in_anonymous": "Anonymous के रूप में साइन इन करें",
     "already_have_account": "PAXIS एक्सेस करने के लिए कृपया {n} करें",
     "check_email": "अपना ईमेल जाँचें",
     "verification_sent": "हमने {email} पर एक सत्यापन लिंक भेजा है।",

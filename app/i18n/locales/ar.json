@@ -30,7 +30,8 @@
     "error": "خطأ",
     "ask_question": "اسأل سؤالاً...",
     "copy_response": "نسخ الإجابة",
-    "back": "رجوع"
+    "back": "رجوع",
+    "or": "أو"
   },
   "auth": {
     "welcome": "مرحباً",
@@ -54,6 +55,8 @@
     "full_name": "الاسم الكامل",
     "creating_account": "جاري إنشاء الحساب...",
     "register": "تسجيل",
+    "sign_up": "اشتراك",
+    "sign_in_anonymous": "تسجيل الدخول كمجهول",
     "already_have_account": "يرجى {n} للوصول إلى PAXIS",
     "check_email": "تحقق من بريدك الإلكتروني",
     "verification_sent": "لقد أرسلنا رابط تحقق إلى {email}.",

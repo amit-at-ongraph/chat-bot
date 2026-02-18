@@ -30,7 +30,8 @@
     "error": "Error",
     "ask_question": "Magtanong...",
     "copy_response": "Kopyahin ang sagot",
-    "back": "Bumalik"
+    "back": "Bumalik",
+    "or": "O"
   },
   "auth": {
     "welcome": "Maligayang Pagdating",
@@ -54,6 +55,8 @@
     "full_name": "Buong Pangalan",
     "creating_account": "Gumagawa ng account...",
     "register": "Magrehistro",
+    "sign_up": "Mag-sign up",
+    "sign_in_anonymous": "Mag-sign in bilang Anonymous",
     "already_have_account": "Mangyaring {n} para ma-access ang PAXIS",
     "check_email": "Suriin ang iyong email",
     "verification_sent": "Nagpadala kami ng verification link sa {email}.",

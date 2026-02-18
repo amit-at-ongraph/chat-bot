@@ -30,7 +30,8 @@
     "error": "Error",
     "ask_question": "Haz una pregunta...",
     "copy_response": "Copiar respuesta",
-    "back": "Volver"
+    "back": "Volver",
+    "or": "O"
   },
   "auth": {
     "welcome": "Bienvenido",
@@ -54,6 +55,8 @@
     "full_name": "Nombre completo",
     "creating_account": "Creando cuenta...",
     "register": "Registrarse",
+    "sign_up": "Regístrate",
+    "sign_in_anonymous": "Iniciar sesión como anónimo",
     "already_have_account": "Por favor, {n} para acceder a PAXIS",
     "check_email": "Revisa tu correo",
     "verification_sent": "Hemos enviado un enlace de verificación a {email}.",

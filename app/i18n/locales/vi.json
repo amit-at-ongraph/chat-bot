@@ -29,8 +29,9 @@
     "back_to_login": "Quay lại Đăng nhập",
     "error": "Lỗi",
     "ask_question": "Đặt câu hỏi...",
-    "copy_response": "Sao chép câu trả lời",
-    "back": "Quay lại"
+    "copy_response": "Sao chép phản hồi",
+    "back": "Quay lại",
+    "or": "HOẶC"
   },
   "auth": {
     "welcome": "Chào mừng",
@@ -54,6 +55,8 @@
     "full_name": "Họ và tên",
     "creating_account": "Đang tạo tài khoản...",
     "register": "Đăng ký",
+    "sign_up": "Đăng ký",
+    "sign_in_anonymous": "Đăng nhập với tư cách ẩn danh",
     "already_have_account": "Vui lòng {n} để truy cập PAXIS",
     "check_email": "Kiểm tra email của bạn",
     "verification_sent": "Chúng tôi đã gửi liên kết xác minh đến {email}.",

@@ -22,6 +22,25 @@ export default function Welcome({ onSkip }: WelcomeProps) {
           <h2 className="text-text-main text-2xl font-bold">{t("auth.welcome")}</h2>
           <p className="text-text-muted mt-2">{t("auth.please_sign_in", { appName: APP_NAME })}</p>
         </div>
+
+        <Button
+          variant="ghost"
+          onClick={onSkip}
+          className="bg-border-light text-text-secondary hover:bg-border-base w-full py-3 font-semibold mb-0"
+        >
+          {t("auth.sign_in_anonymous")}
+        </Button>
+        <div className="relative my-4">
+          <div className="absolute inset-0 flex items-center">
+            <div className="border-border-light w-full border-t"></div>
+          </div>
+          <div className="relative flex justify-center text-xs">
+            <span className="bg-app-bg text-text-muted px-2 tracking-wider uppercase">
+              {t("common.or")}
+            </span>
+          </div>
+        </div>
+
         <div className="space-y-3">
           <Button
             onClick={() => signIn("google")}
@@ -47,33 +66,16 @@ export default function Welcome({ onSkip }: WelcomeProps) {
             </Button>
           </Link>
 
-          <div className="relative my-4">
-            <div className="absolute inset-0 flex items-center">
-              <div className="border-border-light w-full border-t"></div>
-            </div>
-            <div className="relative flex justify-center text-xs">
-              <span className="bg-app-bg text-text-muted px-2 tracking-wider uppercase">
-                {t("auth.new_here")}
-              </span>
-            </div>
-          </div>
-
-          <Link href="/register" className="block">
-            <Button
+          <Link href="/register" className="block text-blue-500 hover:text-blue-600">
+            {t("auth.sign_up")}
+            {/* <Button
               variant="ghost"
               className="text-primary hover:bg-primary/10 w-full py-3 font-bold"
             >
               {t("auth.create_account")}
-            </Button>
+              
+            </Button> */}
           </Link>
-
-          <Button
-            variant="ghost"
-            onClick={onSkip}
-            className="bg-border-light text-text-secondary hover:bg-border-base w-full py-3 font-semibold"
-          >
-            {t("auth.skip_for_now")}
-          </Button>
         </div>
       </div>
     </div>
