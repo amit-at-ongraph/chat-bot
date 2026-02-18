@@ -1,5 +1,7 @@
 "use client";
 
+import { useDebounce } from "../hooks/useDebounce";
+
 import { Button } from "@/app/components/ui/Button";
 import { EnumSelect } from "@/components/ui/enum-select";
 import { Input } from "@/components/ui/input";
@@ -32,7 +34,7 @@ import { Chunk, chunkService } from "./service";
 
 export default function ChunksPage() {
   const PAGINATION_CONFIG = {
-    apiLimit: 10, // Data return from API
+    apiLimit: 20, // Data return from API
     rowsPerPage: 5 // Data per page in UI
   };
 
@@ -40,6 +42,7 @@ export default function ChunksPage() {
   const [chunks, setChunks] = useState<Chunk[]>([]);
   const [loading, setLoading] = useState(true);
   const [globalFilter, setGlobalFilter] = useState("");
+  const debouncedSearch = useDebounce(globalFilter, 600);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: PAGINATION_CONFIG.rowsPerPage,
@@ -66,6 +69,7 @@ export default function ChunksPage() {
         filters,
         serverPageIndex + 1,
         PAGINATION_CONFIG.apiLimit,
+        debouncedSearch
       );
       setChunks(response.chunks);
       setTotalItems(response.pagination.total);
@@ -75,7 +79,7 @@ export default function ChunksPage() {
     } finally {
       setLoading(false);
     }
-  }, [filters, serverPageIndex, t, PAGINATION_CONFIG.apiLimit]);
+  }, [filters, serverPageIndex, t, PAGINATION_CONFIG.apiLimit, debouncedSearch]);
 
   // Sliced data for the current client-side page
   const currentTableData = useMemo(() => {
@@ -104,9 +108,9 @@ export default function ChunksPage() {
   );
 
   useEffect(() => {
-    // Reset to first page when filters change
+    // Reset to first page when filters or search changes
     setPagination((prev) => ({ ...prev, pageIndex: 0 }));
-  }, [filters]);
+  }, [filters, debouncedSearch]);
 
   useEffect(() => {
     fetchChunks();
@@ -232,18 +236,9 @@ export default function ChunksPage() {
     manualPagination: true,
     pageCount: Math.ceil(totalItems / PAGINATION_CONFIG.rowsPerPage),
     state: {
-      globalFilter,
       pagination: pagination,
     },
     onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: (row, columnId, filterValue) => {
-      const content = row.getValue("content") as string;
-      const topic = row.getValue("topic") as string;
-      const query = filterValue.toLowerCase();
-      return (
-        content.toLowerCase().includes(query) || (topic && topic.toLowerCase().includes(query))
-      );
-    },
     onPaginationChange: setPagination,
   });
 

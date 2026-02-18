@@ -2,7 +2,7 @@ import { authOptions } from "@/lib/auth";
 import { UserRole } from "@/lib/constants";
 import { db } from "@/lib/db";
 import { ENUM_NAMES, ragChunks } from "@/lib/db/schema";
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -22,6 +22,8 @@ export async function GET(req: Request) {
     const limit = parseInt(searchParams.get("limit") || "20");
     const offset = (page - 1) * limit;
 
+    const query = searchParams.get("query");
+
     const filters = [];
     if (scenario) filters.push(eq(ragChunks.scenario, scenario as any));
     if (jurisdiction) filters.push(eq(ragChunks.jurisdiction, jurisdiction as any));
@@ -30,6 +32,16 @@ export async function GET(req: Request) {
       filters.push(
         sql`${ragChunks.applicableRoles} @> ARRAY[${applicableRoles}]::${sql.raw(ENUM_NAMES.applicable_role)}[]`,
       );
+    
+    // Add search query filter
+    if (query) {
+      filters.push(
+        or(
+          ilike(ragChunks.content, `%${query}%`),
+          ilike(ragChunks.topic, `%${query}%`)
+        )
+      );
+    }
 
     const whereClause = filters.length > 0 ? and(...filters) : undefined;
 
