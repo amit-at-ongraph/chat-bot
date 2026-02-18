@@ -25,16 +25,17 @@ import {
 } from "@tanstack/react-table";
 import { ArrowUpDown, ChevronLeft, ChevronRight, Plus, Search, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useLinkedListCache } from "../hooks/useLinkedListCache";
 import { toast } from "sonner";
 import { useTranslation } from "../i18n/useTranslation";
 import { createOptionsFromEnum } from "../utils/string.utils";
 import { filterConfigs } from "./filter-config";
-import { Chunk, chunkService } from "./service";
+import { Chunk, PaginatedResult, chunkService } from "./service";
 
 export default function ChunksPage() {
   const PAGINATION_CONFIG = {
-    apiLimit: 20, // Data return from API
+    apiLimit: 15, // Data return from API
     rowsPerPage: 5 // Data per page in UI
   };
 
@@ -64,7 +65,17 @@ export default function ChunksPage() {
   // Calculate which server-side page we need
   const serverPageIndex = Math.floor(pagination.pageIndex / pagesPerBlock);
 
+  const cache = useLinkedListCache<PaginatedResult<Chunk>>({ maxDepth: 5, enabled: true });
+  const prefetchGeneration = useRef(0);
+
   const fetchChunks = useCallback(async () => {
+    const cached = cache.get(serverPageIndex);
+    if (cached) {
+      setChunks(cached.chunks);
+      setTotalItems(cached.pagination.total);
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await chunkService.fetchAll(
@@ -76,13 +87,14 @@ export default function ChunksPage() {
       );
       setChunks(response.chunks);
       setTotalItems(response.pagination.total);
+      cache.set(serverPageIndex, response);
     } catch (error) {
       console.error("Failed to fetch chunks:", error);
       toast.error(t("upload.load_failed"));
     } finally {
       setLoading(false);
     }
-  }, [filters, serverPageIndex, t, PAGINATION_CONFIG.apiLimit, debouncedSearch, sortOrder]);
+  }, [filters, serverPageIndex, t, PAGINATION_CONFIG.apiLimit, debouncedSearch, sortOrder, cache]);
 
   // Sliced data for the current client-side page
   const currentTableData = useMemo(() => {
@@ -117,11 +129,34 @@ export default function ChunksPage() {
   useEffect(() => {
     // Reset to first page when filters or search changes
     setPagination((prev) => ({ ...prev, pageIndex: 0 }));
-  }, [filters, debouncedSearch, sortOrder]);
+    cache.clear();
+    prefetchGeneration.current += 1;
+  }, [filters, debouncedSearch, sortOrder, cache]);
 
   useEffect(() => {
     fetchChunks();
   }, [fetchChunks]);
+
+  useEffect(() => {
+    const isLastPageOfBlock = pagination.pageIndex % pagesPerBlock === pagesPerBlock - 1;
+    const nextServerPageIndex = serverPageIndex + 1;
+    const totalServerPages = Math.ceil(totalItems / PAGINATION_CONFIG.apiLimit);
+    const hasNextBlock = nextServerPageIndex < totalServerPages;
+
+    if (isLastPageOfBlock && hasNextBlock && !loading) {
+      if (cache.has(nextServerPageIndex)) return;
+
+      const gen = prefetchGeneration.current;
+      chunkService
+        .fetchAll(filters, nextServerPageIndex + 1, PAGINATION_CONFIG.apiLimit, debouncedSearch, sortOrder)
+        .then((response) => {
+          if (prefetchGeneration.current === gen) {
+            cache.set(nextServerPageIndex, response);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [pagination.pageIndex, serverPageIndex, pagesPerBlock, totalItems, filters, debouncedSearch, sortOrder, loading, PAGINATION_CONFIG.apiLimit, cache]);
 
   const deleteChunk = useCallback(
     async (chunkId: string) => {
