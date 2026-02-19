@@ -36,15 +36,14 @@ export function EnumSelect({
       <SelectContent>
         {allOptionLabel && <SelectItem value="ALL">{allOptionLabel}</SelectItem>}
         {options.map((option) => {
+          const translateKey = `upload.${option.value}`;
+          const value = t(translateKey);
 
-          const translateKey = `upload.${option.value}`
-          const value= t(translateKey)
-          
           return (
-          <SelectItem key={option.value} value={option.value}>
-            {value === translateKey ? option.label : value}
-          </SelectItem>
-        )
+            <SelectItem key={option.value} value={option.value}>
+              {value === translateKey ? option.label : value}
+            </SelectItem>
+          );
         })}
       </SelectContent>
     </Select>

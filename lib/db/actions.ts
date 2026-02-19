@@ -120,9 +120,9 @@ export async function findRelevantContent(
         lifecycleFilter,
         or(
           gte(boostedSimilarity, 0.5), // High quality boosted match -> Ignore strict filters
-          metadataFilters.length > 0 ? and(...metadataFilters) : sql`TRUE` // Lower quality -> Apply filters
-        )
-      )
+          metadataFilters.length > 0 ? and(...metadataFilters) : sql`TRUE`, // Lower quality -> Apply filters
+        ),
+      ),
     )
     .orderBy((t) => t.score)
     .limit(10);

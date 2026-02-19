@@ -1,5 +1,6 @@
 "use client";
 
+import { HAS_USER_AUTH_ENABLED } from "@/config";
 import { UserRole } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { DBChat } from "@/types/chat";
@@ -190,113 +191,117 @@ export default function Sidebar({
                     )}
                   </div>
 
-                  {/* Navigation Items */}
-                  <nav className="flex-1 space-y-1 overflow-y-auto">
-                    {!effectivelyCollapsed && (
-                      <div className="text-text-muted px-4 py-2 text-[14px]">
-                        {t("common.recent_chats")}
-                      </div>
-                    )}
-                    {isLoadingChats ? (
-                      <div className="space-y-2 px-2">
-                        {[1, 2, 3, 4, 5].map((i) => (
-                          <div
-                            key={i}
-                            className="bg-selected dark:bg-white/5 h-9 w-full animate-pulse rounded-[10px] border border-foreground/5 dark:border-white/5"
-                          />
-                        ))}
-                      </div>
-                    ) : (
-                      <>
-                        {!isCollapsed &&
-                          chats.map((chat) => (
-                            <SidebarItem
-                              key={chat.id}
-                              icon={MessageSquare}
-                              label={chat.title || t("common.untitled_chat")}
-                              active={currentChatId === chat.id}
-                              loading={selectedChatLoading && currentChatId === chat.id}
-                              isCollapsed={effectivelyCollapsed}
-                              onClick={() => {
-                                onSelectChat(chat.id);
-                                if (window.innerWidth < 1024) {
-                                  onClose();
-                                }
-                              }}
-                              onRename={(newTitle) => onRenameChat(chat.id, newTitle)}
-                              onDelete={() => onDeleteChat(chat.id)}
-                            />
-                          ))}
-                        {chats.length === 0 && !effectivelyCollapsed && (
-                          <div className="text-text-muted px-4 py-4 text-sm italic">
-                            {t("common.no_recent_chats")}
+                  {HAS_USER_AUTH_ENABLED && (
+                    <>
+                      {/* Navigation Items */}
+                      <nav className="flex-1 space-y-1 overflow-y-auto">
+                        {!effectivelyCollapsed && (
+                          <div className="text-text-muted px-4 py-2 text-[14px]">
+                            {t("common.recent_chats")}
                           </div>
                         )}
-                      </>
-                    )}
-                  </nav>
-
-                  {/* Sidebar Footer */}
-                  <div className="border-border-base relative flex h-15 items-center justify-start border-t px-2">
-                    <AnimatePresence>
-                      {isUserMenuOpen && session && (
-                        <motion.div
-                          ref={userMenuRef}
-                          initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                          animate={{ opacity: 1, y: 0, scale: 1 }}
-                          exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                          className={`border-border-base bg-app-bg absolute bottom-full z-50 mb-1 w-[90%] overflow-hidden rounded-2xl border p-1 text-[14px] shadow-lg ${
-                            effectivelyCollapsed ? "left-1/2 -translate-x-1/2" : "left-4"
-                          }`}
-                        >
-                          <Button
-                            variant="ghost"
-                            className="text-text-main hover:bg-border-light w-full justify-start gap-3 px-2 py-2 font-medium rounded-xl"
-                            onClick={() => {
-                              setIsUserMenuOpen(false);
-                            }}
-                          >
-                            <Settings className="h-5 w-5" />
-                            {t("common.settings")}
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            className="text-text-main hover:bg-border-light w-full justify-start gap-3 px-2 py-2 font-medium hover:text-red-500 rounded-xl"
-                            onClick={() => {
-                              signOut({ redirect: true, callbackUrl: "/" });
-                            }}
-                          >
-                            <LogOut className="h-5 w-5" />
-                            {t("common.sign_out")}
-                          </Button>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-
-                    <div
-                      className="hover:bg-border-light flex w-full cursor-pointer items-center gap-4 rounded-[10px] px-2 py-2 transition-colors"
-                      onClick={() => session && setIsUserMenuOpen(!isUserMenuOpen)}
-                    >
-                      <div className="border-border-base bg-app-bg flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border shadow-sm">
-                        {session?.user?.image ? (
-                          <Image
-                            src={session.user.image}
-                            alt="logo"
-                            className="h-full w-full object-cover"
-                            width={24}
-                            height={24}
-                          />
+                        {isLoadingChats ? (
+                          <div className="space-y-2 px-2">
+                            {[1, 2, 3, 4, 5].map((i) => (
+                              <div
+                                key={i}
+                                className="bg-selected border-foreground/5 h-9 w-full animate-pulse rounded-[10px] border dark:border-white/5 dark:bg-white/5"
+                              />
+                            ))}
+                          </div>
                         ) : (
-                          <User className="text-text-main h-5 w-5" />
+                          <>
+                            {!isCollapsed &&
+                              chats.map((chat) => (
+                                <SidebarItem
+                                  key={chat.id}
+                                  icon={MessageSquare}
+                                  label={chat.title || t("common.untitled_chat")}
+                                  active={currentChatId === chat.id}
+                                  loading={selectedChatLoading && currentChatId === chat.id}
+                                  isCollapsed={effectivelyCollapsed}
+                                  onClick={() => {
+                                    onSelectChat(chat.id);
+                                    if (window.innerWidth < 1024) {
+                                      onClose();
+                                    }
+                                  }}
+                                  onRename={(newTitle) => onRenameChat(chat.id, newTitle)}
+                                  onDelete={() => onDeleteChat(chat.id)}
+                                />
+                              ))}
+                            {chats.length === 0 && !effectivelyCollapsed && (
+                              <div className="text-text-muted px-4 py-4 text-sm italic">
+                                {t("common.no_recent_chats")}
+                              </div>
+                            )}
+                          </>
                         )}
-                      </div>
-                      {!effectivelyCollapsed && (
-                        <div className="text-text-main max-w-37.5 truncate text-[14px]">
-                          {session?.user?.name || t("common.guest_user")}
+                      </nav>
+
+                      {/* Sidebar Footer */}
+                      <div className="border-border-base relative flex h-15 items-center justify-start border-t px-2">
+                        <AnimatePresence>
+                          {isUserMenuOpen && session && (
+                            <motion.div
+                              ref={userMenuRef}
+                              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                              animate={{ opacity: 1, y: 0, scale: 1 }}
+                              exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                              className={`border-border-base bg-app-bg absolute bottom-full z-50 mb-1 w-[90%] overflow-hidden rounded-2xl border p-1 text-[14px] shadow-lg ${
+                                effectivelyCollapsed ? "left-1/2 -translate-x-1/2" : "left-4"
+                              }`}
+                            >
+                              <Button
+                                variant="ghost"
+                                className="text-text-main hover:bg-border-light w-full justify-start gap-3 rounded-xl px-2 py-2 font-medium"
+                                onClick={() => {
+                                  setIsUserMenuOpen(false);
+                                }}
+                              >
+                                <Settings className="h-5 w-5" />
+                                {t("common.settings")}
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                className="text-text-main hover:bg-border-light w-full justify-start gap-3 rounded-xl px-2 py-2 font-medium hover:text-red-500"
+                                onClick={() => {
+                                  signOut({ redirect: true, callbackUrl: "/" });
+                                }}
+                              >
+                                <LogOut className="h-5 w-5" />
+                                {t("common.sign_out")}
+                              </Button>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+
+                        <div
+                          className="hover:bg-border-light flex w-full cursor-pointer items-center gap-4 rounded-[10px] px-2 py-2 transition-colors"
+                          onClick={() => session && setIsUserMenuOpen(!isUserMenuOpen)}
+                        >
+                          <div className="border-border-base bg-app-bg flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border shadow-sm">
+                            {session?.user?.image ? (
+                              <Image
+                                src={session.user.image}
+                                alt="logo"
+                                className="h-full w-full object-cover"
+                                width={24}
+                                height={24}
+                              />
+                            ) : (
+                              <User className="text-text-main h-5 w-5" />
+                            )}
+                          </div>
+                          {!effectivelyCollapsed && (
+                            <div className="text-text-main max-w-37.5 truncate text-[14px]">
+                              {session?.user?.name || t("common.guest_user")}
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
-                  </div>
+                      </div>
+                    </>
+                  )}
                 </motion.div>
               ) : (
                 <motion.div

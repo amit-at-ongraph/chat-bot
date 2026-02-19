@@ -41,7 +41,9 @@ export default function ChatFooter({
                 icon={action.icon}
                 label={t(`chat_actions.${action.id}_label`) || action.label}
                 color={action.color}
-                onClick={() => handleChatAction(t(`chat_actions.${action.id}_prompt`) || action.prompt)}
+                onClick={() =>
+                  handleChatAction(t(`chat_actions.${action.id}_prompt`) || action.prompt)
+                }
               />
             ))}
           </div>

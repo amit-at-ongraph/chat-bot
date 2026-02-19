@@ -63,7 +63,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<VerifyHumanRe
           success: false,
           error: "Verification token is required. Please try again.",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -74,7 +74,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<VerifyHumanRe
           success: false,
           error: "Server configuration error. Please contact support.",
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -96,9 +96,10 @@ export async function POST(req: NextRequest): Promise<NextResponse<VerifyHumanRe
       return NextResponse.json(
         {
           success: false,
-          error: "Unable to reach verification service. Please check your connection and try again.",
+          error:
+            "Unable to reach verification service. Please check your connection and try again.",
         },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -109,7 +110,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<VerifyHumanRe
           success: false,
           error: "Verification service error. Please try again later.",
         },
-        { status: 502 }
+        { status: 502 },
       );
     }
 
@@ -151,19 +152,19 @@ export async function POST(req: NextRequest): Promise<NextResponse<VerifyHumanRe
           error: errorMessage,
           errorCodes: errorCodes.length > 0 ? errorCodes : undefined,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred. Please try again.";
+    const errorMessage =
+      error instanceof Error ? error.message : "An unexpected error occurred. Please try again.";
     console.error("Verify human error:", error);
     return NextResponse.json<VerifyHumanErrorResponse>(
       {
         success: false,
         error: errorMessage,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-

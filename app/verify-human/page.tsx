@@ -3,8 +3,8 @@
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
 import Turnstile from "react-turnstile";
+import { toast } from "sonner";
 import { useHasAnonymousCookie } from "../hooks/useHasAnonymousCookie";
 
 interface VerifyHumanSuccessResponse {
@@ -63,7 +63,7 @@ export default function VerifyHumanPage() {
 
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<VerifyHumanErrorResponse>;
-        
+
         if (axiosError.response) {
           // Server responded with error
           const status = axiosError.response.status;
@@ -74,7 +74,8 @@ export default function VerifyHumanPage() {
           } else if (status === 500) {
             errorMessage = "Server error. Please try again later.";
           } else if (status === 502 || status === 503) {
-            errorMessage = responseData?.error || "Verification service unavailable. Please try again later.";
+            errorMessage =
+              responseData?.error || "Verification service unavailable. Please try again later.";
           } else if (status === 429) {
             errorMessage = "Too many attempts. Please wait a moment and try again.";
           } else if (responseData?.error) {

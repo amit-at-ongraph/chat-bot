@@ -2,18 +2,18 @@
 
 import { useCallback } from "react";
 import { useLanguageStore } from "../store/languageStore";
-import en from "./locales/en.json";
-import hi from "./locales/hi.json";
-import es from "./locales/es.json";
-import fr from "./locales/fr.json";
-import zh from "./locales/zh.json";
-import ar from "./locales/ar.json";
-import pt from "./locales/pt.json";
-import fil from "./locales/fil.json";
-import vi from "./locales/vi.json";
-import tel from "./locales/tel.json";
-import ta from "./locales/ta.json";
 import { toTitleCaseFromSnakeCase } from "../utils/string.utils";
+import ar from "./locales/ar.json";
+import en from "./locales/en.json";
+import es from "./locales/es.json";
+import fil from "./locales/fil.json";
+import fr from "./locales/fr.json";
+import hi from "./locales/hi.json";
+import pt from "./locales/pt.json";
+import ta from "./locales/ta.json";
+import tel from "./locales/tel.json";
+import vi from "./locales/vi.json";
+import zh from "./locales/zh.json";
 
 const translations = { en, hi, es, fr, zh, ar, pt, fil, vi, tel, ta };
 
@@ -42,7 +42,7 @@ export function useTranslation() {
               break;
             }
           }
-          value = found ? fallback : toTitleCaseFromSnakeCase(keys[1]) ?? key;
+          value = found ? fallback : (toTitleCaseFromSnakeCase(keys[1]) ?? key);
           break;
         }
       }

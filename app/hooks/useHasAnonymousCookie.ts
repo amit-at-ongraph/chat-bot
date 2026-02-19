@@ -1,15 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useChatStore } from "../store/chatStore";
 import { getCookie } from "../utils";
 
 export function useHasAnonymousCookie() {
   const [hasAnonymousUser, setHasAnonymousUser] = useState<boolean | null>(null);
+  const { setSkippedAuth } = useChatStore();
 
   useEffect(() => {
     const checkCookie = () => {
       const cookie = getCookie("anonymous_user");
       setHasAnonymousUser(cookie === "true");
+      setSkippedAuth(cookie === "true");
     };
     // Initial check
     checkCookie();
@@ -34,7 +37,7 @@ export function useHasAnonymousCookie() {
       document.removeEventListener("visibilitychange", checkCookie);
       window.removeEventListener("storage", handleStorage);
     };
-  }, []);
+  }, [setSkippedAuth]);
 
   return hasAnonymousUser;
 }
