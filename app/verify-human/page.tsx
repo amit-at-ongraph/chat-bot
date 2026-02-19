@@ -22,7 +22,7 @@ type VerifyHumanResponse = VerifyHumanSuccessResponse | VerifyHumanErrorResponse
 
 export default function VerifyHumanPage() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [turnstileKey, setTurnstileKey] = useState(0);
   const hasAnonymousCookie = useHasAnonymousCookie();
   const { theme } = useTheme();
@@ -42,7 +42,6 @@ export default function VerifyHumanPage() {
   }
 
   const handleVerify = async (token: string): Promise<void> => {
-    setLoading(true);
     const verifyToast = toast.loading("Verifying...", { id: "verify-toast" });
 
     try {
@@ -58,7 +57,6 @@ export default function VerifyHumanPage() {
         const errorResponse = data as VerifyHumanErrorResponse;
         const errorMessage = errorResponse.error || "Human verification failed";
         toast.error(errorMessage, { id: verifyToast, duration: 5000 });
-        setLoading(false);
         // Reset Turnstile to allow retry
         setTurnstileKey((prev) => prev + 1);
       }
@@ -99,7 +97,6 @@ export default function VerifyHumanPage() {
       }
 
       toast.error(errorMessage, { id: verifyToast, duration: 5000 });
-      setLoading(false);
 
       // Reset Turnstile to allow retry
       setTurnstileKey((prev) => prev + 1);
@@ -113,9 +110,12 @@ export default function VerifyHumanPage() {
         sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
         onVerify={handleVerify}
         theme={["light", "white"].includes(theme) ? "light" : "dark"}
+        onLoad={() => {
+          setLoading(false);
+        }}
       />
 
-      {loading && <p>Verifying...</p>}
+      {loading && <p>Loading...</p>}
     </div>
   );
 }
