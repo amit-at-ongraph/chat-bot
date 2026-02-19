@@ -103,14 +103,13 @@ export default function VerifyHumanPage() {
   };
 
   return (
-    <div className="flex h-screen flex-col items-center justify-center gap-4">
-      <h1>Verify you are human</h1>
+    <div className="bg-transparent flex h-full flex-col items-center justify-center gap-4">
 
       <Turnstile
         key={turnstileKey}
         sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
         onVerify={handleVerify}
-        theme={theme === "white" ? "light" : "dark"}
+        theme={['light', 'white'].includes(theme) ? "light" : "dark"}
       />
 
       {loading && <p>Verifying...</p>}

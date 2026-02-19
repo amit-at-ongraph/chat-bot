@@ -16,9 +16,14 @@ export default function Welcome() {
   return (
     <div className="bg-app-bg/80 absolute inset-0 z-50 flex flex-col items-center justify-center overflow-y-auto p-6 py-12 backdrop-blur-sm">
       <div className="border-border-light bg-app-bg w-full max-w-sm space-y-6 rounded-3xl border p-8 text-center shadow-2xl">
-        <div>
+        {/* <div>
           <h2 className="text-text-main text-2xl font-bold">{t("auth.welcome")}</h2>
           <p className="text-text-muted mt-2">{t("auth.please_sign_in", { appName: APP_NAME })}</p>
+        </div> */}
+
+        <div className="flex justify-center items-center flex-col gap-3">
+          <Image src={"/PAXIS.jpg"} alt="PAXIS" width={80} height={80} className="rounded-full w-16 h-16"></Image>
+          <h2 className="font-medium">{APP_NAME}</h2>
         </div>
 
         <Button
