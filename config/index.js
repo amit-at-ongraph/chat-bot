@@ -8,4 +8,9 @@ export const UI_CONFIG = {
 };
 
 // Should provide signin and signup functionality to users
-export const HAS_USER_AUTH_ENABLED = false;
+export const AUTH_CONFIG = {
+  USER_AUTH_ENABLED: false,
+  FORGOT_PASSWORD_ENABLED: false,
+  REGISTER_ENABLED: false,
+  GOOGLE_LOGIN_ENABLED: false,
+}

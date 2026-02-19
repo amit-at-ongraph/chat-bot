@@ -1,4 +1,4 @@
-import { HAS_USER_AUTH_ENABLED, UI_CONFIG } from "@/config";
+import { AUTH_CONFIG, UI_CONFIG } from "@/config";
 import { Menu, Moon, Sun } from "lucide-react";
 import { signIn, useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
@@ -62,7 +62,7 @@ export default function Header({
         <div className="flex items-center gap-0 sm:gap-1">
           <LanguageSelector />
 
-          {HAS_USER_AUTH_ENABLED ? null : (
+          {AUTH_CONFIG.USER_AUTH_ENABLED ? null : (
             <Button
               variant="ghost"
               size="icon"
@@ -80,7 +80,7 @@ export default function Header({
             </Button>
           )}
         </div>
-        {HAS_USER_AUTH_ENABLED && !session && skippedAuth ? (
+        {AUTH_CONFIG.USER_AUTH_ENABLED && !session && skippedAuth ? (
           <Button
             onClick={() => signIn()}
             className="px-3 py-1.5 text-xs leading-none font-bold whitespace-nowrap"

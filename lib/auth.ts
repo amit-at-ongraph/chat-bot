@@ -9,6 +9,7 @@ import { supabase } from "./supabase";
 
 import * as schema from "./db/schema";
 import { users } from "./db/schema";
+import { AUTH_CONFIG } from "@/config";
 
 export const authOptions: NextAuthOptions = {
   adapter: DrizzleAdapter(db, {
@@ -35,6 +36,7 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        role: { label: "Role", type: "text" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
@@ -61,6 +63,11 @@ export const authOptions: NextAuthOptions = {
             .from(users)
             .where(eq(users.email, data.user.email!))
             .limit(1);
+
+          // ✅ BLOCK NON-ADMIN USERS if no user auth enabled
+          if (!AUTH_CONFIG.USER_AUTH_ENABLED && dbUser.role !== UserRole.ADMIN) {
+            throw new Error("Access denied. Admins only.");
+          }
 
           if (!dbUser) {
             const [newUser] = await db

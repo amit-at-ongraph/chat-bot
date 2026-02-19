@@ -1,6 +1,6 @@
 "use client";
 
-import { APP_NAME, HAS_USER_AUTH_ENABLED } from "@/config";
+import { APP_NAME, AUTH_CONFIG } from "@/config";
 import { Mail } from "lucide-react";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
@@ -29,7 +29,7 @@ export default function Welcome() {
           {t("auth.sign_in_anonymous")}
         </Button>
 
-        {HAS_USER_AUTH_ENABLED && (
+        {AUTH_CONFIG.USER_AUTH_ENABLED && (
           <>
             <div className="relative my-4">
               <div className="absolute inset-0 flex items-center">

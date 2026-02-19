@@ -1,6 +1,6 @@
 "use client";
 
-import { HAS_USER_AUTH_ENABLED } from "@/config";
+import { AUTH_CONFIG } from "@/config";
 import { UserRole } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { DBChat } from "@/types/chat";
@@ -14,7 +14,7 @@ import {
   Menu,
   MessageSquare,
   MoreVertical,
-  Settings,
+  // Settings,
   Trash2,
   User,
   X,
@@ -191,7 +191,7 @@ export default function Sidebar({
                     )}
                   </div>
 
-                  {HAS_USER_AUTH_ENABLED && (
+                  {AUTH_CONFIG.USER_AUTH_ENABLED ? (
                     <>
                       {/* Navigation Items */}
                       <nav className="flex-1 space-y-1 overflow-y-auto">
@@ -238,7 +238,11 @@ export default function Sidebar({
                           </>
                         )}
                       </nav>
+                    </>
+                  ) : null}
 
+                  {session?.user?.role === UserRole.ADMIN && (
+                    <>
                       {/* Sidebar Footer */}
                       <div className="border-border-base relative flex h-15 items-center justify-start border-t px-2">
                         <AnimatePresence>
@@ -252,7 +256,7 @@ export default function Sidebar({
                                 effectivelyCollapsed ? "left-1/2 -translate-x-1/2" : "left-4"
                               }`}
                             >
-                              <Button
+                              {/* <Button
                                 variant="ghost"
                                 className="text-text-main hover:bg-border-light w-full justify-start gap-3 rounded-xl px-2 py-2 font-medium"
                                 onClick={() => {
@@ -261,7 +265,7 @@ export default function Sidebar({
                               >
                                 <Settings className="h-5 w-5" />
                                 {t("common.settings")}
-                              </Button>
+                              </Button> */}
                               <Button
                                 variant="ghost"
                                 className="text-text-main hover:bg-border-light w-full justify-start gap-3 rounded-xl px-2 py-2 font-medium hover:text-red-500"
