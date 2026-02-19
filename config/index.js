@@ -6,3 +6,6 @@ export const UI_CONFIG = {
   CHAT_BTN_TITLE: "New Chat",
   UPLOAD_BTN_TITLE: "Upload Files",
 };
+
+// Should provide signin and signup functionality to users
+export const HAS_USER_AUTH_ENABLED = false;
