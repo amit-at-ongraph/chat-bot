@@ -57,14 +57,17 @@ export default function LoginPage() {
   return (
     <div className="bg-app-bg flex min-h-full flex-col items-center justify-center p-4 px-6">
       <div className="border-border-light bg-app-bg w-full max-w-md space-y-6 rounded-3xl border p-6 shadow-2xl sm:p-10">
-        {AUTH_CONFIG.USER_AUTH_ENABLED && (
+        {AUTH_CONFIG.USER_AUTH_ENABLED ? (
           <div className="text-center">
             <h2 className="text-text-main mt-4 text-3xl font-bold sm:mt-6">
               {t("auth.welcome_back")}
             </h2>
             <p className="text-text-muted mt-2">{t("auth.sign_in_title")}</p>
           </div>
+        ) : (
+          <h2>Login</h2>
         )}
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (
             <div className="rounded-xl bg-red-500/10 p-4 text-center text-sm font-medium text-red-500">
