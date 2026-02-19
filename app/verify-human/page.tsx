@@ -6,6 +6,7 @@ import { useState } from "react";
 import Turnstile from "react-turnstile";
 import { toast } from "sonner";
 import { useHasAnonymousCookie } from "../hooks/useHasAnonymousCookie";
+import { useTheme } from "next-themes";
 
 interface VerifyHumanSuccessResponse {
   success: true;
@@ -24,6 +25,7 @@ export default function VerifyHumanPage() {
   const [loading, setLoading] = useState(false);
   const [turnstileKey, setTurnstileKey] = useState(0);
   const hasAnonymousCookie = useHasAnonymousCookie();
+  const { theme } = useTheme()
 
   // Show loading state while checking cookie
   if (hasAnonymousCookie === null) {
@@ -108,6 +110,7 @@ export default function VerifyHumanPage() {
         key={turnstileKey}
         sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
         onVerify={handleVerify}
+        theme={theme === "white" ? "light" : "dark"}
       />
 
       {loading && <p>Verifying...</p>}
