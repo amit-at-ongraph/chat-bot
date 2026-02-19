@@ -27,6 +27,10 @@ export default function VerifyHumanPage() {
   const hasAnonymousCookie = useHasAnonymousCookie();
   const { theme } = useTheme();
 
+  if (!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) {
+    return toast.error("No SIT KEY found.Please configure it.");
+  }
+
   // Show loading state while checking cookie
   if (hasAnonymousCookie === null) {
     return null;
