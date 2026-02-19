@@ -13,4 +13,4 @@ export const AUTH_CONFIG = {
   FORGOT_PASSWORD_ENABLED: false,
   REGISTER_ENABLED: false,
   GOOGLE_LOGIN_ENABLED: false,
-}
+};

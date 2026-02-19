@@ -21,8 +21,14 @@ export default function Welcome() {
           <p className="text-text-muted mt-2">{t("auth.please_sign_in", { appName: APP_NAME })}</p>
         </div> */}
 
-        <div className="flex justify-center items-center flex-col gap-3">
-          <Image src={"/PAXIS.jpg"} alt="PAXIS" width={80} height={80} className="rounded-full w-16 h-16"></Image>
+        <div className="flex flex-col items-center justify-center gap-3">
+          <Image
+            src={"/PAXIS.jpg"}
+            alt="PAXIS"
+            width={80}
+            height={80}
+            className="h-16 w-16 rounded-full"
+          ></Image>
           <h2 className="font-medium">{APP_NAME}</h2>
         </div>
 

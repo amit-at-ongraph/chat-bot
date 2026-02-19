@@ -1,12 +1,12 @@
 "use client";
 
 import axios, { AxiosError } from "axios";
+import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Turnstile from "react-turnstile";
 import { toast } from "sonner";
 import { useHasAnonymousCookie } from "../hooks/useHasAnonymousCookie";
-import { useTheme } from "next-themes";
 
 interface VerifyHumanSuccessResponse {
   success: true;
@@ -25,7 +25,7 @@ export default function VerifyHumanPage() {
   const [loading, setLoading] = useState(false);
   const [turnstileKey, setTurnstileKey] = useState(0);
   const hasAnonymousCookie = useHasAnonymousCookie();
-  const { theme } = useTheme()
+  const { theme } = useTheme();
 
   // Show loading state while checking cookie
   if (hasAnonymousCookie === null) {
@@ -103,13 +103,12 @@ export default function VerifyHumanPage() {
   };
 
   return (
-    <div className="bg-transparent flex h-full flex-col items-center justify-center gap-4">
-
+    <div className="flex h-full flex-col items-center justify-center gap-4 bg-transparent">
       <Turnstile
         key={turnstileKey}
         sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
         onVerify={handleVerify}
-        theme={['light', 'white'].includes(theme) ? "light" : "dark"}
+        theme={["light", "white"].includes(theme) ? "light" : "dark"}
       />
 
       {loading && <p>Verifying...</p>}
