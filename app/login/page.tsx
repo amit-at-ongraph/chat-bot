@@ -10,7 +10,6 @@ import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -18,12 +17,8 @@ export default function LoginPage() {
   const callbackUrl = searchParams.get("callbackUrl") || "/upload";
   const { t } = useTranslation();
 
-  const { loginForm, setLoginField, resetLoginForm } = useAuthStore();
+  const { loginForm, setLoginField } = useAuthStore();
   const { email, password, error, loading } = loginForm;
-
-  useEffect(() => {
-    return () => resetLoginForm();
-  }, [resetLoginForm]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,9 +38,7 @@ export default function LoginPage() {
       if (result?.error) {
         setLoginField("error", result.error);
       } else {
-        resetLoginForm();
         router.push(callbackUrl);
-        router.refresh();
       }
     } catch (_err: any) {
       setLoginField("error", t("auth.unexpected_error"));

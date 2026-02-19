@@ -270,7 +270,7 @@ export default function Sidebar({
                                 variant="ghost"
                                 className="text-text-main hover:bg-border-light w-full justify-start gap-3 rounded-xl px-2 py-2 font-medium hover:text-red-500"
                                 onClick={() => {
-                                  signOut({ redirect: true, callbackUrl: "/" });
+                                  signOut({ redirect: true, callbackUrl: "/login" });
                                 }}
                               >
                                 <LogOut className="h-5 w-5" />
