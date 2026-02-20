@@ -27,4 +27,3 @@ export function isManualFile(fileName: string): boolean {
 export function generateManualFileName(extension: string = "txt"): string {
   return `${MANUAL_FILE_PREFIX}-${Date.now()}.${extension}`;
 }
-

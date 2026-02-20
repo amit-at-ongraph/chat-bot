@@ -20,9 +20,9 @@ import { useChunkFilters } from "../hooks/useChunkFilters";
 import { useServerPaginatedData } from "../hooks/useServerPaginatedData";
 import { useTranslation } from "../i18n/useTranslation";
 import { TableSkeleton } from "./TableSkeleton";
-import { createChunkColumns } from "./columns";
+import { filterConfigs } from "./config/filter-config";
+import { createChunkColumns } from "./config/table-columns";
 import { PAGINATION_CONFIG } from "./constants";
-import { filterConfigs } from "./filter-config";
 import { Chunk, PaginatedResult, chunkService } from "./service";
 
 export default function ChunksPage() {

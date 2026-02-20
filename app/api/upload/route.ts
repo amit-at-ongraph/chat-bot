@@ -1,9 +1,9 @@
+import { isManualFile } from "@/app/upload/config/uploadConfig";
 import { authOptions } from "@/lib/auth";
 import { UserRole } from "@/lib/constants";
 import { supabase } from "@/lib/supabase";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { isManualFile } from "@/app/upload/config/uploadConfig";
 
 export const runtime = "nodejs"; // IMPORTANT (pdf, buffers, fs safety)
 
@@ -87,7 +87,10 @@ export async function POST(req: Request) {
               .remove([filePath]);
 
             if (deleteError) {
-              console.error(`Failed to delete manual file ${file.name} after successful processing:`, deleteError);
+              console.error(
+                `Failed to delete manual file ${file.name} after successful processing:`,
+                deleteError,
+              );
               // Non-fatal error - file was processed successfully, just couldn't be deleted
             } else {
               console.log(`Successfully deleted manual file ${file.name} after processing`);

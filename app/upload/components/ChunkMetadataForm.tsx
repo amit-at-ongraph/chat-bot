@@ -8,8 +8,8 @@ import { Input } from "@/components/ui/input";
 import { ApplicableRole } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { Database } from "lucide-react";
-import { MetadataState } from "../types";
 import { CHUNK_METADATA_FORM_CONFIG, FormFieldConfig } from "../config/chunkMetadataFormConfig";
+import { MetadataState } from "../types";
 
 interface Props {
   metadata: MetadataState;
@@ -109,7 +109,7 @@ export function ChunkMetadataForm({
         <Database className="h-4 w-4" /> {t("upload.metadata")}
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {CHUNK_METADATA_FORM_CONFIG.map((config) =>
           renderFormField(config, metadata, onChange, onRoleToggle, disabled, t),
         )}

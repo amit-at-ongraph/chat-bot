@@ -23,10 +23,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ chunkI
     }
 
     // 1. Update the content in rag_chunks
-    await db
-      .update(ragChunks)
-      .set({ content })
-      .where(eq(ragChunks.chunkId, chunkId));
+    await db.update(ragChunks).set({ content }).where(eq(ragChunks.chunkId, chunkId));
 
     // 2. Generate new embedding
     const { embedding } = await embed({

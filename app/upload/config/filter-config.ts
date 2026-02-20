@@ -1,5 +1,5 @@
 import { ApplicableRole, Jurisdiction, LifecycleState, Scenario } from "@/lib/constants";
-import { createOptionsFromEnum } from "../utils/string.utils";
+import { createOptionsFromEnum } from "../../utils/string.utils";
 
 export type FilterKey = "scenario" | "jurisdiction" | "lifecycleState" | "applicableRoles";
 

@@ -2,17 +2,17 @@
 
 import { Button } from "@/app/components/ui/Button";
 import { useTranslation } from "@/app/i18n/useTranslation";
-import { ArrowLeft, Loader2, Upload } from "lucide-react";
 import axios from "axios";
+import { ArrowLeft, Loader2, Upload } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { ChunkMetadataForm } from "../components/ChunkMetadataForm";
 import { ChunkSourceEditor } from "../components/ChunkSourceEditor";
+import { generateManualFileName } from "../config/uploadConfig";
 import { INITIAL_METADATA } from "../types";
 import { useChunkForm } from "../useChunkForm";
-import { generateManualFileName } from "../config/uploadConfig";
 
 export default function NewChunkPage() {
   const { t } = useTranslation();
@@ -20,14 +20,8 @@ export default function NewChunkPage() {
   const [uploadType, setUploadType] = useState<"file" | "paste">("file");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  
-  const {
-    metadata,
-    content,
-    setContent,
-    handleMetadataChange,
-    handleRoleToggle,
-  } = useChunkForm({
+
+  const { metadata, content, setContent, handleMetadataChange, handleRoleToggle } = useChunkForm({
     ...INITIAL_METADATA,
     lastReviewed: new Date().toISOString().split("T")[0],
   });
@@ -105,11 +99,7 @@ export default function NewChunkPage() {
             onRoleToggle={handleRoleToggle}
             disabled={isUploading}
             renderFooter={() => (
-              <Button
-                onClick={handleUpload}
-                disabled={isUploading}
-                variant="primary-action"
-              >
+              <Button onClick={handleUpload} disabled={isUploading} variant="primary-action">
                 {isUploading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (

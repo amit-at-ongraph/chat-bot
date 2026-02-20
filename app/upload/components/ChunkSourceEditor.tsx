@@ -1,10 +1,10 @@
 "use client";
 
+import { TextareaWithLineNumbers } from "@/app/components/TextareaWithLineNumbers";
+import { Button } from "@/app/components/ui/Button";
 import { useTranslation } from "@/app/i18n/useTranslation";
 import { cn } from "@/lib/utils";
 import { FileText, Type, Upload } from "lucide-react";
-import { Button } from "@/app/components/ui/Button";
-import { TextareaWithLineNumbers } from "@/app/components/TextareaWithLineNumbers";
 
 interface Props {
   uploadType: "file" | "paste";
@@ -44,7 +44,7 @@ export function ChunkSourceEditor({
               uploadType === "file"
                 ? "bg-primary text-white shadow-sm"
                 : "text-text-muted hover:text-text-main",
-              disabled && "cursor-not-allowed opacity-50"
+              disabled && "cursor-not-allowed opacity-50",
             )}
           >
             <FileText className="h-3.5 w-3.5" /> {t("upload.file")}
@@ -57,7 +57,7 @@ export function ChunkSourceEditor({
               uploadType === "paste"
                 ? "bg-primary text-white shadow-sm"
                 : "text-text-muted hover:text-text-main",
-              disabled && "cursor-not-allowed opacity-50"
+              disabled && "cursor-not-allowed opacity-50",
             )}
           >
             <Type className="h-3.5 w-3.5" /> {t("upload.paste")}
@@ -67,10 +67,12 @@ export function ChunkSourceEditor({
 
       {uploadType === "file" ? (
         <div className="space-y-4">
-          <div className={cn(
-            "border-border-base bg-app-bg hover:bg-border-light/50 group flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-12 text-center transition-colors",
-            disabled && "pointer-events-none opacity-50"
-          )}>
+          <div
+            className={cn(
+              "border-border-base bg-app-bg hover:bg-border-light/50 group flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-12 text-center transition-colors",
+              disabled && "pointer-events-none opacity-50",
+            )}
+          >
             <input
               type="file"
               id="chunk-file"
@@ -79,7 +81,10 @@ export function ChunkSourceEditor({
               accept=".pdf,.txt"
               disabled={disabled}
             />
-            <label htmlFor="chunk-file" className={cn("cursor-pointer space-y-4", disabled && "cursor-not-allowed")}>
+            <label
+              htmlFor="chunk-file"
+              className={cn("cursor-pointer space-y-4", disabled && "cursor-not-allowed")}
+            >
               <div className="bg-primary/5 text-primary group-hover:bg-primary/10 mx-auto flex h-12 w-12 items-center justify-center rounded-full transition-colors">
                 <Upload className="h-6 w-6" />
               </div>

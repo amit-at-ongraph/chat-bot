@@ -4,8 +4,8 @@ import { LifecycleState } from "@/lib/constants";
 import type { ColumnDef, Row } from "@tanstack/react-table";
 import { ArrowUpDown, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { createOptionsFromEnum } from "../utils/string.utils";
-import { Chunk } from "./service";
+import { createOptionsFromEnum } from "../../utils/string.utils";
+import { Chunk } from "../service";
 
 interface CreateChunkColumnsOptions {
   t: (key: string) => string;

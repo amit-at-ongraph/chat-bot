@@ -26,10 +26,7 @@ export interface RoleButtonsFieldConfig extends BaseFormFieldConfig {
   enumType: typeof ApplicableRole;
 }
 
-export type FormFieldConfig =
-  | InputFieldConfig
-  | EnumSelectFieldConfig
-  | RoleButtonsFieldConfig;
+export type FormFieldConfig = InputFieldConfig | EnumSelectFieldConfig | RoleButtonsFieldConfig;
 
 /**
  * Configuration array for chunk metadata form fields.
@@ -90,4 +87,3 @@ export const CHUNK_METADATA_FORM_CONFIG: FormFieldConfig[] = [
     enumType: ApplicableRole,
   },
 ];
-

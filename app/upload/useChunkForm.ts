@@ -8,9 +8,12 @@ export function useChunkForm(initialMetadata: MetadataState) {
   const [metadata, setMetadata] = useState<MetadataState>(initialMetadata);
   const [content, setContent] = useState("");
 
-  const handleMetadataChange = useCallback(<K extends keyof MetadataState>(key: K, value: MetadataState[K]) => {
-    setMetadata((prev) => ({ ...prev, [key]: value }));
-  }, []);
+  const handleMetadataChange = useCallback(
+    <K extends keyof MetadataState>(key: K, value: MetadataState[K]) => {
+      setMetadata((prev) => ({ ...prev, [key]: value }));
+    },
+    [],
+  );
 
   const handleRoleToggle = useCallback((role: ApplicableRole) => {
     setMetadata((prev) => ({
