@@ -22,7 +22,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronLeft, ChevronRight, Plus, Search, Trash2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -175,6 +175,15 @@ export default function ChunksPage() {
         header: () => <div className="text-center">{t("upload.actions")}</div>,
         cell: ({ row }) => (
           <div className="flex items-center justify-center gap-1 transition-opacity">
+            <Link href={`/upload/edit/${row.original.chunkId}`}>
+              <Button
+                variant="none"
+                size="none"
+                className="p-2 text-primary hover:text-primary/80"
+              >
+                <Pencil className="h-4 w-4" />
+              </Button>
+            </Link>
             <Button
               variant="none"
               size="none"

@@ -9,6 +9,11 @@ export interface Chunk {
   lifecycleState?: string;
   createdAt: string;
   applicableRoles?: string[];
+  lastReviewed?: string;
+  lexicalTriggers?: string[];
+  authorityLevel?: number;
+  sourceIds?: string[];
+  retrievalWeight?: number;
 }
 
 export const chunkService = {
@@ -20,6 +25,19 @@ export const chunkService = {
 
     const { data } = await axios.get(`/api/chunks?${params.toString()}`);
     return (data.chunks as Chunk[]) || [];
+  },
+
+  fetchOne: async (chunkId: string) => {
+    const { data } = await axios.get(`/api/chunks/${chunkId}`);
+    return data.chunk as Chunk;
+  },
+
+  updateMetadata: async (chunkId: string, metadata: Partial<Chunk>) => {
+    await axios.patch(`/api/chunks/${chunkId}/metadata`, metadata);
+  },
+
+  updateContent: async (chunkId: string, content: string) => {
+    await axios.patch(`/api/chunks/${chunkId}/content`, { content });
   },
 
   toggleStatus: async (chunkId: string, status: string) => {
