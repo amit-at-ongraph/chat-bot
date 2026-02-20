@@ -19,6 +19,7 @@ type Props = {
   placeholder?: string;
   className?: string;
   layout?: Partial<LayoutConfig>;
+  disabled?: boolean;
 };
 
 const DEFAULT_LAYOUT: LayoutConfig = {
@@ -33,7 +34,7 @@ const DEFAULT_LAYOUT: LayoutConfig = {
 
 export const TextareaWithLineNumbers = forwardRef<HTMLTextAreaElement, Props>(
   function TextareaWithLineNumbers(
-    { value, onChange, placeholder, className = "", layout = {} },
+    { value, onChange, placeholder, className = "", layout = {}, disabled = false },
     forwardedRef,
   ) {
     const cfg = { ...DEFAULT_LAYOUT, ...layout };
@@ -86,7 +87,7 @@ export const TextareaWithLineNumbers = forwardRef<HTMLTextAreaElement, Props>(
     };
 
     // Merge refs safely
-    const setTextareaRef = (node: HTMLTextAreaElement) => {
+    const setTextareaRef = (node: HTMLTextAreaElement | null) => {
       textareaRef.current = node;
 
       if (typeof forwardedRef === "function") forwardedRef(node);
@@ -94,13 +95,15 @@ export const TextareaWithLineNumbers = forwardRef<HTMLTextAreaElement, Props>(
     };
 
     return (
-      <div className="space-y-4">
+      <div className={`space-y-4 ${disabled ? "opacity-60 grayscale" : ""}`}>
         <div
-          className={`group border-border-base focus-within:ring-primary/10 focus-within:border-primary/50 relative flex h-80 w-full flex-col overflow-hidden rounded-xl border transition-all focus-within:ring-2 ${className}`}
+          className={`group border-border-base focus-within:ring-primary/10 focus-within:border-primary/50 relative flex h-80 w-full flex-col overflow-hidden rounded-xl border transition-all focus-within:ring-2 ${
+            disabled ? "bg-muted/5 border-border-light cursor-not-allowed" : "bg-white"
+          } ${className}`}
         >
           {/* Editor area */}
           <div
-            className="relative flex-1 overflow-hidden bg-white"
+            className={`relative flex-1 overflow-hidden ${disabled ? "bg-transparent" : "bg-white"}`}
             style={{
               fontSize: cfg.fontSize,
               lineHeight: `${cfg.lineHeight}px`,
@@ -158,9 +161,12 @@ export const TextareaWithLineNumbers = forwardRef<HTMLTextAreaElement, Props>(
               value={value}
               placeholder={placeholder}
               spellCheck={false}
+              disabled={disabled}
               onChange={(e) => onChange(e.target.value)}
               onScroll={handleScroll}
-              className="absolute top-0 right-0 bottom-0 z-10 resize-none overflow-y-auto bg-white wrap-break-word whitespace-pre-wrap focus:outline-none"
+              className={`absolute top-0 right-0 bottom-0 z-10 resize-none overflow-y-auto wrap-break-word whitespace-pre-wrap focus:outline-none ${
+                disabled ? "cursor-not-allowed bg-transparent" : "bg-white"
+              }`}
               style={{
                 left: lineNumberWidth, // prevents overlap
                 paddingTop: cfg.paddingY,

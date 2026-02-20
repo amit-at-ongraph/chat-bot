@@ -11,6 +11,9 @@ export interface Chunk {
   applicableRoles?: string[];
   lastReviewed?: string;
   lexicalTriggers?: string[];
+  authorityLevel?: number;
+  sourceIds?: string[];
+  retrievalWeight?: number;
 }
 
 export interface PaginatedResult<T> {

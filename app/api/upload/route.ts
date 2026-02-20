@@ -1,3 +1,4 @@
+import { isManualFile } from "@/app/upload/config/uploadConfig";
 import { authOptions } from "@/lib/auth";
 import { UserRole } from "@/lib/constants";
 import { supabase } from "@/lib/supabase";
@@ -55,17 +56,49 @@ export async function POST(req: Request) {
           };
         }
 
+        let functionSuccess = false;
         try {
-          await supabase.functions.invoke("generate-embeddings", {
+          const { error: invokeError } = await supabase.functions.invoke("generate-embeddings", {
             body: {
               bucket: "documents",
               path: filePath,
               metadata,
             },
           });
-        } catch (invokeError) {
+
+          // Check if function invocation was successful (no error means 200 OK)
+          if (invokeError) {
+            console.error("Failed to trigger ingestion for", file.name, invokeError);
+            functionSuccess = false;
+          } else {
+            // Function invocation successful (200 status)
+            functionSuccess = true;
+          }
+        } catch (invokeError: any) {
           console.error("Failed to trigger ingestion for", file.name, invokeError);
-          // Non-fatal error for the upload itself, but should be logged
+          functionSuccess = false;
+        }
+
+        // If function returned 200 and file is manually created, delete it from storage
+        if (functionSuccess && isManualFile(file.name)) {
+          try {
+            const { error: deleteError } = await supabase.storage
+              .from("documents")
+              .remove([filePath]);
+
+            if (deleteError) {
+              console.error(
+                `Failed to delete manual file ${file.name} after successful processing:`,
+                deleteError,
+              );
+              // Non-fatal error - file was processed successfully, just couldn't be deleted
+            } else {
+              console.log(`Successfully deleted manual file ${file.name} after processing`);
+            }
+          } catch (deleteError) {
+            console.error(`Error deleting manual file ${file.name}:`, deleteError);
+            // Non-fatal error - continue with success response
+          }
         }
 
         return {
