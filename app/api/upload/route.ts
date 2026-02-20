@@ -58,7 +58,7 @@ export async function POST(req: Request) {
 
         let functionSuccess = false;
         try {
-          const { data, error: invokeError } = await supabase.functions.invoke("generate-embeddings", {
+          const { error: invokeError } = await supabase.functions.invoke("generate-embeddings", {
             body: {
               bucket: "documents",
               path: filePath,
