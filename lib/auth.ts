@@ -7,6 +7,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { UserRole } from "./constants";
 import { supabase } from "./supabase";
 
+import { AUTH_CONFIG } from "@/config";
 import * as schema from "./db/schema";
 import { users } from "./db/schema";
 
@@ -35,6 +36,7 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        role: { label: "Role", type: "text" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
@@ -56,7 +58,7 @@ export const authOptions: NextAuthOptions = {
           }
 
           // Check if user exists in Drizzle DB
-          const [dbUser] = await db
+          let [dbUser] = await db
             .select()
             .from(users)
             .where(eq(users.email, data.user.email!))
@@ -72,15 +74,16 @@ export const authOptions: NextAuthOptions = {
                 emailVerified: data.user.email_confirmed_at
                   ? new Date(data.user.email_confirmed_at)
                   : null,
+                role: AUTH_CONFIG.USER_AUTH_ENABLED ? UserRole.USER : UserRole.ADMIN,
               })
               .returning();
 
-            return {
-              id: newUser.id,
-              email: newUser.email,
-              name: newUser.name,
-              role: newUser.role,
-            };
+            dbUser = newUser;
+          }
+
+          // ✅ BLOCK NON-ADMIN USERS if no user auth enabled
+          if (!AUTH_CONFIG.USER_AUTH_ENABLED && dbUser.role !== UserRole.ADMIN) {
+            throw new Error("Access denied. Admins only.");
           }
 
           return {
