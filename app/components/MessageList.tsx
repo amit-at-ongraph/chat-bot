@@ -202,7 +202,7 @@ export default function MessageList({
         )}
 
         {/* This spacer provides the necessary room to scroll the latest prompt to the top, only after the first message */}
-        {hasSubmitted && <div aria-hidden="true" />}
+        {hasSubmitted && <div aria-hidden="true" className="h-[55vh]" />}
       </div>
     </main>
   );
