@@ -31,6 +31,11 @@ export default function MessageList({
   const { t } = useTranslation();
 
   const isStreaming = status === "submitted" || status === "streaming";
+  const lastMessageRole = messages[messages.length - 1]?.role;
+  const userMessageCount = React.useMemo(
+    () => messages.filter((message) => message.role === "user").length,
+    [messages],
+  );
 
   // Auto-scroll logic
   React.useEffect(() => {
@@ -62,7 +67,7 @@ export default function MessageList({
           const behavior =
             Math.abs(container.scrollTop - targetTop) < threshold ? "instant" : "smooth";
           container.scrollTo({ top: targetTop, behavior });
-        } else if (messages[messages.length - 1]?.role === "user") {
+        } else if (lastMessageRole === "user") {
           // When user just submitted, scroll smoothly to their message at the top
           container.scrollTo({ top: targetTop, behavior: "smooth" });
         }
@@ -70,7 +75,7 @@ export default function MessageList({
     }, 50);
 
     return () => clearTimeout(timer);
-  }, [messages.length, isStreaming]);
+  }, [messages.length, userMessageCount, lastMessageRole, isStreaming]);
 
   // Listen for scroll-to-bottom events
   React.useEffect(() => {
