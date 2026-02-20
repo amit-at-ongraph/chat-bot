@@ -2,7 +2,7 @@ import { authOptions } from "@/lib/auth";
 import { UserRole } from "@/lib/constants";
 import { db } from "@/lib/db";
 import { ENUM_NAMES, ragChunks } from "@/lib/db/schema";
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq, ilike, or, sql } from "drizzle-orm";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -18,6 +18,11 @@ export async function GET(req: Request) {
     const jurisdiction = searchParams.get("jurisdiction");
     const lifecycleState = searchParams.get("lifecycleState");
     const applicableRoles = searchParams.get("applicableRoles");
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "20");
+    const offset = (page - 1) * limit;
+
+    const query = searchParams.get("query");
 
     const filters = [];
     if (scenario) filters.push(eq(ragChunks.scenario, scenario as any));
@@ -28,15 +33,40 @@ export async function GET(req: Request) {
         sql`${ragChunks.applicableRoles} @> ARRAY[${applicableRoles}]::${sql.raw(ENUM_NAMES.applicable_role)}[]`,
       );
 
+    // Add search query filter
+    if (query) {
+      filters.push(
+        or(ilike(ragChunks.content, `%${query}%`), ilike(ragChunks.topic, `%${query}%`)),
+      );
+    }
+
+    const whereClause = filters.length > 0 ? and(...filters) : undefined;
+
+    // Get total count for pagination
+    const [{ count }] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(ragChunks)
+      .where(whereClause);
+
+    const sortOrder = searchParams.get("sortOrder") || "desc";
+
     const chunks = await db
       .select()
       .from(ragChunks)
-      .where(filters.length > 0 ? and(...filters) : undefined)
-      .orderBy(desc(ragChunks.createdAt));
+      .where(whereClause)
+      .orderBy(sortOrder === "asc" ? asc(ragChunks.createdAt) : desc(ragChunks.createdAt))
+      .limit(limit)
+      .offset(offset);
 
     return NextResponse.json({
       success: true,
       chunks,
+      pagination: {
+        total: Number(count),
+        page,
+        limit,
+        totalPages: Math.ceil(Number(count) / limit),
+      },
     });
   } catch (error) {
     console.error("Error fetching chunks:", error);

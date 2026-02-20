@@ -8,11 +8,11 @@ import Welcome from "./components/Welcome";
 
 import { useSession } from "next-auth/react";
 import { useChatLogic } from "./hooks/useChatLogic";
-import { useChatStore } from "./store/chatStore";
+import { useHasAnonymousCookie } from "./hooks/useHasAnonymousCookie";
 
 function HomeContent() {
   const { data: session } = useSession();
-  const { skippedAuth, setSkippedAuth } = useChatStore();
+  const hasAnonymousCookie = useHasAnonymousCookie();
 
   const {
     messages,
@@ -37,10 +37,15 @@ function HomeContent() {
     return () => window.removeEventListener("start-new-chat", startNewChat);
   }, [startNewChat]);
 
+  // Show loading state while checking cookie
+  if (hasAnonymousCookie === null) {
+    return null; // or a loading spinner
+  }
+
   return (
     <>
-      {/* Sign In Overlay */}
-      {!session && !skippedAuth && <Welcome onSkip={() => setSkippedAuth(true)} />}
+      {/* Sign In Overlay - Show welcome if no session and no anonymous cookie */}
+      {!session && !hasAnonymousCookie && <Welcome />}
 
       <div className="flex h-full min-h-0 flex-col overflow-hidden">
         {/* Chat Area */}

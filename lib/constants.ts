@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 
 export const APP_CONFIG: AppConfig = {
-  name: "Immigration Action Guide",
+  name: "PAXIS",
   description: "A comprehensive guide and assistant for immigration-related queries and actions.",
 };
 

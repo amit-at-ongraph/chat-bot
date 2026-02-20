@@ -36,7 +36,6 @@ export async function POST(req: Request) {
     const context = await findRelevantContent(userQuery, contextRetrieval);
     // console.timeEnd("findRelevantContent");
 
-
     // console.time("createChat");
     if (session?.user?.id) {
       if (!chatId) {

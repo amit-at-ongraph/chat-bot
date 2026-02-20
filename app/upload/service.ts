@@ -16,15 +16,35 @@ export interface Chunk {
   retrievalWeight?: number;
 }
 
+export interface PaginatedResult<T> {
+  chunks: T[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+
 export const chunkService = {
-  fetchAll: async (filters: Record<string, string>) => {
+  fetchAll: async (
+    filters: Record<string, string>,
+    page = 1,
+    limit = 20,
+    query: string = "",
+    sortOrder: "asc" | "desc" = "desc",
+  ) => {
     const params = new URLSearchParams();
+    if (query) params.append("query", query);
+    if (sortOrder) params.append("sortOrder", sortOrder);
     Object.entries(filters).forEach(([key, value]) => {
       if (value) params.append(key, value);
     });
+    params.append("page", page.toString());
+    params.append("limit", limit.toString());
 
     const { data } = await axios.get(`/api/chunks?${params.toString()}`);
-    return (data.chunks as Chunk[]) || [];
+    return data as PaginatedResult<Chunk>;
   },
 
   fetchOne: async (chunkId: string) => {

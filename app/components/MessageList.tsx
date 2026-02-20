@@ -31,6 +31,11 @@ export default function MessageList({
   const { t } = useTranslation();
 
   const isStreaming = status === "submitted" || status === "streaming";
+  const lastMessageRole = messages[messages.length - 1]?.role;
+  const userMessageCount = React.useMemo(
+    () => messages.filter((message) => message.role === "user").length,
+    [messages],
+  );
 
   // Auto-scroll logic
   React.useEffect(() => {
@@ -62,7 +67,7 @@ export default function MessageList({
           const behavior =
             Math.abs(container.scrollTop - targetTop) < threshold ? "instant" : "smooth";
           container.scrollTo({ top: targetTop, behavior });
-        } else if (messages[messages.length - 1]?.role === "user") {
+        } else if (lastMessageRole === "user") {
           // When user just submitted, scroll smoothly to their message at the top
           container.scrollTo({ top: targetTop, behavior: "smooth" });
         }
@@ -70,7 +75,7 @@ export default function MessageList({
     }, 50);
 
     return () => clearTimeout(timer);
-  }, [messages.length, isStreaming]);
+  }, [messages.length, userMessageCount, lastMessageRole, isStreaming]);
 
   // Listen for scroll-to-bottom events
   React.useEffect(() => {
@@ -109,7 +114,7 @@ export default function MessageList({
     <main
       ref={mainRef}
       style={{ overflowAnchor: "auto" }}
-      className="bg-app-bg flex-1 min-h-0 space-y-6 overflow-y-auto overflow-x-hidden p-4"
+      className="bg-app-bg min-h-0 flex-1 space-y-6 overflow-x-hidden overflow-y-auto p-4"
       onScroll={handleScroll}
     >
       <div className="mx-auto max-w-3xl">
@@ -131,7 +136,9 @@ export default function MessageList({
               data-role={message.role}
               className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}
             >
-              <div className={`mb-4 flex flex-col gap-3 overflow-hidden ${isUser ? "max-w-[80%]" : "w-full"}`}>
+              <div
+                className={`mb-4 flex flex-col gap-3 overflow-hidden ${isUser ? "max-w-[80%]" : "w-full"}`}
+              >
                 <div
                   className={`${isUser ? "border-border-light bg-border-light rounded-3xl border px-4 py-3" : ""} relative`}
                   // className={`${
@@ -195,7 +202,7 @@ export default function MessageList({
         )}
 
         {/* This spacer provides the necessary room to scroll the latest prompt to the top, only after the first message */}
-        {hasSubmitted && <div className="h-[60vh]" aria-hidden="true" />}
+        {hasSubmitted && <div aria-hidden="true" />}
       </div>
     </main>
   );

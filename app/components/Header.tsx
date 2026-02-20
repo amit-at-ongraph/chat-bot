@@ -1,12 +1,12 @@
-import { UI_CONFIG } from "@/config";
+import { AUTH_CONFIG, UI_CONFIG } from "@/config";
 import { Menu, Moon, Sun } from "lucide-react";
 import { signIn, useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "../i18n/useTranslation";
 import { Button } from "./ui/Button";
 import { LanguageSelector } from "./ui/LanguageSelector";
-import { useRouter } from "next/navigation";
 
 interface HeaderProps {
   skippedAuth: boolean;
@@ -15,14 +15,21 @@ interface HeaderProps {
   mainContentOffsetClasses: string;
 }
 
-export default function Header({ skippedAuth, onToggleSidebar, isSidebarOpen, mainContentOffsetClasses }: HeaderProps) {
+export default function Header({
+  skippedAuth,
+  onToggleSidebar,
+  isSidebarOpen,
+  mainContentOffsetClasses,
+}: HeaderProps) {
   const { data: session } = useSession();
   const { setTheme, resolvedTheme } = useTheme();
   const { t } = useTranslation();
   const router = useRouter();
 
   return (
-    <header className={`sticky top-0 z-10 flex items-center justify-between bg-transparent px-4 py-3 ${mainContentOffsetClasses}`}>
+    <header
+      className={`sticky top-0 z-10 flex items-center justify-between bg-transparent px-4 py-3 ${mainContentOffsetClasses}`}
+    >
       <div className="flex items-center gap-3">
         {(session || skippedAuth) && (
           <Button
@@ -41,12 +48,12 @@ export default function Header({ skippedAuth, onToggleSidebar, isSidebarOpen, ma
             alt="Logo"
             width={32}
             height={32}
-            className="h-10 w-10 object-fit rounded-full"
+            className="object-fit h-10 w-10 rounded-full"
             onClick={() => {
               router.push("/");
             }}
           />
-          <h1 className="text-text-main m-0 block text-lg font tracking-tight truncate max-w-[170px] sm:text-xl font-semibold sm:max-w-md">
+          <h1 className="text-text-main font m-0 block max-w-[170px] truncate text-lg font-semibold tracking-tight sm:max-w-md sm:text-xl">
             {UI_CONFIG.HEADER_TITLE}
           </h1>
         </div>
@@ -55,7 +62,7 @@ export default function Header({ skippedAuth, onToggleSidebar, isSidebarOpen, ma
         <div className="flex items-center gap-0 sm:gap-1">
           <LanguageSelector />
 
-          {(!session && skippedAuth) ? null : (
+          {AUTH_CONFIG.USER_AUTH_ENABLED ? null : (
             <Button
               variant="ghost"
               size="icon"
@@ -73,10 +80,10 @@ export default function Header({ skippedAuth, onToggleSidebar, isSidebarOpen, ma
             </Button>
           )}
         </div>
-        {!session && skippedAuth ? (
+        {AUTH_CONFIG.USER_AUTH_ENABLED && !session && skippedAuth ? (
           <Button
             onClick={() => signIn()}
-            className="whitespace-nowrap px-3 py-1.5 text-xs font-bold leading-none"
+            className="px-3 py-1.5 text-xs leading-none font-bold whitespace-nowrap"
           >
             {t("common.sign_in")}
           </Button>

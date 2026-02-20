@@ -3,7 +3,6 @@
 import { Button } from "@/app/components/ui/Button";
 import { EnumSelect } from "@/components/ui/enum-select";
 import { Input } from "@/components/ui/input";
-
 import {
   Table,
   TableBody,
@@ -12,49 +11,48 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { LifecycleState } from "@/lib/constants";
-import {
-  ColumnDef,
-  Row,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-import { ChevronLeft, ChevronRight, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { Row, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { ChevronLeft, ChevronRight, Plus, Search } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { toast } from "sonner";
+import { useChunkFilters } from "../hooks/useChunkFilters";
+import { useServerPaginatedData } from "../hooks/useServerPaginatedData";
 import { useTranslation } from "../i18n/useTranslation";
-import { createOptionsFromEnum } from "../utils/string.utils";
+import { TableSkeleton } from "./TableSkeleton";
+import { createChunkColumns } from "./columns";
+import { PAGINATION_CONFIG } from "./constants";
 import { filterConfigs } from "./filter-config";
-import { Chunk, chunkService } from "./service";
+import { Chunk, PaginatedResult, chunkService } from "./service";
 
 export default function ChunksPage() {
   const { t } = useTranslation();
-  const [chunks, setChunks] = useState<Chunk[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [globalFilter, setGlobalFilter] = useState("");
-  const [filters, setFilters] = useState<Record<string, string>>({
-    scenario: "",
-    jurisdiction: "",
-    lifecycleState: "",
-    applicableRoles: "",
-  });
+  const {
+    filters,
+    setFilter,
+    searchQuery,
+    setSearchQuery,
+    debouncedSearch,
+    sortOrder,
+    toggleSort,
+  } = useChunkFilters();
 
-  const fetchChunks = useCallback(async () => {
-    setLoading(true);
-    try {
-      const data = await chunkService.fetchAll(filters);
-      setChunks(data);
-    } catch (error) {
-      console.error("Failed to fetch chunks:", error);
-      toast.error(t("upload.load_failed"));
-    } finally {
-      setLoading(false);
-    }
-  }, [filters, t]);
+  const { data, totalItems, loading, pagination, setPagination, pageCount, refresh, setItems } =
+    useServerPaginatedData<Chunk, PaginatedResult<Chunk>>({
+      queryKey: [filters, debouncedSearch, sortOrder],
+      fetchFn: (page, limit) =>
+        chunkService.fetchAll(filters, page, limit, debouncedSearch, sortOrder),
+      extractItems: (r) => r.chunks,
+      extractTotal: (r) => r.pagination.total,
+      apiLimit: PAGINATION_CONFIG.apiLimit,
+      rowsPerPage: PAGINATION_CONFIG.rowsPerPage,
+      cacheDepth: PAGINATION_CONFIG.cacheDepth,
+      prefetchEnabled: true,
+      onError: (error) => {
+        console.error("Failed to fetch chunks:", error);
+        toast.error(t("upload.load_failed"));
+      },
+    });
 
   const toggleChunkStatus = useCallback(
     (row: Row<Chunk>) => async (value: string) => {
@@ -62,8 +60,7 @@ export default function ChunksPage() {
         const chunkId = row.original.chunkId;
         await chunkService.toggleStatus(chunkId, value);
         toast.success(t("upload.status_updated"));
-        // Update local state to reflect change
-        setChunks((prev) =>
+        setItems((prev) =>
           prev.map((c) => (c.chunkId === chunkId ? { ...c, lifecycleState: value } : c)),
         );
       } catch (error) {
@@ -71,158 +68,43 @@ export default function ChunksPage() {
         toast.error(t("upload.update_failed"));
       }
     },
-    [t],
+    [t, setItems],
   );
-
-  useEffect(() => {
-    fetchChunks();
-  }, [filters, fetchChunks]);
 
   const deleteChunk = useCallback(
     async (chunkId: string) => {
       if (!confirm(t("upload.delete_chunk_confirm"))) return;
-
       try {
         await chunkService.delete(chunkId);
         toast.success(t("upload.chunk_deleted"));
-        setChunks((prev) => prev.filter((c) => c.chunkId !== chunkId));
+        refresh();
       } catch (error) {
         console.error("Failed to delete chunk:", error);
         toast.error(t("upload.chunk_delete_failed"));
       }
     },
-    [t],
+    [t, refresh],
   );
 
-  const columns = useMemo<ColumnDef<Chunk>[]>(
-    () => [
-      {
-        accessorKey: "content",
-        header: t("upload.content"),
-        cell: ({ row }) => (
-          <div className="max-w-sm text-[13px] leading-relaxed">
-            <div className="line-clamp-2 w-full">{row.getValue("content")}</div>
-          </div>
-        ),
-      },
-      {
-        accessorKey: "topic",
-        header: t("upload.topic"),
-        cell: ({ row }) => {
-          const topic = row.getValue("topic") as string;
-          return (
-            <span className="border-primary/10 bg-primary/5 text-primary inline-flex items-center rounded-full border px-2.5 py-0.5 text-[12px] font-semibold">
-              {topic ?? "-"}
-            </span>
-          );
-        },
-      },
-      {
-        accessorKey: "scenario",
-        header: t("upload.scenario"),
-        cell: ({ row }) => {
-          const value = row.getValue("scenario") as string;
-          return <div className="text-text-secondary text-[13px]">{t(`upload.${value}`)}</div>;
-        },
-      },
-      {
-        accessorKey: "jurisdiction",
-        header: t("upload.jurisdiction"),
-        cell: ({ row }) => {
-          const value = row.getValue("jurisdiction") as string;
-          return (
-            <div className="text-text-secondary text-[13px] whitespace-nowrap">
-              {t(`upload.${value}`)}
-            </div>
-          );
-        },
-      },
-      {
-        accessorKey: "applicableRoles",
-        header: t("upload.applicable_roles"),
-        cell: ({ row }) => {
-          const roles = row.getValue("applicableRoles") as Array<string>;
-          return (
-            <div className="text-text-secondary text-[13px] whitespace-nowrap">
-              {roles?.map((role) => t(`upload.${role}`)).join(", ")}
-            </div>
-          );
-        },
-      },
-      {
-        accessorKey: "lifecycleState",
-        header: t("upload.status"),
-        cell: ({ row }) => (
-          <EnumSelect
-            value={row.getValue("lifecycleState")}
-            onValueChange={toggleChunkStatus(row)}
-            options={createOptionsFromEnum(LifecycleState)}
-            triggerClassName="w-fit"
-          />
-        ),
-      },
-      {
-        accessorKey: "createdAt",
-        header: t("upload.created"),
-        cell: ({ row }) => (
-          <div className="text-text-secondary text-[12px] whitespace-nowrap">
-            {new Date(row.getValue("createdAt")).toLocaleDateString()}
-          </div>
-        ),
-      },
-      {
-        id: "actions",
-        header: () => <div className="text-center">{t("upload.actions")}</div>,
-        cell: ({ row }) => (
-          <div className="flex items-center justify-center gap-1 transition-opacity">
-            <Link href={`/upload/edit/${row.original.chunkId}`}>
-              <Button
-                variant="none"
-                size="none"
-                className="p-2 text-primary hover:text-primary/80"
-              >
-                <Pencil className="h-4 w-4" />
-              </Button>
-            </Link>
-            <Button
-              variant="none"
-              size="none"
-              className="p-2 text-red-400 hover:text-red-500"
-              onClick={() => deleteChunk(row.original.chunkId)}
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </div>
-        ),
-      },
-    ],
-    [deleteChunk, t, toggleChunkStatus],
+  const columns = useMemo(
+    () =>
+      createChunkColumns({
+        t,
+        onToggleStatus: toggleChunkStatus,
+        onDelete: deleteChunk,
+        onToggleSort: toggleSort,
+      }),
+    [t, toggleChunkStatus, deleteChunk, toggleSort],
   );
 
-  const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 5,
-  });
-
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
-    data: chunks,
+    data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    state: {
-      globalFilter,
-      pagination: pagination,
-    },
-    onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: (row, columnId, filterValue) => {
-      const content = row.getValue("content") as string;
-      const topic = row.getValue("topic") as string;
-      const query = filterValue.toLowerCase();
-      return (
-        content.toLowerCase().includes(query) || (topic && topic.toLowerCase().includes(query))
-      );
-    },
+    manualPagination: true,
+    pageCount,
+    state: { pagination },
     onPaginationChange: setPagination,
   });
 
@@ -251,8 +133,8 @@ export default function ChunksPage() {
           <Search className="text-text-muted absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
           <Input
             placeholder={t("upload.search_placeholder")}
-            value={globalFilter ?? ""}
-            onChange={(e) => setGlobalFilter(e.target.value)}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-9"
           />
         </div>
@@ -262,10 +144,7 @@ export default function ChunksPage() {
             <EnumSelect
               key={key}
               value={filters[key]}
-              onValueChange={(value) => {
-                const newValue = value === "ALL" ? "" : value;
-                setFilters((f) => (f[key] === newValue ? f : { ...f, [key]: newValue }));
-              }}
+              onValueChange={(value) => setFilter(key, value)}
               options={options}
               placeholder={t(placeholder)}
               triggerClassName="w-fit"
@@ -295,19 +174,7 @@ export default function ChunksPage() {
           </TableHeader>
           <TableBody className="divide-border-base divide-y dark:divide-neutral-700">
             {loading ? (
-              Array(2)
-                .fill(0)
-                .map((_, i) => (
-                  <TableRow key={i} className="border-border-base animate-pulse">
-                    {Array(7)
-                      .fill(0)
-                      .map((_, j) => (
-                        <TableCell key={j} className="px-6 py-4">
-                          <div className="bg-border-light h-4 w-full rounded" />
-                        </TableCell>
-                      ))}
-                  </TableRow>
-                ))
+              <TableSkeleton rows={2} columns={columns.length} />
             ) : table.getRowModel().rows.length === 0 ? (
               <TableRow>
                 <TableCell
@@ -336,7 +203,7 @@ export default function ChunksPage() {
 
         <div className="border-border-base flex items-center justify-between border-t px-6 py-4 dark:border-neutral-700">
           <p className="text-text-muted text-[12px] font-light">
-            {t("upload.showing_segments", { count: table.getRowModel().rows.length })}
+            {t("upload.showing_segments", { count: totalItems })}
           </p>
           <div className="flex items-center gap-2">
             <Button

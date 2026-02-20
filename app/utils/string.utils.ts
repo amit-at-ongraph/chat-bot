@@ -1,5 +1,7 @@
 export const format = (value: string): string =>
-  value.includes(" ") ? value : value.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+  value.includes(" ")
+    ? value
+    : value.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
 
 type FormattableObject = Record<string, unknown>;
 
