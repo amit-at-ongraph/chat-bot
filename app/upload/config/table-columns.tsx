@@ -2,9 +2,10 @@ import { Button } from "@/app/components/ui/Button";
 import { EnumSelect } from "@/components/ui/enum-select";
 import { LifecycleState } from "@/lib/constants";
 import type { ColumnDef, Row } from "@tanstack/react-table";
-import { ArrowUpDown, Trash2 } from "lucide-react";
-import { createOptionsFromEnum } from "../utils/string.utils";
-import { Chunk } from "./service";
+import { ArrowUpDown, Pencil, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { createOptionsFromEnum } from "../../utils/string.utils";
+import { Chunk } from "../service";
 
 interface CreateChunkColumnsOptions {
   t: (key: string) => string;
@@ -104,6 +105,11 @@ export function createChunkColumns({
       header: () => <div className="text-center">{t("upload.actions")}</div>,
       cell: ({ row }) => (
         <div className="flex items-center justify-center gap-1 transition-opacity">
+          <Link href={`/upload/edit/${row.original.chunkId}`}>
+            <Button variant="none" size="none" className="text-primary hover:text-primary/80 p-2">
+              <Pencil className="h-4 w-4" />
+            </Button>
+          </Link>
           <Button
             variant="none"
             size="none"
