@@ -116,7 +116,7 @@ export const authOptions: NextAuthOptions = {
             realIp ||
             "127.0.0.1";
 
-          const location = credentials?.location || "Unknown";
+          const location = credentials?.location;
           const newUser = await createAnonymousUser(ip, location);
 
           // Create or find a "Guest" user in your DB or just return a dummy object
