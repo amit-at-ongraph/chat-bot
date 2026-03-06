@@ -83,7 +83,7 @@ export default function VerifyHumanPage() {
 
         toast.success("Verification successful! Welcome!", { id: verifyToast });
         router.push("/");
-        // router.refresh();
+        router.refresh();
       } else {
         // Verification failed - could be bot detection, expired token, etc.
         const errorResponse = data as VerifyHumanErrorResponse;
