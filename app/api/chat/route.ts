@@ -37,15 +37,16 @@ export async function POST(req: Request) {
     // console.timeEnd("findRelevantContent");
 
     // console.time("createChat");
-    if (session?.user?.id) {
-      if (!chatId) {
-        const chat = await createChat(session.user.id, userQuery.slice(0, 50));
-        chatId = chat.id;
-      }
+    // Always save chats and messages to database, even for anonymous users
+    const userId = session?.user?.id || null;
 
-      if (lastUserMessage.role === "user") {
-        await saveMessage(chatId, lastUserMessage.role, userQuery);
-      }
+    if (!chatId) {
+      const chat = await createChat(userId, userQuery.slice(0, 50));
+      chatId = chat.id;
+    }
+
+    if (lastUserMessage.role === "user") {
+      await saveMessage(chatId, lastUserMessage.role, userQuery);
     }
     // console.timeEnd("createChat");
 
@@ -63,7 +64,8 @@ export async function POST(req: Request) {
       system: systemPrompt,
       messages: await convertToModelMessages(messages),
       onFinish: async ({ text }) => {
-        if (session?.user?.id && chatId) {
+        // Always save assistant messages to database, even for anonymous users
+        if (chatId) {
           await saveMessage(chatId, "assistant", text);
         }
       },
