@@ -8,6 +8,7 @@ import { UserRole } from "./constants";
 import { supabase } from "./supabase";
 
 import { AUTH_CONFIG } from "@/config";
+import { createAnonymousUser } from "./db/actions";
 import * as schema from "./db/schema";
 import { users } from "./db/schema";
 
@@ -91,6 +92,40 @@ export const authOptions: NextAuthOptions = {
             email: dbUser.email,
             name: dbUser.name,
             role: dbUser.role,
+          };
+        }
+        return null;
+      },
+    }),
+    CredentialsProvider({
+      id: "guest-verify",
+      name: "Guest Access",
+      credentials: {
+        isGuest: { label: "isGuest", type: "boolean" },
+        location: { label: "Location", type: "text" },
+      },
+      async authorize(credentials, req) {
+        if (credentials?.isGuest === "true") {
+          // Extract IP from headers provided by NextAuth 'req' object
+          const forwardedFor = req.headers?.["x-forwarded-for"];
+          const realIp = req.headers?.["x-real-ip"];
+
+          // Standard logic: check forwarded-for first, then fall back
+          const ip =
+            (typeof forwardedFor === "string" ? forwardedFor.split(",")[0] : forwardedFor) ||
+            realIp ||
+            "127.0.0.1";
+
+          const location = credentials?.location || "Unknown";
+          const newUser = await createAnonymousUser(ip, location);
+
+          // Create or find a "Guest" user in your DB or just return a dummy object
+          return {
+            id: newUser.id,
+            name: newUser.name,
+            email: newUser.email,
+            role: newUser.role,
+            location: location,
           };
         }
         return null;

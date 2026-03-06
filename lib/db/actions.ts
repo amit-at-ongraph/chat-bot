@@ -1,11 +1,12 @@
 import { DBChat, DBMessage } from "@/types/chat";
 import { embed } from "ai";
-import { and, desc, eq, gte, lt, or, sql } from "drizzle-orm";
+import { randomUUID } from "crypto";
+import { InferInsertModel, and, desc, eq, gte, lt, or, sql } from "drizzle-orm";
 import z from "zod";
 import { embeddingModel, queryMetadataSchema } from "../ai";
-import { LifecycleState } from "../constants";
+import { LifecycleState, UserRole } from "../constants";
 import { db } from "./index";
-import { ENUM_NAMES, chats, messages, ragChunks, ragEmbeddings } from "./schema";
+import { ENUM_NAMES, chats, messages, ragChunks, ragEmbeddings, users } from "./schema";
 
 export async function createChat(userId: string, title?: string): Promise<DBChat> {
   const [newChat] = await db
@@ -16,6 +17,28 @@ export async function createChat(userId: string, title?: string): Promise<DBChat
     })
     .returning();
   return newChat;
+}
+
+// Returns the newly created user.
+export async function createAnonymousUser(
+  ipAddress: string,
+  location?: string,
+): Promise<InferInsertModel<typeof users>> {
+  const anonId = `anon_${randomUUID()}`;
+  const [newUser] = await db
+    .insert(users)
+    .values({
+      id: anonId,
+      name: "Guest",
+      email: `${anonId}@anon.local`,
+      location: location || null,
+      ipAddress,
+      role: UserRole.USER,
+      emailVerified: new Date(),
+    })
+    .returning();
+
+  return newUser;
 }
 
 export async function saveMessage(

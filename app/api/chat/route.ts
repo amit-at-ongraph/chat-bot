@@ -1,7 +1,12 @@
 import { MODE_CLASSIFIER_PROMPT } from "@/config/behaviour";
 import { chatModel, extractQueryMetadata } from "@/lib/ai";
 import { authOptions } from "@/lib/auth";
-import { createChat, findRelevantContent, saveMessage } from "@/lib/db/actions";
+import {
+  createAnonymousUser,
+  createChat,
+  findRelevantContent,
+  saveMessage,
+} from "@/lib/db/actions";
 import { getSystemMessage } from "@/lib/prompts";
 import { convertToModelMessages, generateText, streamText, UIMessage } from "ai";
 import { getServerSession } from "next-auth";
@@ -37,8 +42,19 @@ export async function POST(req: Request) {
     // console.timeEnd("findRelevantContent");
 
     // console.time("createChat");
-    // Always save chats and messages to database, even for anonymous users
-    const userId = session?.user?.id || null;
+    // Always save chats and messages to database, even for anonymous users.
+    let userId = session?.user?.id || null;
+    if (!userId) {
+      const ip =
+        req.headers.get("x-forwarded-for") ||
+        req.headers.get("x-real-ip") ||
+        req.headers.get("x-ip") ||
+        "";
+      const location = req.headers.get("x-location") || undefined;
+
+      const newUser = await createAnonymousUser(ip, location);
+      userId = newUser.id;
+    }
 
     if (!chatId) {
       const chat = await createChat(userId, userQuery.slice(0, 50));

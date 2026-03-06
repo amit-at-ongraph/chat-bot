@@ -1,9 +1,10 @@
 "use client";
 
 import axios, { AxiosError } from "axios";
+import { signIn } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Turnstile from "react-turnstile";
 import { toast } from "sonner";
 import { useHasAnonymousCookie } from "../hooks/useHasAnonymousCookie";
@@ -27,18 +28,21 @@ export default function VerifyHumanPage() {
   const hasAnonymousCookie = useHasAnonymousCookie();
   const { theme } = useTheme();
 
-  if (!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) {
-    return toast.error("No SIT KEY found.Please configure it.");
-  }
-
-  // Show loading state while checking cookie
-  if (hasAnonymousCookie === null) {
-    return null;
-  }
+  useEffect(() => {
+    if (!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) {
+      toast.error("No SITE KEY found. Please configure it.");
+    }
+  }, []);
 
   // Redirect if user already has anonymous cookie
-  if (hasAnonymousCookie) {
-    router.push("/");
+  useEffect(() => {
+    if (hasAnonymousCookie) {
+      router.push("/");
+    }
+  }, [hasAnonymousCookie, router]);
+
+  if (!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || hasAnonymousCookie === null) {
+    return null;
   }
 
   const handleVerify = async (token: string): Promise<void> => {
@@ -49,9 +53,37 @@ export default function VerifyHumanPage() {
       const data = response.data;
 
       if (data.success) {
+        // 1. Request Location
+        let userLocation = "Denied";
+
+        try {
+          const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+              timeout: 10000,
+            });
+          });
+          userLocation = `${position.coords.latitude}, ${position.coords.longitude}`;
+          toast.success("Location captured!", { id: "location-toast" });
+        } catch {
+          console.warn("Location access denied or timed out");
+          // We continue anyway since location is optional per your prompt
+        }
+
+        // 2. Create Dummy NextAuth Session
+        const result = await signIn("guest-verify", {
+          isGuest: "true",
+          location: userLocation,
+          redirect: false,
+        });
+
+        if (result?.error) {
+          toast.error("Failed to create session", { id: verifyToast });
+          return;
+        }
+
         toast.success("Verification successful! Welcome!", { id: verifyToast });
         router.push("/");
-        router.refresh();
+        // router.refresh();
       } else {
         // Verification failed - could be bot detection, expired token, etc.
         const errorResponse = data as VerifyHumanErrorResponse;
