@@ -6,10 +6,11 @@ import { PasswordInput } from "@/app/components/ui/PasswordInput";
 import { useTranslation } from "@/app/i18n/useTranslation";
 import { useAuthStore } from "@/app/store/authStore";
 import { AUTH_CONFIG } from "@/config";
-import { signIn } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -19,6 +20,10 @@ export default function LoginPage() {
 
   const { loginForm, setLoginField } = useAuthStore();
   const { email, password, error, loading } = loginForm;
+
+  useEffect(() => {
+    signOut({ redirect: false });
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
