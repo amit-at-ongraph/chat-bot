@@ -4,8 +4,10 @@ import { DBMessage, ExtendedUIMessage } from "@/types/chat";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import axios from "axios";
+import { getSession, signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import { useChatStore } from "../store/chatStore";
 import { useLanguageStore } from "../store/languageStore";
 
@@ -150,8 +152,41 @@ export function useChatLogic() {
     window.dispatchEvent(new Event("new-chat-created"));
   }, [setMessages, setIsLoadingMessages]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const session = await getSession();
+    // Try to create session if not found for user to save chats
+    if (!session) {
+      try {
+        // 1. Request Location
+        let userLocation = "Denied";
+
+        try {
+          const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+              timeout: 10000,
+            });
+          });
+          userLocation = `${position.coords.latitude}, ${position.coords.longitude}`;
+          toast.success("Location captured!", { id: "location-toast" });
+        } catch {
+          console.warn("Location access denied or timed out");
+          // We continue anyway since location is optional per your prompt
+        }
+
+        // 2. Create Dummy NextAuth Session
+        await signIn("guest-verify", {
+          isGuest: "true",
+          location: userLocation,
+          redirect: false,
+        });
+      } catch (error) {
+        console.error("Failed to submit message:", error);
+      }
+    }
+    // END: Try to create session if not found for user to save chats
+    
     if (input.trim()) {
       sendMessage({
         text: input,
