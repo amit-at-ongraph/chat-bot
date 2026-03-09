@@ -7,7 +7,6 @@ import axios from "axios";
 import { getSession, signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
 import { useChatStore } from "../store/chatStore";
 import { useLanguageStore } from "../store/languageStore";
 
@@ -169,7 +168,6 @@ export function useChatLogic() {
             });
           });
           userLocation = `${position.coords.latitude}, ${position.coords.longitude}`;
-          toast.success("Location captured!", { id: "location-toast" });
         } catch {
           console.warn("Location access denied or timed out");
           // We continue anyway since location is optional per your prompt

@@ -63,7 +63,6 @@ export default function VerifyHumanPage() {
             });
           });
           userLocation = `${position.coords.latitude}, ${position.coords.longitude}`;
-          toast.success("Location captured!", { id: "location-toast" });
         } catch {
           console.warn("Location access denied or timed out");
           // We continue anyway since location is optional per your prompt
@@ -81,7 +80,6 @@ export default function VerifyHumanPage() {
           return;
         }
 
-        toast.success("Verification successful! Welcome!", { id: verifyToast });
         router.push("/");
         router.refresh();
       } else {
