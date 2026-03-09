@@ -46,7 +46,6 @@ export default function VerifyHumanPage() {
   }
 
   const handleVerify = async (token: string): Promise<void> => {
-    const verifyToast = toast.loading("Verifying...", { id: "verify-toast" });
 
     try {
       const response = await axios.post<VerifyHumanResponse>("/api/verify-human", { token });
@@ -76,7 +75,7 @@ export default function VerifyHumanPage() {
         });
 
         if (result?.error) {
-          toast.error("Failed to create session", { id: verifyToast });
+          toast.error("Failed to create session");
           return;
         }
 
@@ -86,7 +85,7 @@ export default function VerifyHumanPage() {
         // Verification failed - could be bot detection, expired token, etc.
         const errorResponse = data as VerifyHumanErrorResponse;
         const errorMessage = errorResponse.error || "Human verification failed";
-        toast.error(errorMessage, { id: verifyToast, duration: 5000 });
+        toast.error(errorMessage, { duration: 5000 });
         // Reset Turnstile to allow retry
         setTurnstileKey((prev) => prev + 1);
       }
@@ -126,7 +125,7 @@ export default function VerifyHumanPage() {
         errorMessage = error.message || "An unexpected error occurred. Please try again.";
       }
 
-      toast.error(errorMessage, { id: verifyToast, duration: 5000 });
+      toast.error(errorMessage, { duration: 5000 });
 
       // Reset Turnstile to allow retry
       setTurnstileKey((prev) => prev + 1);
